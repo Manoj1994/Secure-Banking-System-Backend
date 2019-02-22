@@ -1,4 +1,4 @@
-package com.bankingapp.model;
+package com.bankingapp.model.login;
 
 import javax.persistence.*;
 import java.util.Set;

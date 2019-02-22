@@ -1,6 +1,6 @@
 package com.bankingapp.service;
 
-import com.bankingapp.model.User;
+import com.bankingapp.model.login.User;
 
 import java.util.Set;
 

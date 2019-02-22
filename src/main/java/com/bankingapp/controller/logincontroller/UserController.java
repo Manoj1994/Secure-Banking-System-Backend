@@ -1,4 +1,4 @@
-package com.bankingapp.controller;
+package com.bankingapp.controller.logincontroller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

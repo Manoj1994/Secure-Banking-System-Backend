@@ -1,9 +1,9 @@
-package com.bankingapp.model;
+package com.bankingapp.model.login;
 
+import com.bankingapp.model.login.Role;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
