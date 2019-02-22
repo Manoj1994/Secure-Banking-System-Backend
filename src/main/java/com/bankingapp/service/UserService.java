@@ -1,14 +1,12 @@
-package com.bankingapp.repository;
+package com.bankingapp.service;
 
 import com.bankingapp.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserService {
 
     Set<User> findByUserName(String userName);
     User findByUserEmail(String email);
     User findByUserNameAndPassword(String userName, String password);
-
 }
