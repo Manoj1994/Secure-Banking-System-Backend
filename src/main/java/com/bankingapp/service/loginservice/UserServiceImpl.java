@@ -1,8 +1,10 @@
-package com.bankingapp.service;
+package com.bankingapp.service.loginservice;
 
 import com.bankingapp.model.login.User;
-import com.bankingapp.repository.UserRepository;
+import com.bankingapp.repository.loginrepository.UserRepository;
+import com.bankingapp.service.loginservice.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -11,13 +13,12 @@ import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.Set;
 
-@Repository
-public class UserServiceImpl implements UserService{
+@Component
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
     private UserRepository userRepository;
 
     public Set<User> findByUserName(String userName) {
