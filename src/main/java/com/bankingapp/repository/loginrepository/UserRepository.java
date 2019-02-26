@@ -7,11 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
-@Repository("userRepository")
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Set<User> findByUserName(String userName);
-    User findByUserEmail(String email);
     User findByUserNameAndPassword(String userName, String password);
 
 }

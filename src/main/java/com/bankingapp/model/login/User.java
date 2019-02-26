@@ -1,6 +1,5 @@
 package com.bankingapp.model.login;
 
-import com.bankingapp.model.login.Role;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -13,34 +12,35 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "userName")
-    @NotEmpty(message = "*Please provide your name")
     private String userName;
 
-    @Column(name = "password")
-    @Length(min = 8, message = "*Your password must have at least 8 characters")
-    @NotEmpty(message = "*Please provide your password")
     private String password;
 
-    @ManyToMany
-    private Set<Role> role;
+    private String role;
 
-    public String getUserName() {
-        return userName;
+    public User() {
+    }
+
+    public User(Long id, String userName, String password, String role) {
+        this.userName = userName;
+        this.password = password;
+        this.id = id;
+        this.role = role;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getRole() {
+        return role;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Long getId() {
@@ -51,11 +51,21 @@ public class User {
         this.id = id;
     }
 
-    public Set<Role> getRole() {
-        return role;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }
