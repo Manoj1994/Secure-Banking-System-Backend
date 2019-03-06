@@ -51,12 +51,14 @@ public class UserService {
 
     public User findByUserNameAndPassword(String username, String password) {
         try {
+
+            String encryptedPassword = EncrytedPasswordUtils.encrptPassword(password);
             String sql = "Select e from " + User.class.getName() + " e " //
                     + " Where e.userName = :userName " +" and e.password = :password";
 
             Query query = entityManager.createQuery(sql, User.class);
             query.setParameter("userName", username);
-            query.setParameter("password", password);
+            query.setParameter("password", encryptedPassword);
 
             return (User) query.getSingleResult();
         } catch (NoResultException e) {
