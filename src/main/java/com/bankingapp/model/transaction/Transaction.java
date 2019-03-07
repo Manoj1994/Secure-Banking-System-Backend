@@ -1,8 +1,14 @@
 package com.bankingapp.model.transaction;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "transaction")
 public class Transaction {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private int id;
     private int payer_id;
     private int payee_id;
