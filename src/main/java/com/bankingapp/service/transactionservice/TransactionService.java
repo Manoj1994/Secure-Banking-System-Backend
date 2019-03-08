@@ -4,7 +4,7 @@ import com.bankingapp.model.transaction.Transaction;
 
 import java.util.List;
 
-public interface TransactionInf {
+public interface TransactionService {
 
     public Boolean save(Transaction transaction, String type);
 

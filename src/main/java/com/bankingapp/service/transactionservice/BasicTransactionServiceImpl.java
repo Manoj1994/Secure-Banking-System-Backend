@@ -1,8 +1,6 @@
 package com.bankingapp.service.transactionservice;
 
-import com.bankingapp.model.login.User;
 import com.bankingapp.model.transaction.Transaction;
-import com.bankingapp.repository.loginrepository.UserRepository;
 import com.bankingapp.repository.transactionrepository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +10,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Component
-public class TransactionImpl implements TransactionInf{
+public class BasicTransactionServiceImpl implements TransactionService {
 
     @Autowired
     EntityManager entityManager;
