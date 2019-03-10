@@ -53,12 +53,15 @@ public class UserService {
         try {
 
             String encryptedPassword = EncrytedPasswordUtils.encrptPassword(password);
+            System.out.println(encryptedPassword);
             String sql = "Select e from " + User.class.getName() + " e " //
                     + " Where e.userName = :userName " +" and e.password = :password";
 
             Query query = entityManager.createQuery(sql, User.class);
             query.setParameter("userName", username);
             query.setParameter("password", encryptedPassword);
+
+            System.out.println(query.getResultList());
 
             return (User) query.getSingleResult();
         } catch (NoResultException e) {

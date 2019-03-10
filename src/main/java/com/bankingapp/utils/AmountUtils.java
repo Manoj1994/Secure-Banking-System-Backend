@@ -12,9 +12,14 @@ public class AmountUtils {
 
     public boolean isCritical(String amount, Double criticalAmount) {
 
-        amount = amount.replaceAll(",", "");
-        Double doubleAmount = Double.parseDouble(amount);
+        Double doubleAmount = convertToDouble(amount);
 
         return doubleAmount > criticalAmount;
+    }
+
+    public Double convertToDouble(String amount) {
+        amount = amount.replaceAll(",", "");
+        Double doubleAmount = Double.parseDouble(amount);
+        return doubleAmount;
     }
 }

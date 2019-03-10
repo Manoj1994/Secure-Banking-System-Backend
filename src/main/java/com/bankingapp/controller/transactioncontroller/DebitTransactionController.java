@@ -80,7 +80,14 @@ public class DebitTransactionController {
             return modelAndView;
         }
 
-        modelAndView.addObject("extUserID", extuserID);
+        Double doubleAmount = amountUtils.convertToDouble(amount);
+        if(!accountBalanceService.validateDebitAmount(payeeId, doubleAmount)) {
+            modelAndView.addObject("success", false);
+            modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
+                    " Insufficinet Balance!");
+            return modelAndView;
+        }
+
         modelAndView.addObject("error_msg", "Transaction processed successfully!");
         modelAndView.addObject("success", true);
 

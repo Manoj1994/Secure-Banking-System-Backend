@@ -33,7 +33,7 @@ public class TransactionController {
         }
     }
 
-    @RequestMapping(value = "/employee/transactionsearch", method = RequestMethod.POST)
+    @RequestMapping(value = "/transactionsearch", method = RequestMethod.POST)
     public ModelAndView TransactionSearch(@RequestParam("transactionID") String transactionID) {
 
         ModelAndView model = new ModelAndView("employeePages/employeeTransaction");
@@ -49,7 +49,7 @@ public class TransactionController {
 
     }
 
-    @RequestMapping(value = "/employee/approvetransaction", method = RequestMethod.POST)
+    @RequestMapping(value = "/approvetransaction", method = RequestMethod.POST)
     public ModelAndView TransactionApproveContoller(@RequestParam("transactionID") String transactionID) {
 
         ModelAndView model = new ModelAndView("redirect:" + "/employee/transaction");
@@ -58,13 +58,13 @@ public class TransactionController {
             model.addObject("error_msg", "Transaction Approved!");
             return model;
         } catch (Exception e) {
-            model.addObject("error_msg", "Transaction Approved!");
+            model.addObject("error_msg", "Couldn't process the transaction!");
         }
         return model;
 
     }
 
-    @RequestMapping(value = "/employee/transactionreject", method = RequestMethod.POST)
+    @RequestMapping(value = "/transactionreject", method = RequestMethod.POST)
     public ModelAndView TransactionRejectContoller(@RequestParam("transactionID") String transactionID) {
 
         ModelAndView model = new ModelAndView("redirect:" + "/employee/transaction");
@@ -73,7 +73,7 @@ public class TransactionController {
             model.addObject("error_msg", "Transaction Rejected!");
             return model;
         } catch (Exception e) {
-            model.addObject("error_msg", "Transaction Rejected!");
+            model.addObject("error_msg", "Couldn't process the transaction!");
         }
         return model;
     }
