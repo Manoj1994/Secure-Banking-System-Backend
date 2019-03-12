@@ -1,6 +1,15 @@
 package com.bankingapp.model.account;
 
-public class DebitAccount extends BankAccount{
+import javax.persistence.*;
+
+@Entity
+@Table(name = "savings_account")
+public class SavingsAccount extends BankAccount{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
 
     private double currentBalance;
 

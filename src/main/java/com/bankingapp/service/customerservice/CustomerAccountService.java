@@ -1,7 +1,8 @@
 package com.bankingapp.service.customerservice;
 
+import com.bankingapp.model.account.CheckingAccount;
 import com.bankingapp.model.account.Customer;
-import com.bankingapp.model.account.DebitAccount;
+import com.bankingapp.model.account.SavingsAccount;
 import com.bankingapp.model.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,18 +28,28 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
-    public DebitAccount getSavingsAccount(int accountNumber) {
-        String sql = "SELECT d FROM debit_bank_accountshere account_number = :account_number";
+    public SavingsAccount getSavingsAccount(String accountNumber) {
+        String sql = "SELECT d FROM debit_bank_accounts where account_number = :account_number";
 
-        Query query = entityManager.createQuery(sql, DebitAccount.class);
+        Query query = entityManager.createQuery(sql, SavingsAccount.class);
         query.setParameter("account_number", accountNumber);
-        return (DebitAccount) query.getSingleResult();
+        return (SavingsAccount) query.getSingleResult();
 
     }
+
+    public SavingsAccount getCheckingAccount(int accountNumber) {
+        String sql = "SELECT d FROM checking_bank_accounts where account_number = :account_number";
+
+        Query query = entityManager.createQuery(sql, CheckingAccount.class);
+        query.setParameter("account_number", accountNumber);
+        return (SavingsAccount) query.getSingleResult();
+
+    }
+
     public String getEmailID(Integer userID)
     {
         String sql = "SELECT b from "+ Customer.class.getName() + " b where b.id= :id";
-        Query query = entityManager.createQuery(sql, DebitAccount.class);
+        Query query = entityManager.createQuery(sql, SavingsAccount.class);
         query.setParameter("id", userID);
 
         Customer customer = (Customer) query.getSingleResult();

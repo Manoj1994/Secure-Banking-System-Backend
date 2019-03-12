@@ -1,7 +1,6 @@
 package com.bankingapp.service.accountservice;
 
-import com.bankingapp.model.account.BankAccount;
-import com.bankingapp.model.account.DebitAccount;
+import com.bankingapp.model.account.SavingsAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +13,13 @@ public class AccountDetailsService {
     @Autowired
     EntityManager entityManager;
 
-    public DebitAccount getDebitAccount(int accountNumber) {
+    public SavingsAccount getDebitAccount(int accountNumber) {
         String sql = "SELECT * FROM bank_accounts where account_number = " + accountNumber;
 
-        Query query = entityManager.createQuery(sql, DebitAccount.class);
+        Query query = entityManager.createQuery(sql, SavingsAccount.class);
         query.setParameter("account_number", accountNumber);
 
-        return (DebitAccount) query.getSingleResult();
+        return (SavingsAccount) query.getSingleResult();
 
     }
 //    public String getEmailID(Integer userID)

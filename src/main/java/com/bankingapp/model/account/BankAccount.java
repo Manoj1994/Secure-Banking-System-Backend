@@ -2,20 +2,29 @@ package com.bankingapp.model.account;
 
 import com.bankingapp.model.transaction.Transaction;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.List;
 
 public class BankAccount {
 
-    private Customer owner;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
+    private int owner;
     private int accountNumber;
-    private AccountType accountType;
+    private String accountType;
     private List<Transaction> transactionList;
 
-    public Customer getOwner() {
+    public int getOwner() {
         return owner;
     }
 
-    public void setOwner(Customer owner) {
+    public void setOwner(int owner) {
         this.owner = owner;
     }
 
@@ -27,11 +36,11 @@ public class BankAccount {
         this.accountNumber = accountNumber;
     }
 
-    public AccountType getAccountType() {
+    public String getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(AccountType accountType) {
+    public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
 

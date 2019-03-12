@@ -1,7 +1,7 @@
 //package com.bankingapp.service.accountservice;
 //
 //import com.bankingapp.model.account.Customer;
-//import com.bankingapp.model.account.DebitAccount;
+//import com.bankingapp.model.account.SavingsAccount;
 //import com.bankingapp.model.transaction.Transaction;
 //import org.springframework.stereotype.Component;
 //
@@ -10,7 +10,7 @@
 //@Component
 //public class AccountUpdateService {
 //
-//    public boolean addMoney(Customer user, DebitAccount account, Transaction transaction, Double amount, String accountType) throws SQLException
+//    public boolean addMoney(Customer user, SavingsAccount account, Transaction transaction, Double amount, String accountType) throws SQLException
 //    {
 //        boolean status=false;
 //        java.sql.Timestamp createdDateTime = new java.sql.Timestamp(new java.util.Date().getTime());
