@@ -52,14 +52,14 @@ public class UserService {
     public User findByUserNameAndPassword(String username, String password) {
         try {
 
-            String encryptedPassword = EncrytedPasswordUtils.encrptPassword(password);
-            System.out.println(encryptedPassword);
+            //String encryptedPassword = EncrytedPasswordUtils.encrptPassword(password);
+            //System.out.println(encryptedPassword);
             String sql = "Select e from " + User.class.getName() + " e " //
-                    + " Where e.userName = :userName " +" and e.password = :password";
+                    + " Where e.username = :username " +" and e.password = :password";
 
             Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("userName", username);
-            query.setParameter("password", encryptedPassword);
+            query.setParameter("username", username);
+            query.setParameter("password", password);
 
             System.out.println(query.getResultList());
 

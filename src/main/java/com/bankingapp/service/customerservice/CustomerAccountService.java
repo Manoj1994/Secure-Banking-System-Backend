@@ -1,8 +1,7 @@
 package com.bankingapp.service.customerservice;
 
-import com.bankingapp.model.account.CheckingAccount;
+import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
-import com.bankingapp.model.account.SavingsAccount;
 import com.bankingapp.model.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,28 +27,28 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
-    public SavingsAccount getSavingsAccount(String accountNumber) {
+    public Account getSavingsAccount(String accountNumber) {
         String sql = "SELECT d FROM debit_bank_accounts where account_number = :account_number";
 
-        Query query = entityManager.createQuery(sql, SavingsAccount.class);
+        Query query = entityManager.createQuery(sql, Account.class);
         query.setParameter("account_number", accountNumber);
-        return (SavingsAccount) query.getSingleResult();
+        return (Account) query.getSingleResult();
 
     }
 
-    public SavingsAccount getCheckingAccount(int accountNumber) {
+    public Account getCheckingAccount(int accountNumber) {
         String sql = "SELECT d FROM checking_bank_accounts where account_number = :account_number";
 
-        Query query = entityManager.createQuery(sql, CheckingAccount.class);
+        Query query = entityManager.createQuery(sql, Account.class);
         query.setParameter("account_number", accountNumber);
-        return (SavingsAccount) query.getSingleResult();
+        return (Account) query.getSingleResult();
 
     }
 
     public String getEmailID(Integer userID)
     {
         String sql = "SELECT b from "+ Customer.class.getName() + " b where b.id= :id";
-        Query query = entityManager.createQuery(sql, SavingsAccount.class);
+        Query query = entityManager.createQuery(sql, Customer.class);
         query.setParameter("id", userID);
 
         Customer customer = (Customer) query.getSingleResult();

@@ -8,56 +8,62 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private int id;
-    private int payer_id;
-    private int payee_id;
-    private Double amount;
-    private String transaction_type;
+    @Column(name = "transaction_id", updatable = false, nullable = false)
+    private int transaction_id;
+
+    @Column(name = "transaction_amount")
+    private Double transaction_amount;
+
+    @Column(name = "transaction_timestamp")
+    private Timestamp transaction_timestamp;
+
+    @Column(name = "transaction_type")
+    private int transaction_type;
+
+    @Column(name = "description")
     private String description;
-    private String status;
-    private String approver;
-    private boolean critical;
-    private Timestamp timestamp_created;
-    private Timestamp timestamp_updated;
 
-    public int getId() {
-        return id;
+    @Column(name = "status")
+    private int status;
+
+    @Column(name = "account_no")
+    private int account_no;
+
+    @Column(name = "balance")
+    private Double balance;
+
+    @Column(name = "request_id")
+    private int request_id;
+
+    public int getTransaction_id() {
+        return transaction_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTransaction_id(int transaction_id) {
+        this.transaction_id = transaction_id;
     }
 
-    public int getPayer_id() {
-        return payer_id;
+    public Double getTransaction_amount() {
+        return transaction_amount;
     }
 
-    public void setPayer_id(int payer_id) {
-        this.payer_id = payer_id;
+    public void setTransaction_amount(Double transaction_amount) {
+        this.transaction_amount = transaction_amount;
     }
 
-    public int getPayee_id() {
-        return payee_id;
+    public Timestamp getTransaction_timestamp() {
+        return transaction_timestamp;
     }
 
-    public void setPayee_id(int payee_id) {
-        this.payee_id = payee_id;
+    public void setTransaction_timestamp(Timestamp transaction_timestamp) {
+        this.transaction_timestamp = transaction_timestamp;
     }
 
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public String getTransaction_type() {
+    public int getTransaction_type() {
         return transaction_type;
     }
 
-    public void setTransaction_type(String transaction_type) {
+    public void setTransaction_type(int transaction_type) {
         this.transaction_type = transaction_type;
     }
 
@@ -69,43 +75,35 @@ public class Transaction {
         this.description = description;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public String getApprover() {
-        return approver;
+    public int getAccount_no() {
+        return account_no;
     }
 
-    public void setApprover(String approver) {
-        this.approver = approver;
+    public void setAccount_no(int account_no) {
+        this.account_no = account_no;
     }
 
-    public boolean isCritical() {
-        return critical;
+    public Double getBalance() {
+        return balance;
     }
 
-    public void setCritical(boolean critical) {
-        this.critical = critical;
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
-    public Timestamp getTimestamp_created() {
-        return timestamp_created;
+    public int getRequest_id() {
+        return request_id;
     }
 
-    public void setTimestamp_created(Timestamp timestamp_created) {
-        this.timestamp_created = timestamp_created;
-    }
-
-    public Timestamp getTimestamp_updated() {
-        return timestamp_updated;
-    }
-
-    public void setTimestamp_updated(Timestamp timestamp_updated) {
-        this.timestamp_updated = timestamp_updated;
+    public void setRequest_id(int request_id) {
+        this.request_id = request_id;
     }
 }
