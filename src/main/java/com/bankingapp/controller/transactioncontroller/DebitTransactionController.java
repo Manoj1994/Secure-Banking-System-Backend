@@ -38,8 +38,8 @@ public class DebitTransactionController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/employee/processAccountTransaction", method = RequestMethod.POST)
-    public ModelAndView processAccTransactions(@RequestParam("transactionID") String transactionID,
+    @RequestMapping(value = "/employee/processAccountTransactionSavings", method = RequestMethod.POST)
+    public ModelAndView processAccTransactionsSavings(@RequestParam("transactionID") String transactionID,
                                                @RequestParam("requestType") String requestType,
                                                @RequestParam("extUserID") String extuserID,
                                                @RequestParam("payeeID") String payeeID,

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.List;
 
 @Component
 public class CustomerService {
@@ -13,13 +14,19 @@ public class CustomerService {
     @Autowired
     EntityManager entityManager;
 
-    public Customer getCustomer(String id) {
+    public Customer getCustomer(int id) {
         String sql = "Select e from " + Customer.class.getName() + " e " //
-                + " Where e.id = :id ";
+                + " Where e.user_id = :user_id ";
 
         Query query = entityManager.createQuery(sql, Customer.class);
-        query.setParameter("id", id);
+        query.setParameter("user_id", id);
         return (Customer) query.getSingleResult();
+    }
+
+    public List<Customer> getAllCustomers() {
+        String sql = "Select e from " + Customer.class.getName() + " e ";
+        Query query = entityManager.createQuery(sql, Customer.class);
+        return query.getResultList();
     }
 
 }

@@ -26,4 +26,13 @@ public class AccountBalanceService {
         }
         return true;
     }
+
+    public Double getBalance(int account_no) {
+
+        String sql = "Select b.balance from " + Account.class.getName() +" b where b.account_no = :account_no";
+        Query query = entityManager.createQuery(sql);
+        query.setParameter("account_no", account_no);
+
+        return (Double) query.getSingleResult();
+    }
 }

@@ -18,8 +18,8 @@ public class CustomerAccountService {
 
     public List<Transaction> getTransactions(int accountNumber, int interval) {
 
-        String sql = "SELECT t FROM "+ Transaction.class.getName() +" t WHERE (t.payer_id=:payer_id OR payee_id = :payer_id ) " +
-                "AND (timestamp_updated between DATE_SUB(NOW(), INTERVAL "+ interval +" MONTH) AND NOW()) ORDER BY timestamp_updated DESC";
+        String sql = "SELECT t FROM "+ Transaction.class.getName() +" t WHERE (t.account_no=:payer_id) " +
+                "AND (transaction_timestamp between DATE_SUB(NOW(), INTERVAL "+ interval +" MONTH) AND NOW()) ORDER BY transaction_timestamp DESC";
 
         Query query = entityManager.createQuery(sql, Transaction.class);
         query.setParameter("payer_id", accountNumber);
@@ -27,13 +27,27 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
-    public Account getSavingsAccount(String accountNumber) {
-        String sql = "SELECT d FROM debit_bank_accounts where account_number = :account_number";
+    public List<Account> getAccounts(int userId, int accountType) {
+        String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.user_id = :user_id and d.account_type = :account_type";
 
         Query query = entityManager.createQuery(sql, Account.class);
-        query.setParameter("account_number", accountNumber);
-        return (Account) query.getSingleResult();
+        query.setParameter("user_id", userId);
+        query.setParameter("account_type", accountType);
 
+        System.out.println(query.getResultList());
+        return query.getResultList();
+    }
+
+    public Account getAccount(int userId, int account_no, int accountType) {
+        String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.user_id = :user_id and d.account_type = :account_type and d.account_no = :account_no";
+
+        Query query = entityManager.createQuery(sql, Account.class);
+        query.setParameter("user_id", userId);
+        query.setParameter("account_type", accountType);
+        query.setParameter("account_no", account_no);
+
+        System.out.println(query.getResultList());
+        return (Account)query.getSingleResult();
     }
 
     public Account getCheckingAccount(int accountNumber) {

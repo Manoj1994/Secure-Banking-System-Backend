@@ -1,6 +1,8 @@
 package com.bankingapp.service.accountservice;
 
+import com.bankingapp.model.account.Account;
 import com.bankingapp.model.login.User;
+import com.bankingapp.repository.accountrepository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,9 @@ public class AccountUpdateService {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     public boolean addMoney(int accoutNumber,Double amount) throws SQLException
     {
@@ -51,4 +56,35 @@ public class AccountUpdateService {
         }
         return status;
     }
+
+    public boolean updateMoney(int accountNumber, Double amount) {
+
+        try {
+
+            String sql = "update " + Account.class.getName() + " a set a.balance = :balance where a.account_no = :account_no";
+            Query query = entityManager.createQuery(sql);
+            query.setParameter("account_no", accountNumber);
+            query.setParameter("balance", amount);
+            return true;
+
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
+
+    public boolean updateBalance(int account_no, Double amount) {
+
+        try {
+            Account account = accountRepository.findById(account_no);
+            account.setBalance(amount);
+            accountRepository.save(account);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
+
+
 }

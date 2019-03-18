@@ -25,7 +25,7 @@ public class Customer {
     @Column(name ="contact")
     private String contact;
 
-    @Column(name ="email")
+    @Column(name ="email_id")
     private String email;
 
     @Column(name ="address")
@@ -34,8 +34,8 @@ public class Customer {
     @Column(name ="user_type")
     private int user_type;
 
-    @Column(name ="timestamp")
-    private Timestamp timestamp;
+    @Column(name ="created")
+    private Timestamp created;
 
     public int getUser_id() {
         return user_id;
@@ -101,11 +101,11 @@ public class Customer {
         this.user_type = user_type;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getCreated() {
+        return created;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setCreated(Timestamp created) {
+        this.created = created;
     }
 }

@@ -1,5 +1,6 @@
 package com.bankingapp.controller.logincontroller;
 
+import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
 import com.bankingapp.model.login.User;
 import com.bankingapp.service.loginservice.UserService;
@@ -32,30 +33,25 @@ public class UserController {
 //    }
 
     @RequestMapping(value = "/api/login", method = RequestMethod.GET)
-    public User login(@RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
+    public LoginResponse login(@RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
         System.out.println("Username = "+userName+" "+"password = "+password);
 
         User user = userService.findByUserNameAndPassword(userName, password);
 
+        LoginResponse loginResponse = null;
+
         if(user == null) {
-            return user;
+            return loginResponse;
         } else {
 
             int auth_user_id = user.getAuth_user_id();
             Role role = roleService.findRoleByUserId(auth_user_id);
 
-            if(role == null) {
-
-            } else if(role.getAuth_role_id() == 1) {
-
-
-            } else if(role.getAuth_role_id() == 2){
-
-            }
+            loginResponse = new LoginResponse(user.getFirst_name(), user.getAuth_user_id(), role.getAuth_role_id());
         }
 
         System.out.println("Retrieved user "+user);
 
-        return user;
+        return loginResponse;
     }
 }

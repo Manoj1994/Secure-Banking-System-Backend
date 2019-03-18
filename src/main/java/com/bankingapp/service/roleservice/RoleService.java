@@ -24,8 +24,8 @@ public class RoleService{
             String sql = "Select e from " + Role.class.getName() + " e " //
                     + " Where e.auth_user_id = :auth_user_id";
 
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter(auth_user_id, auth_user_id);
+            Query query = entityManager.createQuery(sql, Role.class);
+            query.setParameter("auth_user_id", auth_user_id);
 
             return (Role) query.getSingleResult();
         } catch (NoResultException e) {

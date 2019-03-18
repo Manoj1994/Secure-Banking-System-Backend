@@ -1,7 +1,10 @@
 package com.bankingapp.controller.accountcontroller;
 
+import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Account;
+import com.bankingapp.model.account.AccountResponse;
 import com.bankingapp.model.transaction.Transaction;
+import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
@@ -23,6 +26,9 @@ import java.util.List;
 public class CustomerAccountController {
 
     @Autowired
+    AppConfig appConfig;
+
+    @Autowired
     CustomerService customerService;
 
     @Autowired
@@ -40,43 +46,59 @@ public class CustomerAccountController {
     @Autowired
     AccountUpdateService accountUpdateService;
 
-    @RequestMapping("/SavingsAccount")
-    public ModelAndView SavingAccount(HttpServletRequest request, @RequestParam("id") String customerId, @RequestParam("interval") String interval)
+    @RequestMapping("/SavingsAccounts")
+    public List<AccountResponse> SavingAccount(@RequestParam("customerId") int customerId)
     {
+        List<AccountResponse> accountResponseList = new ArrayList<>();
         try{
 
-            Account savingsAccount = customerAccountService.getSavingsAccount(customerId);
+            List<Account> savingsAccounts = customerAccountService.getAccounts(customerId, 1);
 
-            List<Transaction> TransactionLines = new ArrayList<Transaction>();
-            if (interval.equals("Last month"))
-            {
-                TransactionLines = customerAccountService.getTransactions(savingsAccount.getAccount_no(), 1);
-            }else if (interval.equals("Last 3 months"))
-            {
-                TransactionLines = customerAccountService.getTransactions(savingsAccount.getAccount_no(), 3);
-            }else if (interval.equals("Last 6 months"))
-            {
-                TransactionLines = customerAccountService.getTransactions(savingsAccount.getAccount_no(), 6);
-            }else
-            {
-                TransactionLines = customerAccountService.getTransactions(savingsAccount.getAccount_no(), 1);
+            for(Account account : savingsAccounts) {
+                AccountResponse accountResponse = new AccountResponse();
+                accountResponse.setAccountType("Savings");
+                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setAccount(account);
+                accountResponseList.add(accountResponse);
             }
-            ModelAndView model = new ModelAndView("");
-            model.addObject("customer",customerId);
-            model.addObject("savingsAccount", savingsAccount );
-            model.addObject("TransactionLines",TransactionLines);
-            return model;
+
         }catch(Exception e){
             throw new RuntimeException();
         }
 
+        return accountResponseList;
+
+    }
+
+    @RequestMapping("/CheckingAccounts")
+    public List<AccountResponse> CheckingAccount(@RequestParam("customerId") int customerId)
+    {
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+        try{
+
+            List<Account> checkingAccountsList = customerAccountService.getAccounts(customerId, 2);
+
+            for(Account account : checkingAccountsList) {
+                AccountResponse accountResponse = new AccountResponse();
+                accountResponse.setAccountType("Checking");
+                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setAccount(account);
+                accountResponseList.add(accountResponse);
+            }
+
+        }catch(Exception e){
+            throw new RuntimeException();
+        }
+
+        return accountResponseList;
+
     }
 
     @RequestMapping("/CheckingAccount")
-    public ModelAndView CheckingAccount(HttpServletRequest request, @RequestParam("id") String customerId, @RequestParam("interval") String interval)
+    public ModelAndView CheckingAccount(@RequestParam("id") int customerId, @RequestParam("interval") String interval)
     {
         try{
-            Account savingsAccount = customerAccountService.getSavingsAccount(customerId);
+            Account savingsAccount = customerAccountService.getCheckingAccount(customerId);
 
             List<Transaction> TransactionLines = new ArrayList<Transaction>();
             if (interval.equals("Last month"))
@@ -104,73 +126,92 @@ public class CustomerAccountController {
     }
 
     @RequestMapping("/DepositMoney")
-    public ModelAndView DepositMoneyToSavingsAccount(HttpServletRequest request, @RequestParam("id") String customerId, @RequestParam("amount") String amount)
+    public TransactionResponse DepositMoneyToSavingsAccount(@RequestParam("customer_id") int customer_id, @RequestParam("account_no") int account_no, @RequestParam("amount") String amount)
     {
+        TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            Account savingsAccount = customerAccountService.getSavingsAccount(customerId);
+            if (!accountCheckService.checkAccountExists(customer_id, account_no)) {
 
-            ModelAndView modelAndView = new ModelAndView("");
-
-            int payerId = savingsAccount.getAccount_no();
-            if (!accountCheckService.checkAccountExists(payerId)) {
-                modelAndView.addObject("success", false);
-                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
                         " Invalid payer account chosen!");
-                return modelAndView;
+                return transactionResponse;
             }
 
             if (!amountUtils.isValidAmount(amount)) {
-                modelAndView.addObject("success", false);
-                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
                         " Invalid amount!");
-                return modelAndView;
+                return transactionResponse;
+            }
+
+            Double doubleAmount = Double.parseDouble(amount);
+            Double balance = accountBalanceService.getBalance(account_no);
+            System.out.println("Balance = "+balance);
+            boolean status = false;
+
+            if(doubleAmount < appConfig.getCriticalAmount()) {
+                status = accountUpdateService.updateMoney(account_no, balance + doubleAmount);
+            }
+
+            if(!status) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Internal Server Error!");
+                return transactionResponse;
+            } else {
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Your transaction is successful");
             }
 
 
-            ModelAndView model = new ModelAndView("");
-            model.addObject("customer",customerId);
-            model.addObject("savingsAccount", savingsAccount );
-            return model;
+
         }catch(Exception e){
-            throw new RuntimeException();
+
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                    " Ran into Exceptiom!");
         }
+
+        return transactionResponse;
 
     }
 
-    @RequestMapping("/WithdrawMoney")
-    public ModelAndView WithdrawMoneyFromSavingsAccount(HttpServletRequest request, @RequestParam("id") String customerId, @RequestParam("amount") String amount)
-    {
-        try{
+//    @RequestMapping("/WithdrawMoney")
+//    public ModelAndView WithdrawMoneyFromSavingsAccount(@RequestParam("id") int customerId, @RequestParam("amount") String amount)
+//    {
+//        try{
+//
+//            Account savingsAccount = customerAccountService.getCheckingAccount(customerId);
+//
+//            ModelAndView modelAndView = new ModelAndView("");
+//
+//            int payerId = savingsAccount.getAccount_no();
+//            if (!accountCheckService.checkAccountExists(payerId)) {
+//                modelAndView.addObject("success", false);
+//                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
+//                        " Invalid payer account chosen!");
+//                return modelAndView;
+//            }
+//
+//            Double doubleAmount = amountUtils.convertToDouble(amount);
+//            if(!accountBalanceService.validateDebitAmount(payerId, doubleAmount)) {
+//                modelAndView.addObject("success", false);
+//                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
+//                        " Insufficinet Balance!");
+//                return modelAndView;
+//            }
+//
+//
+//            ModelAndView model = new ModelAndView("");
+//            model.addObject("customer",customerId);
+//            model.addObject("savingsAccount", savingsAccount );
+//            return model;
+//        }catch(Exception e){
+//            throw new RuntimeException();
+//        }
 
-            Account savingsAccount = customerAccountService.getSavingsAccount(customerId);
-
-            ModelAndView modelAndView = new ModelAndView("");
-
-            int payerId = savingsAccount.getAccount_no();
-            if (!accountCheckService.checkAccountExists(payerId)) {
-                modelAndView.addObject("success", false);
-                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
-                        " Invalid payer account chosen!");
-                return modelAndView;
-            }
-
-            Double doubleAmount = amountUtils.convertToDouble(amount);
-            if(!accountBalanceService.validateDebitAmount(payerId, doubleAmount)) {
-                modelAndView.addObject("success", false);
-                modelAndView.addObject("error_msg", "Sorry! Your payment was rejected." +
-                        " Insufficinet Balance!");
-                return modelAndView;
-            }
-
-
-            ModelAndView model = new ModelAndView("");
-            model.addObject("customer",customerId);
-            model.addObject("savingsAccount", savingsAccount );
-            return model;
-        }catch(Exception e){
-            throw new RuntimeException();
-        }
-
-    }
+//    }
 }

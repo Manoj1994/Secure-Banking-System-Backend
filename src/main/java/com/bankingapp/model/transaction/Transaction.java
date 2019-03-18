@@ -8,7 +8,7 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id", updatable = false, nullable = false)
+    @Column(name = "transaction_id", nullable = false)
     private int transaction_id;
 
     @Column(name = "transaction_amount")
