@@ -33,11 +33,13 @@ public class Account {
     @Column(name = "updated")
     private Timestamp updated;
 
-    public int getAccount_no() {
+    public int getAccount_no()
+    {
         return account_no;
     }
 
-    public void setAccount_no(int account_no) {
+    public void setAccount_no(int account_no)
+    {
         this.account_no = account_no;
     }
 

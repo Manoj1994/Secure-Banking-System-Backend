@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.sql.SQLException;
 
 @Component
+@Transactional
 public class AccountUpdateService {
 
     @Autowired
@@ -76,9 +78,13 @@ public class AccountUpdateService {
     public boolean updateBalance(int account_no, Double amount) {
 
         try {
-            Account account = accountRepository.findById(account_no);
-            account.setBalance(amount);
-            accountRepository.save(account);
+            String sql = "Select b from " +Account.class.getName()+" b where b.account_no = :account_no";
+            Query query = entityManager.createQuery(sql, Account.class);
+            query.setParameter("account_no", account_no);
+
+            Account bankAccount = (Account) query.getSingleResult();
+            bankAccount.setBalance(amount);
+            accountRepository.save(bankAccount);
             return true;
         } catch(Exception e) {
 

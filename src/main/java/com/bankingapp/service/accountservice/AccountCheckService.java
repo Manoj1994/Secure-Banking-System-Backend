@@ -20,7 +20,7 @@ public class AccountCheckService {
 
             String sql = "select b from " + Account.class.getName() + " b where b.account_no=:account_no and b.user_id = :user_id";
 
-            Query query = entityManager.createQuery(sql);
+            Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
             query.setParameter("user_id", customer_id);
 
@@ -41,10 +41,32 @@ public class AccountCheckService {
 
         try {
 
-            String sql = "select b from " + Account.class.getName() + " b where b.account_no=:account_no";
+            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no";
 
-            Query query = entityManager.createQuery(sql);
+            Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
+
+            if (query.getResultList().size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+
+        }
+        return false;
+
+    }
+
+    public boolean checkAccountExists(String email) {
+
+        try {
+
+            String sql = "select b from " + Account.class.getName() + " b where b.email =: email";
+
+            Query query = entityManager.createQuery(sql, Account.class);
+            query.setParameter("email", email);
 
             if (query.getResultList().size() > 0) {
                 return true;

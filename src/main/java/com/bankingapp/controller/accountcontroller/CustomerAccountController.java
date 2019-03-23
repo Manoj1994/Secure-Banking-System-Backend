@@ -3,6 +3,7 @@ package com.bankingapp.controller.accountcontroller;
 import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.AccountResponse;
+import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.Transaction;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,7 +133,7 @@ public class CustomerAccountController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(customer_id, account_no)) {
+            if (!accountCheckService.checkAccountExists(account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -153,7 +155,7 @@ public class CustomerAccountController {
             boolean status = false;
 
             if(doubleAmount < appConfig.getCriticalAmount()) {
-                status = accountUpdateService.updateMoney(account_no, balance + doubleAmount);
+                status = accountUpdateService.updateBalance(account_no, balance + doubleAmount);
             }
 
             if(!status) {
@@ -163,7 +165,7 @@ public class CustomerAccountController {
                 return transactionResponse;
             } else {
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction is successful");
+                transactionResponse.setMessage("Money Deposited, Your transaction is successful");
             }
 
 
@@ -178,6 +180,70 @@ public class CustomerAccountController {
         return transactionResponse;
 
     }
+
+    @RequestMapping("/WithdrawMoney")
+    public TransactionResponse withdrawMoneyToSavingsAccount(@RequestParam("account_no") int account_no, @RequestParam("amount") String amount)
+    {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try{
+
+            if (!accountCheckService.checkAccountExists(account_no)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid payer account chosen!");
+                return transactionResponse;
+            }
+
+            if (!amountUtils.isValidAmount(amount)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid amount!");
+                return transactionResponse;
+            }
+
+            Double doubleAmount = Double.parseDouble(amount);
+            Double balance = accountBalanceService.getBalance(account_no);
+
+            if (doubleAmount > balance) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Insufficient Balance!");
+                return transactionResponse;
+            }
+
+            System.out.println("Balance = "+balance);
+            boolean status = false;
+
+            if(doubleAmount < appConfig.getCriticalAmount()) {
+                status = accountUpdateService.updateBalance(account_no, balance - doubleAmount);
+            }
+
+            if(!status) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Internal Server Error!");
+                return transactionResponse;
+            } else {
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Money Withdrawn, Your transaction is successful");
+            }
+
+
+
+        }catch(Exception e){
+
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                    " Ran into Exceptiom!");
+        }
+
+        return transactionResponse;
+
+    }
+
 
 //    @RequestMapping("/WithdrawMoney")
 //    public ModelAndView WithdrawMoneyFromSavingsAccount(@RequestParam("id") int customerId, @RequestParam("amount") String amount)

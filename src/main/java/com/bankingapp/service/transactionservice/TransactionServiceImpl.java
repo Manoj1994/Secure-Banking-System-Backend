@@ -1,5 +1,6 @@
 package com.bankingapp.service.transactionservice;
 
+import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,26 +15,26 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     @Autowired
     EntityManager entityManager;
 
-    private String TRANSACTION_PENDING = "transaction_pending";
-    private String TRANSACTION_REJECTED = "transaction_rejected";
-    private String TRANSACTION_APPROVED = "transaction_approved";
+    private final int TRANSACTION_PENDING = 1;
+    private final int TRANSACTION_REJECTED = 3;
+    private final int TRANSACTION_APPROVED = 2;
 
-    public List<Transaction> getAllPending() {
+    public List<TransactionRequest> getAllPending(int employeeId) {
 
-        String sql = "SELECT t FROM transaction t where t.status = :status";
+        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id and t.approved_by = :approved_by";
 
-        Query query = entityManager.createQuery(sql, Transaction.class);
-        query.setParameter("status", TRANSACTION_PENDING);
+        Query query = entityManager.createQuery(sql, TransactionRequest.class);
+        query.setParameter("status_id", TRANSACTION_PENDING);
+        query.setParameter("approved_by", employeeId);
         return query.getResultList();
     }
 
-    public List<Transaction> getAllCompleted() {
+    public List<Transaction> getAllApproved() {
 
-        String sql = "SELECT t FROM transaction t where t.status = :status1 or t.status = :status2";
+        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id";
 
-        Query query = entityManager.createQuery(sql, Transaction.class);
-        query.setParameter("status1", TRANSACTION_REJECTED);
-        query.setParameter("status2", TRANSACTION_APPROVED);
+        Query query = entityManager.createQuery(sql, TransactionRequest.class);
+        query.setParameter("status_id", TRANSACTION_APPROVED);
         return query.getResultList();
     }
 

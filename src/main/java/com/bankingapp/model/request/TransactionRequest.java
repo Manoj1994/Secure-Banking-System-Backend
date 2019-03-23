@@ -3,16 +3,6 @@ package com.bankingapp.model.request;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-//`request_id` int(11) NOT NULL AUTO_INCREMENT,
-//  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP(),
-//  `status_id` int(11) NOT NULL,
-//  `created_by` int(11) unsigned NOT NULL,
-//  `approved_by` int(11) unsigned,
-//  `approved_at` timestamp,
-//  `from_account` int(11) unsigned NOT NULL,
-//  `to_account` int(11) unsigned NOT NULL,
-//  `transaction_amount` decimal(10,2) NOT NULL,
-
 @Entity
 @Table(name = "transaction_request")
 public class TransactionRequest {
@@ -42,6 +32,9 @@ public class TransactionRequest {
 
     @Column(name = "to_account")
     private int to_account;
+
+    @Column(name = "critical")
+    private boolean critical;
 
     @Column(name = "transaction_amount")
     private Double transaction_amount;
@@ -116,5 +109,29 @@ public class TransactionRequest {
 
     public void setTransaction_amount(Double transaction_amount) {
         this.transaction_amount = transaction_amount;
+    }
+
+    public boolean isCritical() {
+        return critical;
+    }
+
+    public void setCritical(boolean critical) {
+        this.critical = critical;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionRequest{" +
+                "request_id=" + request_id +
+                ", created_at=" + created_at +
+                ", status_id=" + status_id +
+                ", created_by=" + created_by +
+                ", approved_by=" + approved_by +
+                ", approved_at=" + approved_at +
+                ", from_account=" + from_account +
+                ", to_account=" + to_account +
+                ", critical=" + critical +
+                ", transaction_amount=" + transaction_amount +
+                '}';
     }
 }
