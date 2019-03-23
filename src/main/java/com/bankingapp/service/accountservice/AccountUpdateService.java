@@ -83,7 +83,7 @@ public class AccountUpdateService {
             query.setParameter("account_no", account_no);
 
             Account bankAccount = (Account) query.getSingleResult();
-            bankAccount.setBalance(amount);
+            bankAccount.setBalance(bankAccount.getBalance() + amount);
             accountRepository.save(bankAccount);
             return true;
         } catch(Exception e) {
@@ -91,6 +91,4 @@ public class AccountUpdateService {
         }
         return false;
     }
-
-
 }

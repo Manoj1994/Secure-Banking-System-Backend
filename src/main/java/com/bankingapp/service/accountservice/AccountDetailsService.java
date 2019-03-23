@@ -6,8 +6,10 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 @Component
+@Transactional
 public class AccountDetailsService {
 
     @Autowired

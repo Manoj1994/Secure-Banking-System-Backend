@@ -1,7 +1,12 @@
 package com.bankingapp.controller.employeecontroller;
 
-import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.request.TransactionRequest;
+import com.bankingapp.model.transaction.Transaction;
+import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.service.accountservice.AccountBalanceService;
+import com.bankingapp.service.accountservice.AccountCheckService;
+import com.bankingapp.service.accountservice.AccountUpdateService;
+import com.bankingapp.service.transactionservice.BasicTransactionServiceImpl;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +25,18 @@ public class ProcessTransactionController {
     @Autowired
     TransactionServiceImpl transactionService;
 
+    @Autowired
+    AccountUpdateService accountUpdateService;
+
+    @Autowired
+    AccountBalanceService accountBalanceService;
+
+    @Autowired
+    AccountCheckService accountCheckService;
+
+    @Autowired
+    BasicTransactionServiceImpl basicTransactionService;
+
     @RequestMapping("/ViewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
 
@@ -37,16 +54,110 @@ public class ProcessTransactionController {
     }
 
     @RequestMapping("/approvedTransaction")
-    public Boolean approveTransaction(int request_id) {
+    public TransactionResponse approveTransaction(@RequestParam("request_id")  int request_id) {
+
+        TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            boolean status = transactionService.approveTransaction(request_id);
+
+            TransactionRequest transactionRequest = transactionService.getPendingTransaction(request_id);
+
+            int payerAccountNumber = transactionRequest.getFrom_account();
+            int payeeAccountNumber = transactionRequest.getTo_account();
+            Double transactionAmount = transactionRequest.getTransaction_amount();
+
+            Double balance = accountBalanceService.getBalance(payerAccountNumber);
+
+
+
+            if (!accountCheckService.checkAccountExists(payerAccountNumber)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! transaction request was rejected." +
+                        " Invalid payer account chosen!");
+                return transactionResponse;
+            }
+
+            if (!accountCheckService.checkAccountExists(payeeAccountNumber)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! transaction was rejected." +
+                        " Invalid payee account chosen!");
+                return transactionResponse;
+            }
+
+            if (transactionAmount > balance) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! transaction was rejected." +
+                        " Insufficient Balance!");
+                return transactionResponse;
+            }
+
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            TransactionRequest transactionRequest =
+
+            boolean status = transactionService.approveTransaction(request_id);
+
+            if(!status) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! transaction request was rejected." +
+                        " Internal Server Error!");
+                return transactionResponse;
+            } else {
+
+                //DebitTransaction
+
+                Transaction transaction1 = new Transaction();
+
+                transaction1.setAccount_no(payerAccountNumber);
+                transaction1.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+                transaction1.setRequest_id(transactionRequest.getRequest_id());
+
+                String debit_description = "Debited from your account to "+payeeAccountNumber;
+                transaction1.setDescription(debit_description);
+
+                transaction1.setStatus(1);
+                transaction1.setTransaction_type(1);
+                transaction1.setTransaction_timestamp(timestamp);
+                transaction1.setTransaction_amount(transactionAmount);
+
+                basicTransactionService.save(transaction1);
+
+                accountUpdateService.updateMoney(payerAccountNumber, -transactionAmount);
+
+
+                // Credit Transaction
+
+                Transaction transaction2 = new Transaction();
+
+                transaction2.setAccount_no(payerAccountNumber);
+                transaction2.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+                transaction2.setRequest_id(transactionRequest.getRequest_id());
+
+                String credit_description = "Credited from  account "+payeeAccountNumber+" To your account";
+                transaction2.setDescription(credit_description);
+
+                transaction2.setStatus(1);
+                transaction2.setTransaction_type(2);
+                transaction2.setTransaction_timestamp(timestamp);
+                transaction2.setTransaction_amount(transactionAmount);
+
+
+                basicTransactionService.save(transaction2);
+                accountUpdateService.updateMoney(payeeAccountNumber, transactionAmount);
+
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Your transaction request is Pending");
+
+                return transactionResponse;
+            }
+
 
         }catch(Exception e){
         }
 
-        return false;
+        transactionResponse.setSuccess(false);
+        transactionResponse.setMessage("Error while processing transaction");
+        return transactionResponse;
     }
 }

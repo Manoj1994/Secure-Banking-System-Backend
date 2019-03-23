@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TransactionService {
 
-    public Boolean save(Transaction transaction, String type);
+    public Boolean save(Transaction transaction);
 
     public List<Transaction> getById(int ide);
 

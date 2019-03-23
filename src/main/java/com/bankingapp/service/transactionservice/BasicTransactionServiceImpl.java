@@ -18,7 +18,7 @@ public class BasicTransactionServiceImpl implements TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
-    public Boolean save(Transaction transaction, String type) {
+    public Boolean save(Transaction transaction) {
 
         try {
             transactionRepository.save(transaction);
