@@ -6,7 +6,6 @@ import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
-import com.bankingapp.service.transactionservice.BasicTransactionServiceImpl;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +32,6 @@ public class ProcessTransactionController {
 
     @Autowired
     AccountCheckService accountCheckService;
-
-
 
     @RequestMapping("/ViewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
@@ -160,4 +157,3 @@ public class ProcessTransactionController {
         return transactionResponse;
     }
 }
-
