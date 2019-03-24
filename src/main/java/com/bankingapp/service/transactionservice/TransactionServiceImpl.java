@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
+
 @Component
 public class TransactionServiceImpl extends BasicTransactionServiceImpl {
 

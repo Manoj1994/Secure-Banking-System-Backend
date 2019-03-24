@@ -34,8 +34,7 @@ public class ProcessTransactionController {
     @Autowired
     AccountCheckService accountCheckService;
 
-    @Autowired
-    BasicTransactionServiceImpl basicTransactionService;
+
 
     @RequestMapping("/ViewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
@@ -121,7 +120,7 @@ public class ProcessTransactionController {
                 transaction1.setTransaction_timestamp(timestamp);
                 transaction1.setTransaction_amount(transactionAmount);
 
-                basicTransactionService.save(transaction1);
+                transactionService.save(transaction1);
 
                 accountUpdateService.updateMoney(payerAccountNumber, -transactionAmount);
 
@@ -143,7 +142,7 @@ public class ProcessTransactionController {
                 transaction2.setTransaction_amount(transactionAmount);
 
 
-                basicTransactionService.save(transaction2);
+                transactionService.save(transaction2);
                 accountUpdateService.updateMoney(payeeAccountNumber, transactionAmount);
 
                 transactionResponse.setSuccess(true);
@@ -161,3 +160,4 @@ public class ProcessTransactionController {
         return transactionResponse;
     }
 }
+
