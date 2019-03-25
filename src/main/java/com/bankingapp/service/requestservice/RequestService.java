@@ -6,15 +6,20 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.sql.DataSource;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import com.bankingapp.model.login.User;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.repository.requestrepository.RequestRepository;
 import com.bankingapp.service.accountservice.AccountUpdateService;
+import com.bankingapp.service.accountservice.CreditCardService;
+import com.bankingapp.service.accountservice.DebitCardService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
+@Transactional
 public class RequestService {
 
     @Autowired
@@ -22,6 +27,13 @@ public class RequestService {
 
     @Autowired
     RequestRepository requestRepository;
+
+    @Autowired
+    CreditCardService creditCardService;
+
+    @Autowired
+    DebitCardService debitCardService;
+
 
     private final String TABLE_NAME = "request"; // change this according to your request table name
     private DataSource dataSource;
@@ -32,7 +44,6 @@ public class RequestService {
      */
     public Boolean add_new_request(Request request){
         boolean status = true;
-        // set up SQL connection
 
         try {
             // Update tuple
@@ -51,7 +62,7 @@ public class RequestService {
 
     /*
     Assumes The request id is unique
-    * */
+    */
     public Request getByID(int id){
 
         Request request = new Request();
@@ -94,7 +105,6 @@ public class RequestService {
     public List<Request> getByAllRequest(){
 
         List<Request> requests = new ArrayList<Request>();
-        boolean status=true;
         // set up SQL connection
         try {
             // Update tuple
@@ -104,15 +114,13 @@ public class RequestService {
             List<Request> rs = query.getResultList();
         } catch (NoResultException e) {
             e.printStackTrace();
-            status=false;
         } catch (Exception e) {
             e.printStackTrace();
-            status=false;
         }
         return requests;
     }
 
-    public ArrayList<Request> getByRequesterID(int id){
+    public List<Request> getByRequesterID(int id){
 
         ArrayList<Request> requests = new ArrayList<Request>();
         // set up SQL connection
@@ -261,10 +269,10 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=?, status=?, timestamp_updated=? WHERE id=?";
+            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=:approver_id, status=\"Rejected\", timestamp_updated=CURRENT_TIMESTAMP() WHERE id=:id";
             Query query = entityManager.createQuery(sql, User.class);
             query.setParameter("approver_id",approver_id );
-            query.setParameter("status","APPROVED" );
+            query.setParameter("id",req_id );
 
         } catch (NoResultException e) {
             e.printStackTrace();
