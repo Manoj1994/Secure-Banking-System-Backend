@@ -1,6 +1,7 @@
 package com.bankingapp.model.transaction;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.sql.Date;
 
 @Entity
 @Table(name = "transaction")
@@ -105,5 +106,20 @@ public class Transaction {
 
     public void setRequest_id(int request_id) {
         this.request_id = request_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transaction_id=" + transaction_id +
+                ", transaction_amount=" + transaction_amount +
+                ", transaction_timestamp=" + transaction_timestamp.toLocalDateTime() +
+                ", transaction_type=" + transaction_type +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", account_no=" + account_no +
+                ", balance=" + balance +
+                ", request_id=" + request_id +
+                '}';
     }
 }

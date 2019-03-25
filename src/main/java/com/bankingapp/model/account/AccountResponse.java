@@ -1,5 +1,9 @@
 package com.bankingapp.model.account;
 
+import com.bankingapp.model.transaction.Transaction;
+
+import java.util.List;
+
 public class AccountResponse {
 
     private String accountType;
@@ -7,6 +11,16 @@ public class AccountResponse {
     private int accountId;
 
     private Account account;
+
+    private List<Transaction> transactionList;
+
+    public List<Transaction> getTransactionList() {
+        return transactionList;
+    }
+
+    public void setTransactionList(List<Transaction> transactionList) {
+        this.transactionList = transactionList;
+    }
 
     public String getAccountType() {
         return accountType;

@@ -10,6 +10,7 @@ import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
+import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,9 @@ public class CustomerAccountController {
     @Autowired
     AccountUpdateService accountUpdateService;
 
+    @Autowired
+    TransactionServiceImpl transactionService;
+
     @RequestMapping("/getAccounts")
     public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId)
     {
@@ -56,6 +60,8 @@ public class CustomerAccountController {
             List<Account> savingsAccounts = customerAccountService.getAccounts(customerId);
 
             for(Account account : savingsAccounts) {
+
+                List<Transaction> transactionList = transactionService.getAllTransactions(account.getAccount_no());
                 AccountResponse accountResponse = new AccountResponse();
                 if(account.getAccount_type() == 1) {
                     accountResponse.setAccountType("Savings");
@@ -65,6 +71,8 @@ public class CustomerAccountController {
 
                 accountResponse.setAccountId(account.getUser_id());
                 accountResponse.setAccount(account);
+                accountResponse.setTransactionList(transactionList);
+                
                 accountResponseList.add(accountResponse);
             }
 

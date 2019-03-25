@@ -29,6 +29,15 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         return query.getResultList();
     }
 
+    public List<Transaction> getAllTransactions(int accountId) {
+
+        String sql = "SELECT t FROM "+ Transaction.class.getName() +" t where t.account_no = :account_no";
+
+        Query query = entityManager.createQuery(sql, Transaction.class);
+        query.setParameter("account_no", accountId);
+        return query.getResultList();
+    }
+
     public TransactionRequest getPendingTransaction(int transactionId) {
 
         String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.request_id = :request_id";
