@@ -69,10 +69,10 @@ public class CustomerAccountController {
                     accountResponse.setAccountType("Checking");
                 }
 
-                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setCustomerId(account.getUser_id());
                 accountResponse.setAccount(account);
                 accountResponse.setTransactionList(transactionList);
-                
+
                 accountResponseList.add(accountResponse);
             }
 
@@ -95,7 +95,7 @@ public class CustomerAccountController {
             for(Account account : savingsAccounts) {
                 AccountResponse accountResponse = new AccountResponse();
                 accountResponse.setAccountType("Savings");
-                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setCustomerId(account.getUser_id());
                 accountResponse.setAccount(account);
                 accountResponseList.add(accountResponse);
             }
@@ -119,7 +119,7 @@ public class CustomerAccountController {
             for(Account account : checkingAccountsList) {
                 AccountResponse accountResponse = new AccountResponse();
                 accountResponse.setAccountType("Checking");
-                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setCustomerId(account.getUser_id());
                 accountResponse.setAccount(account);
                 accountResponseList.add(accountResponse);
             }

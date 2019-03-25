@@ -8,7 +8,7 @@ public class AccountResponse {
 
     private String accountType;
 
-    private int accountId;
+    private int customerId;
 
     private Account account;
 
@@ -30,12 +30,12 @@ public class AccountResponse {
         this.accountType = accountType;
     }
 
-    public int getAccountId() {
-        return accountId;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public Account getAccount() {
