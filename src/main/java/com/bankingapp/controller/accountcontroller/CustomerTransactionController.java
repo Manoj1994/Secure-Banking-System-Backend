@@ -5,8 +5,6 @@ import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
-import com.bankingapp.service.customerservice.CustomerAccountService;
-import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.utils.AmountUtils;
@@ -40,7 +38,7 @@ public class CustomerTransactionController {
     EmployeeService employeeService;
 
     @RequestMapping("/TransferMoneyFromAccount")
-    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount)
+    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("routing_no") String routing_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
@@ -50,6 +48,14 @@ public class CustomerTransactionController {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
                         " Invalid payer account chosen!");
+                return transactionResponse;
+            }
+
+            if (!accountCheckService.checkAccountExistsWithRoutingNo(from_account_no, routing_no)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                        " Invalid routing number for this account!");
                 return transactionResponse;
             }
 
@@ -119,8 +125,6 @@ public class CustomerTransactionController {
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Your transaction request is Pending");
             }
-
-
 
         }catch(Exception e){
 
@@ -207,9 +211,6 @@ public class CustomerTransactionController {
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Your transaction request is Pending");
             }
-
-
-
         }catch(Exception e){
 
             transactionResponse.setSuccess(false);

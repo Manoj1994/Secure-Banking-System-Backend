@@ -2,7 +2,6 @@ package com.bankingapp.service.loginservice;
 
 import com.bankingapp.model.login.User;
 import com.bankingapp.repository.loginrepository.UserRepository;
-import com.bankingapp.utils.EncrytedPasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,12 +68,12 @@ public class UserService {
         }
     }
 
-    public void saveUser(User user) {
-
-        String encryptedPassword = EncrytedPasswordUtils.encrptPassword(user.getPassword());
-        user.setPassword(encryptedPassword);
-
-        System.out.println(user);
-        userRepository.save(user);
-    }
+//    public void saveUser(User user) {
+//
+//        String encryptedPassword = EncrytedPasswordUtils.encrptPassword(user.getPassword());
+//        user.setPassword(encryptedPassword);
+//
+//        System.out.println(user);
+//        userRepository.save(user);
+//    }
 }

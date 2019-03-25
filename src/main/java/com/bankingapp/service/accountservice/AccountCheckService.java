@@ -1,7 +1,6 @@
 package com.bankingapp.service.accountservice;
 
 import com.bankingapp.model.account.Account;
-import com.bankingapp.model.login.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
@@ -47,6 +46,29 @@ public class AccountCheckService {
 
             Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
+
+            if (query.getResultList().size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+
+        }
+        return false;
+
+    }
+
+    public boolean checkAccountExistsWithRoutingNo(int account_no, String routing_no) {
+
+        try {
+
+            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no and b.rounting_no =: routing_no";
+
+            Query query = entityManager.createQuery(sql, Account.class);
+            query.setParameter("account_no", account_no);
+            query.setParameter("routing_no", routing_no);
 
             if (query.getResultList().size() > 0) {
                 return true;

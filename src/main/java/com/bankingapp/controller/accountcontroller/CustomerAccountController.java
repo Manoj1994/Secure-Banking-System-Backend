@@ -3,7 +3,6 @@ package com.bankingapp.controller.accountcontroller;
 import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.AccountResponse;
-import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.Transaction;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
@@ -47,6 +46,35 @@ public class CustomerAccountController {
 
     @Autowired
     AccountUpdateService accountUpdateService;
+
+    @RequestMapping("/getAccounts")
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId)
+    {
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+        try{
+
+            List<Account> savingsAccounts = customerAccountService.getAccounts(customerId);
+
+            for(Account account : savingsAccounts) {
+                AccountResponse accountResponse = new AccountResponse();
+                if(account.getAccount_type() == 1) {
+                    accountResponse.setAccountType("Savings");
+                } else {
+                    accountResponse.setAccountType("Checking");
+                }
+
+                accountResponse.setAccountId(account.getUser_id());
+                accountResponse.setAccount(account);
+                accountResponseList.add(accountResponse);
+            }
+
+        }catch(Exception e){
+            throw new RuntimeException();
+        }
+
+        return accountResponseList;
+
+    }
 
     @RequestMapping("/SavingsAccounts")
     public List<AccountResponse> SavingAccount(@RequestParam("customerId") int customerId)

@@ -27,6 +27,16 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
+    public List<Account> getAccounts(int userId) {
+        String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.user_id = :user_id";
+
+        Query query = entityManager.createQuery(sql, Account.class);
+        query.setParameter("user_id", userId);
+
+        System.out.println(query.getResultList());
+        return query.getResultList();
+    }
+
     public List<Account> getAccounts(int userId, int accountType) {
         String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.user_id = :user_id and d.account_type = :account_type";
 

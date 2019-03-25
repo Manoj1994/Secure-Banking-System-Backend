@@ -2,7 +2,7 @@ package com.bankingapp.model.login;
 
 public class LoginResponse {
 
-    private String userName;
+    private String name;
 
     private int role;
 
@@ -13,17 +13,17 @@ public class LoginResponse {
     }
 
     public LoginResponse(String userName, int role, int id) {
-        this.userName = userName;
+        this.name = userName;
         this.role = role;
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String userName) {
+        this.name = userName;
     }
 
     public int getRole() {
