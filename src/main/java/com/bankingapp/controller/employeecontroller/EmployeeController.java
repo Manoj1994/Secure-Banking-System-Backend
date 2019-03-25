@@ -3,6 +3,7 @@ package com.bankingapp.controller.employeecontroller;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.AccountResponse;
 import com.bankingapp.model.employee.Employee;
+import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,9 @@ public class EmployeeController {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    CustomerAccountService customerAccountService;
 
     @RequestMapping("/getAllEmployees")
     public List<Employee> getAllEmployees() {
@@ -45,5 +49,19 @@ public class EmployeeController {
         }
 
         return null;
+    }
+
+    @RequestMapping("/getCustomerAccounts")
+    public List<Account> getAllUserAccounts() {
+
+        List<Account> accounts = new ArrayList<>();
+        try{
+            accounts = customerAccountService.getAllAccounts();
+            return accounts;
+
+        }catch(Exception e){
+        }
+
+        return accounts;
     }
 }

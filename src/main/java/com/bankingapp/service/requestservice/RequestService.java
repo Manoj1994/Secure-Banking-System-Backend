@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.sql.DataSource;
 import javax.persistence.EntityManager;
 
 import com.bankingapp.model.login.User;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.repository.requestrepository.RequestRepository;
 import com.bankingapp.service.accountservice.AccountUpdateService;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -23,7 +21,7 @@ public class RequestService {
     @Autowired
     RequestRepository requestRepository;
 
-    private final String TABLE_NAME = "request"; // change this according to your request table name
+    private final String TABLE_NAME = Request.class.getName(); // change this according to your request table name
 
     /*
     Assumes the status o New Request is always Pending at first

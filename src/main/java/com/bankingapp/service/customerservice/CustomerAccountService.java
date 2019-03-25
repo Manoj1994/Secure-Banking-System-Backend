@@ -48,6 +48,13 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
+    public List<Account> getAllAccounts() {
+
+        String sql = "SELECT d FROM "+ Account.class.getName() +" d";
+        Query query = entityManager.createQuery(sql, Account.class);
+        return query.getResultList();
+    }
+
     public Account getAccount(int userId, int account_no, int accountType) {
         String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.user_id = :user_id and d.account_type = :account_type and d.account_no = :account_no";
 
