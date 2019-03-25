@@ -91,4 +91,30 @@ public class AccountUpdateService {
         }
         return false;
     }
+
+    /*TODO: create add account and delete account (set interest rate)*/
+    public boolean createAccount(int cus_id,int account_type)
+    {
+        //insert into account(user_id,balance,account_type,interest,created,updated) values(?,?,?,?,current_timestamp(),null)
+        try {
+            String sql = "insert into account(user_id,balance,account_type,interest,updated) values("+cus_id+",0,"+account_type+",5.00,"+",null)";
+            Query query = entityManager.createNativeQuery(sql, Account.class);
+            query.executeUpdate();
+
+            return true;
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
+    public boolean deleteAccount(int account_no) {
+        try {
+            String sql = "DELETE from " + Account.class.getName() + " where account_no="+account_no;
+            Query query = entityManager.createNativeQuery(sql, Account.class);
+            query.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

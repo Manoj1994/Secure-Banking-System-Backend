@@ -1,14 +1,32 @@
 package com.bankingapp.model.request;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "request")
 public class Request {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private int id;
+
+    @Column(name = "request_id", updatable = false, nullable = false)
     private int requester_id;
-    private int account_id;
+
+    @Column(name = "approver_id", nullable = false)
     private int approver_id;
+
+    @Column(name = "request_type", updatable = false, nullable = false)
     private String request_type;
-    private String current_value;
+
+    @Column(name = "requested_value", updatable = false)
     private String requested_value;
+
+    @Column(name = "status", nullable = false)
     private String status;
+
+    @Column(name = "description")
     private String description;
 
     public int getId() {
@@ -19,20 +37,12 @@ public class Request {
         this.id = id;
     }
 
-    public int getRequesterId() {
+    public int getRequesterId()  {
         return requester_id;
     }
 
     public void setRequesterId(int requesterid) {
         this.requester_id = requesterid;
-    }
-
-    public int getAccountId() {
-        return account_id;
-    }
-
-    public void setAccountId(int acc_id) {
-        account_id = acc_id;
     }
 
     public int getApproverId() {
@@ -50,14 +60,6 @@ public class Request {
 
     public void setRequest_type(String request_type) {
         this.request_type = request_type;
-    }
-
-    public String getCurrent_value() {
-        return current_value;
-    }
-
-    public void setCurrent_value(String current_value) {
-        this.current_value = current_value;
     }
 
     public String getRequested_value() {
