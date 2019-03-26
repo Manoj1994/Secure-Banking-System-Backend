@@ -16,8 +16,8 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     EntityManager entityManager;
 
     private final int TRANSACTION_PENDING = 1;
-    private final int TRANSACTION_REJECTED = 3;
     private final int TRANSACTION_APPROVED = 2;
+    private final int TRANSACTION_REJECTED = 3;
 
     public List<TransactionRequest> getAllPending(int employeeId) {
 
