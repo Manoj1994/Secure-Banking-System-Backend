@@ -5,6 +5,7 @@ import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
+import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.utils.AmountUtils;
@@ -36,6 +37,9 @@ public class CustomerTransactionController {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    AccountUpdateService accountUpdateService;
 
     @RequestMapping("/TransferMoneyFromAccount")
     public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount, @RequestParam("routing_no") int routing_no)
@@ -211,6 +215,70 @@ public class CustomerTransactionController {
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Your transaction request is Pending");
             }
+        }catch(Exception e){
+
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                    " Ran into Exceptiom!");
+        }
+
+        return transactionResponse;
+
+    }
+
+
+    @RequestMapping("/issueCashiersCheck")
+    public TransactionResponse issueCashiersCheck(@RequestParam("account_no") int account_no, @RequestParam("amount") String amount, @RequestParam("beneficiary") String beneficiary_name)
+    {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try{
+
+            if (!accountCheckService.checkAccountExists(account_no)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid payer account chosen!");
+                return transactionResponse;
+            }
+
+            if (!amountUtils.isValidAmount(amount)) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid amount!");
+                return transactionResponse;
+            }
+
+            Double doubleAmount = Double.parseDouble(amount);
+            Double balance = accountBalanceService.getBalance(account_no);
+
+            if (doubleAmount > balance) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Insufficient Balance!");
+                return transactionResponse;
+            }
+
+            System.out.println("Balance = "+balance);
+            boolean status = false;
+
+            if(doubleAmount < appConfig.getCriticalAmount()) {
+                status = accountUpdateService.updateBalance(account_no, balance - doubleAmount);
+            }
+
+            if(!status) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Internal Server Error!");
+                return transactionResponse;
+            } else {
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Money Withdrawn, Your transaction is successful");
+            }
+
+
+
         }catch(Exception e){
 
             transactionResponse.setSuccess(false);
