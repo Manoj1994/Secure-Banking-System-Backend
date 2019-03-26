@@ -3,6 +3,7 @@ package com.bankingapp.controller.requestcontroller;
 import java.util.List;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.model.request.Request;
+import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.requestservice.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,9 @@ public class RequestController {
     @Autowired
     RequestService requestService;
 
+    @Autowired
+    EmployeeService employeeService;
+
     @RequestMapping(value = "/addRequest", method = RequestMethod.GET)
     public TransactionResponse addNewRequest(@RequestParam("requester_id") int requester_id, @RequestParam("request_type") String request_type,@RequestParam("requested_value") String requested_value,@RequestParam("description") String description)
     {
@@ -28,6 +32,8 @@ public class RequestController {
             request.setRequest_type(request_type);
             request.setRequested_value(requested_value);
             request.setDescription(description);
+            request.setStatus("Pending");
+            request.setApproverId(employeeService.getTierEmployeeId(1));
 
             if (!requestService.add_new_request(request)) {
                 transactionResponse.setSuccess(false);
@@ -53,6 +59,7 @@ public class RequestController {
         List<Request> requests=null;
         try{
             requests= requestService.getByAllRequest();
+
         }
         catch(Exception e){
             e.printStackTrace();
@@ -94,6 +101,7 @@ public class RequestController {
             status=requestService.rejectRequest(id,approver_id);
             transactionResponse.setMessage("Request approved");
             transactionResponse.setSuccess(true);
+            System.out.println("The request with id = "+id+" is inserted");
         }
         catch(Exception e){
             e.printStackTrace();

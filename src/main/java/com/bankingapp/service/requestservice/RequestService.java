@@ -8,7 +8,8 @@ import javax.sql.DataSource;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import com.bankingapp.model.login.User;
+import com.bankingapp.model.account.CreditCard;
+import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.repository.requestrepository.RequestRepository;
 import com.bankingapp.service.accountservice.AccountUpdateService;
@@ -17,6 +18,7 @@ import com.bankingapp.service.accountservice.DebitCardService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.sql.Timestamp;
 
 @Component
 @Transactional
@@ -33,6 +35,9 @@ public class RequestService {
 
     @Autowired
     DebitCardService debitCardService;
+
+    @Autowired
+    AccountUpdateService accountUpdateService;
 
 
     private final String TABLE_NAME = "request"; // change this according to your request table name
@@ -70,7 +75,7 @@ public class RequestService {
         try {
             // Update tuple
             String sql = "select * from request where id=:id";
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("id", request.getRequesterId());
 
 
@@ -91,7 +96,7 @@ public class RequestService {
         try {
             // Update tuple
             String sql = "delete from request where id=?";
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("id", request.getRequesterId());
         } catch (NoResultException e) {
             status=false;
@@ -108,9 +113,9 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request order by id desc";
-            Query query = entityManager.createQuery(sql, User.class);
-
+            String sql = "select r from "+ Request.class.getName() +" r order by r.id";
+            Query query = entityManager.createQuery(sql, Request.class);
+            System.out.println("The list of requests collected s"+requests.size());
             List<Request> rs = query.getResultList();
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -127,7 +132,7 @@ public class RequestService {
         try {
             // Update tuple
             String sql = "select * from request where requester_id=?";
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Request.class);
 
             List<Request> rs = query.getResultList();
 
@@ -153,7 +158,7 @@ public class RequestService {
             //TODO: See how to handle email string vs mobile no int
             String sql = "update "+ table +" set "+ column +" = "+newValue+" where user_id =:id";
 
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("id", cus_id);
 
         } catch (NoResultException e) {
@@ -200,9 +205,17 @@ public class RequestService {
                     {
                         case "Credit Card":
                             //req+val =account id
+                            CreditCard creditCard=new CreditCard();
+                            creditCard.setAccount_no(req_val);
+                            //TODO:card limit hardcoded
+                            creditCard.setCard_limit(750);
+                            status=creditCardService.AddNewCreditCard(creditCard);
                             break;
                         case "Debit Card":
                             //req+val =account id
+                            DebitCard debitCard=new DebitCard();
+                            debitCard.setAccount_no(req_val);
+                            status=debitCardService.AddNewDebitCard(debitCard);
                             break;
                         case "Current Account":
                             //Requester id =customer id
@@ -218,25 +231,28 @@ public class RequestService {
                     }
                     break;
                 case "Delete":
-                    int requested_val = Integer.parseInt(request.getRequested_value());
+                    String requested_val = request.getRequested_value();
                     switch(request.getDescription())
                     {
-                        case "Credit Card":
+                        case "Credit Card":{
                             //req+val =Card id
+                            long card_no=Long.parseLong(requested_val);
+                            creditCardService.deleteCreditCard(card_no);
                             break;
-                        case "Debit Card":
+                        }
+                        case "Debit Card": {
                             //req+val =Card id
+                            long card_no = Long.parseLong(requested_val);
+                            debitCardService.deleteDebitCard(card_no);
                             break;
+                        }
                         case "Current Account":
-                            ////req_val = account-id
-                            AccountUpdateService acc1=new AccountUpdateService();
-                            status=acc1.deleteAccount(requested_val);
-                            break;
-                        case "Savings Account":
+                        case "Savings Account": {
                             //req_val = account -id
-                            AccountUpdateService acc2=new AccountUpdateService();
-                            status=acc2.deleteAccount(requested_val);
+                            int account_id=Integer.parseInt(requested_val);
+                            status = accountUpdateService.deleteAccount(account_id);
                             break;
+                        }
                         default:
                             return false;
                     }
@@ -247,7 +263,7 @@ public class RequestService {
 
             // Update tuple
             String sql = "UPDATE " + TABLE_NAME + " SET approver_id=:approver_id, status=:status, timestamp_updated=CURRENT_TIMESTAMP() WHERE id=?";
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("approver_id",approver_id );
             query.setParameter("status","APPROVED" );
 
@@ -269,10 +285,15 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=:approver_id, status=\"Rejected\", timestamp_updated=CURRENT_TIMESTAMP() WHERE id=:id";
-            Query query = entityManager.createQuery(sql, User.class);
+            Timestamp createdDateTime = new java.sql.Timestamp(new java.util.Date().getTime());
+
+            String sql = "UPDATE " + Request.class.getName() + " r SET r.approver_id=:approver_id, r.status=:status, r.timestamp_updated=:time WHERE r.id=:id";
+            Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("approver_id",approver_id );
             query.setParameter("id",req_id );
+            query.setParameter("status","Rejected" );
+            query.setParameter("time",createdDateTime );
+
 
         } catch (NoResultException e) {
             e.printStackTrace();

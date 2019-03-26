@@ -35,6 +35,7 @@ public class AccountUpdateService {
             //query.setParameter("userName", username);
             //query.setParameter("password", encryptedPassword);
             status =true;
+            status =true;
 
         }catch(Exception e){
 
