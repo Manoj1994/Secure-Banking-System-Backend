@@ -143,6 +143,26 @@ public class RequestService {
         return requests;
     }
 
+    public List<Request> getByApproverID(int id){
+
+        List<Request> requests = null;
+        // set up SQL connection
+        try {
+            // Update tuple
+            String sql = "select r from "+ Request.class.getName() +" r where approver_id=:approver_id";
+            Query query = entityManager.createQuery(sql, Request.class);
+            query.setParameter("approver_id",id);
+
+            requests = query.getResultList();
+
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
 
     /*
     Called by approveRequest() to change the value

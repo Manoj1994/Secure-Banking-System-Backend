@@ -31,7 +31,7 @@ public class CustomerRequestController {
     CustomerCompressor customerCompressor;
 
     @RequestMapping(value = "/customerEditRequest", method = RequestMethod.GET)
-    public TransactionResponse customerEditAccountRequest(@RequestParam("requester_id") int user_id, @RequestParam("name") String name, @RequestParam("phone_no") String phone_no, @RequestParam("address") String address)
+    public TransactionResponse customerEditAccountRequest(@RequestParam("requester_id") int user_id, @RequestParam("name") String name, @RequestParam("contact") String contact, @RequestParam("address") String address, @RequestParam("email") String email)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
 
@@ -46,7 +46,8 @@ public class CustomerRequestController {
 
             Customer newCustomer = new Customer();
             customer.setAddress(address);
-            customer.setContact(phone_no);
+            customer.setContact(contact);
+            customer.setEmail(email);
             customer.setName(name);
 
             if(customer.equals(newCustomer)) {
