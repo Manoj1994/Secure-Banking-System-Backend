@@ -56,7 +56,6 @@ public class CustomerRequestController {
             }
 
             String customerString = customerCompressor.toString(customer);
-            System.out.println(customerString);
 
             Request request=new Request();
             request.setRequesterId(user_id);
@@ -64,7 +63,9 @@ public class CustomerRequestController {
             request.setRequested_value(customerString);
             request.setDescription("Changing Details of Customer");
             request.setStatus("Pending");
-            request.setApproverId(employeeService.getTierEmployeeId(1));
+            request.setApproverId(employeeService.getTierEmployeeId(2));
+
+            System.out.println(request.toString());
 
             if (!requestService.add_new_request(request)) {
                 transactionResponse.setSuccess(false);

@@ -23,7 +23,9 @@ public class EmployeeRequestController {
 
         List<Request> requests = new ArrayList<>();
         try {
-            requests = requestService.getByRequesterID(employee_id);
+            requests = requestService.getByApproverID(employee_id);
+
+            System.out.println(requests);
             return requests;
 
         } catch(Exception e) {

@@ -149,7 +149,7 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select r from "+ Request.class.getName() +" r where approver_id=:approver_id";
+            String sql = "select r from "+ Request.class.getName() +" r where r.approver_id=:approver_id";
             Query query = entityManager.createQuery(sql, Request.class);
             query.setParameter("approver_id",id);
 

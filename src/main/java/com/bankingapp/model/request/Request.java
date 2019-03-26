@@ -36,6 +36,21 @@ public class Request {
     @Column(name = "timestamp_updated")
     private Timestamp timestamp_updated;
 
+    @Override
+    public String toString() {
+        return "Request{" +
+                "id=" + id +
+                ", requester_id=" + requester_id +
+                ", approver_id=" + approver_id +
+                ", request_type='" + request_type + '\'' +
+                ", requested_value='" + requested_value + '\'' +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", timestamp_created=" + timestamp_created +
+                ", timestamp_updated=" + timestamp_updated +
+                '}';
+    }
+
     public int getId() {
         return id;
     }
