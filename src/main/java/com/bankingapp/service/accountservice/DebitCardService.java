@@ -20,7 +20,7 @@ public class DebitCardService {
     DebitCardRepository debitCardRepository;
 
 
-    public Boolean AddNewDebitCard(DebitCard debitCard) {
+    public Boolean addNewDebitCard(DebitCard debitCard) {
 
         try {
             debitCardRepository.save(debitCard);
@@ -33,11 +33,11 @@ public class DebitCardService {
 
     public List<DebitCard> getDebitCards(int customerId) {
 
-        String sql = "Select e from " + User.class.getName() + " e " //
-                + " Where e.user_id = :user_id";
+        String sql = "Select e from " + DebitCard.class.getName() + " e " //
+                + " Where e.account_no = :account_no";
 
         Query query = entityManager.createQuery(sql, DebitCard.class);
-        query.setParameter("user_id", customerId);
+        query.setParameter("account_no", customerId);
 
         return query.getResultList();
     }

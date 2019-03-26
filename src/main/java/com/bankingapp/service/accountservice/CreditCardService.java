@@ -22,7 +22,7 @@ public class CreditCardService {
     CreditCardRepository creditCardRepository;
 
 
-    public Boolean AddNewDebitCard(CreditCard creditCard) {
+    public Boolean addNewDebitCard(CreditCard creditCard) {
 
         try {
             creditCardRepository.save(creditCard);
@@ -33,13 +33,13 @@ public class CreditCardService {
         return false;
     }
 
-    public List<DebitCard> getCreditCards(int customerId) {
+    public List<CreditCard> getCreditCards(int account_no) {
 
         String sql = "Select e from " + CreditCard.class.getName() + " e " //
-                + " Where e.user_id = :user_id";
+                + " Where e.account_no = :account_no";
 
         Query query = entityManager.createQuery(sql, CreditCard.class);
-        query.setParameter("user_id", customerId);
+        query.setParameter("account_no", account_no);
 
         return query.getResultList();
     }

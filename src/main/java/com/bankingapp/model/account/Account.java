@@ -33,6 +33,20 @@ public class Account {
     @Column(name = "updated")
     private Timestamp updated;
 
+    @Override
+    public String toString() {
+        return "Account{" +
+                "account_no=" + account_no +
+                ", user_id=" + user_id +
+                ", balance=" + balance +
+                ", routing_no=" + routing_no +
+                ", account_type=" + account_type +
+                ", interest=" + interest +
+                ", created=" + created +
+                ", updated=" + updated +
+                '}';
+    }
+
     public int getAccount_no()
     {
         return account_no;

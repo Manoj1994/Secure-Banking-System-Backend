@@ -38,7 +38,7 @@ public class CustomerTransactionController {
     EmployeeService employeeService;
 
     @RequestMapping("/TransferMoneyFromAccount")
-    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("routing_no") String routing_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount)
+    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount, @RequestParam("routing_no") String routing_no)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
@@ -51,7 +51,7 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExistsWithRoutingNo(from_account_no, routing_no)) {
+            if (!accountCheckService.checkAccountExistsWithRoutingNo(to_account_no, routing_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +

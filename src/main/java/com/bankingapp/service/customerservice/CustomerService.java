@@ -1,5 +1,6 @@
 package com.bankingapp.service.customerservice;
 
+import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,14 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         String sql = "Select e from " + Customer.class.getName() + " e ";
         Query query = entityManager.createQuery(sql, Customer.class);
+        return query.getResultList();
+    }
+
+    public List<Account> getAllAccounts(int customerId) {
+        String sql = "Select e from " + Account.class.getName() + " e where e.user_id = :user_id";
+        Query query = entityManager.createQuery(sql, Account.class);
+
+        query.setParameter("user_id", customerId);
         return query.getResultList();
     }
 

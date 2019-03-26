@@ -64,7 +64,7 @@ public class AccountCheckService {
 
         try {
 
-            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no and b.rounting_no =: routing_no";
+            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no and b.routing_no =: routing_no";
 
             Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
