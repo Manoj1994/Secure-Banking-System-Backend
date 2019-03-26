@@ -37,9 +37,7 @@ public class CreditCardService {
         boolean status=true;
         try {
             // Update tuple
-            String sql = "delete from credit_card where card_no=:card_no";
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("card_no", card_no);
+            creditCardRepository.deleteById(card_no);
         } catch (NoResultException e) {
             status=false;
         } catch (Exception e) {

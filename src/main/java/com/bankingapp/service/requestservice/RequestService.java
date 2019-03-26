@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import com.bankingapp.model.account.CreditCard;
+import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.repository.requestrepository.RequestRepository;
@@ -74,10 +75,9 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request where id=:id";
+            String sql = "select r from "+Request.class.getName()+" r where id=:id";
             Query query = entityManager.createQuery(sql, Request.class);
-            query.setParameter("id", request.getRequesterId());
-
+            query.setParameter("id", id);
 
             List<Request> rs = query.getResultList();
             request = rs.get(0);
@@ -95,9 +95,7 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "delete from request where id=?";
-            Query query = entityManager.createQuery(sql, Request.class);
-            query.setParameter("id", request.getRequesterId());
+            requestRepository.deleteById((long)id);
         } catch (NoResultException e) {
             status=false;
         } catch (Exception e) {
@@ -109,14 +107,15 @@ public class RequestService {
 
     public List<Request> getByAllRequest(){
 
-        List<Request> requests = new ArrayList<Request>();
+        List<Request> requests=null;
         // set up SQL connection
         try {
             // Update tuple
             String sql = "select r from "+ Request.class.getName() +" r order by r.id";
             Query query = entityManager.createQuery(sql, Request.class);
+            requests = query.getResultList();
+
             System.out.println("The list of requests collected s"+requests.size());
-            List<Request> rs = query.getResultList();
         } catch (NoResultException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -127,14 +126,15 @@ public class RequestService {
 
     public List<Request> getByRequesterID(int id){
 
-        ArrayList<Request> requests = new ArrayList<Request>();
+        List<Request> requests = null;
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request where requester_id=?";
+            String sql = "select r from "+ Request.class.getName() +" r where requester_id=:requester_id";
             Query query = entityManager.createQuery(sql, Request.class);
+            query.setParameter("requester_id",id);
 
-            List<Request> rs = query.getResultList();
+            requests = query.getResultList();
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -155,11 +155,28 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            //TODO: See how to handle email string vs mobile no int
-            String sql = "update "+ table +" set "+ column +" = "+newValue+" where user_id =:id";
+            String sql = "select c from "+ Customer.class.getName() +" c where c.user_id =:id";
 
-            Query query = entityManager.createQuery(sql, Request.class);
+            Query query = entityManager.createQuery(sql, Customer.class);
             query.setParameter("id", cus_id);
+
+            List<Customer> customers = query.getResultList();
+            Customer customer = customers.get(0);
+
+            switch(column)
+            {
+                case "Email":
+                    customer.setEmail(newValue);
+                    break;
+                case "Mobile":
+                    customer.setContact(newValue);
+                    break;
+                case "Name":
+                    customer.setName(newValue);
+                    break;
+                default:
+                    return false;
+            }
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -183,20 +200,7 @@ public class RequestService {
             {
                 case "Update":
                     int cus_id=request.getRequesterId();
-                    switch(request.getDescription())
-                    {
-                        case "Email":
-                            update_contact_value(cus_id,"email_id",request.getRequested_value());
-                            break;
-                        case "Mobile":
-                            update_contact_value(cus_id,"contact",request.getRequested_value());
-                            break;
-                        case "Name":
-                            update_contact_value(cus_id,"name",request.getRequested_value());
-                            break;
-                        default:
-                            return false;
-                    }
+                    status=update_contact_value(cus_id,request.getDescription(),request.getRequested_value());
                     break;
                 case "Create":
                     int req_val = Integer.parseInt(request.getRequested_value());
@@ -262,10 +266,10 @@ public class RequestService {
             }
 
             // Update tuple
-            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=:approver_id, status=:status, timestamp_updated=CURRENT_TIMESTAMP() WHERE id=?";
-            Query query = entityManager.createQuery(sql, Request.class);
-            query.setParameter("approver_id",approver_id );
-            query.setParameter("status","APPROVED" );
+            Timestamp createdDateTime = new Timestamp(new java.util.Date().getTime());
+            request.setStatus("Approved");
+            request.setTimestamp_updated(createdDateTime);
+            requestRepository.save(request);
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -285,16 +289,19 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            Timestamp createdDateTime = new java.sql.Timestamp(new java.util.Date().getTime());
+            Timestamp createdDateTime = new Timestamp(new java.util.Date().getTime());
 
-            String sql = "UPDATE " + Request.class.getName() + " r SET r.approver_id=:approver_id, r.status=:status, r.timestamp_updated=:time WHERE r.id=:id";
+            //String sql = "UPDATE " + Request.class.getName() + " r SET r.approver_id=:approver_id, r.status=:status, r.timestamp_updated=:time WHERE r.id=:id";
+            String sql = "Select r from " + Request.class.getName() + " r WHERE r.id=:id";
+
             Query query = entityManager.createQuery(sql, Request.class);
-            query.setParameter("approver_id",approver_id );
-            query.setParameter("id",req_id );
-            query.setParameter("status","Rejected" );
-            query.setParameter("time",createdDateTime );
+            query.setParameter("id",req_id);
 
-
+            List<Request> rs = query.getResultList();
+            Request request = rs.get(0);
+            request.setStatus("Rejected");
+            request.setTimestamp_updated(createdDateTime);
+            requestRepository.save(request);
         } catch (NoResultException e) {
             e.printStackTrace();
             status = false;
