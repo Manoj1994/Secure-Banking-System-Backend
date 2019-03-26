@@ -18,9 +18,7 @@ public class AccountCheckService {
     public boolean checkAccountExists(int customer_id, int account_no) {
 
         try {
-
             String sql = "select b from " + Account.class.getName() + " b where b.account_no=:account_no and b.user_id = :user_id";
-
             Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
             query.setParameter("user_id", customer_id);
@@ -35,7 +33,6 @@ public class AccountCheckService {
 
         }
         return false;
-
     }
 
     public boolean checkAccountExists(int account_no) {
@@ -57,15 +54,12 @@ public class AccountCheckService {
 
         }
         return false;
-
     }
 
-    public boolean checkAccountExistsWithRoutingNo(int account_no, String routing_no) {
+    public boolean checkAccountExistsWithRoutingNo(int account_no, int routing_no) {
 
         try {
-
-            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no and b.routing_no =: routing_no";
-
+            String sql = "select b from " + Account.class.getName() + " b where b.account_no = :account_no and b.routing_no = :routing_no";
             Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
             query.setParameter("routing_no", routing_no);
@@ -77,7 +71,7 @@ public class AccountCheckService {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return false;
 
@@ -102,7 +96,5 @@ public class AccountCheckService {
 
         }
         return false;
-
     }
-
 }
