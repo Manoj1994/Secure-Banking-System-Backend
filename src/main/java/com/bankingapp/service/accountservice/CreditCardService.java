@@ -1,29 +1,31 @@
 package com.bankingapp.service.accountservice;
 
+import com.bankingapp.model.account.CreditCard;
 import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.model.login.User;
+import com.bankingapp.repository.cardrepository.CreditCardRepository;
 import com.bankingapp.repository.cardrepository.DebitCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
-
 @Component
-public class DebitCardService {
+public class CreditCardService {
 
     @Autowired
     EntityManager entityManager;
 
     @Autowired
-    DebitCardRepository debitCardRepository;
+    CreditCardRepository creditCardRepository;
 
 
-    public Boolean AddNewDebitCard(DebitCard debitCard) {
+    public Boolean AddNewDebitCard(CreditCard creditCard) {
 
         try {
-            debitCardRepository.save(debitCard);
+            creditCardRepository.save(creditCard);
             return true;
         } catch (Exception e) {
 
@@ -31,12 +33,12 @@ public class DebitCardService {
         return false;
     }
 
-    public List<DebitCard> getDebitCards(int customerId) {
+    public List<DebitCard> getCreditCards(int customerId) {
 
-        String sql = "Select e from " + User.class.getName() + " e " //
+        String sql = "Select e from " + CreditCard.class.getName() + " e " //
                 + " Where e.user_id = :user_id";
 
-        Query query = entityManager.createQuery(sql, DebitCard.class);
+        Query query = entityManager.createQuery(sql, CreditCard.class);
         query.setParameter("user_id", customerId);
 
         return query.getResultList();
