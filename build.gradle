@@ -18,4 +18,5 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.2.RELEASE'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.42'
     compile group: 'org.springframework.data', name: 'spring-orm', version: '1.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.0.1.RELEASE'
 }
