@@ -188,12 +188,10 @@ public class ProcessTransactionController {
             }
 
             Double doubleAmount = Double.parseDouble(amount);
-            Double balance = accountBalanceService.getBalance(account_no);
-            System.out.println("Balance = "+balance);
             boolean status = false;
 
             if(doubleAmount < appConfig.getCriticalAmount()) {
-                status = accountUpdateService.updateBalance(account_no, balance + doubleAmount);
+                status = accountUpdateService.updateBalance(account_no, doubleAmount);
             }
 
             if(!status) {
