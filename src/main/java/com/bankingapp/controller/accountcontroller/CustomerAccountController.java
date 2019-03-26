@@ -163,60 +163,6 @@ public class CustomerAccountController {
 
     }
 
-    @RequestMapping("/DepositMoney")
-    public TransactionResponse DepositMoneyToSavingsAccount(@RequestParam("customer_id") int customer_id, @RequestParam("account_no") int account_no, @RequestParam("amount") String amount)
-    {
-        TransactionResponse transactionResponse = new TransactionResponse();
-        try{
-
-            if (!accountCheckService.checkAccountExists(account_no)) {
-
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your payment was rejected." +
-                        " Invalid payer account chosen!");
-                return transactionResponse;
-            }
-
-            if (!amountUtils.isValidAmount(amount)) {
-
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your payment was rejected." +
-                        " Invalid amount!");
-                return transactionResponse;
-            }
-
-            Double doubleAmount = Double.parseDouble(amount);
-            Double balance = accountBalanceService.getBalance(account_no);
-            System.out.println("Balance = "+balance);
-            boolean status = false;
-
-            if(doubleAmount < appConfig.getCriticalAmount()) {
-                status = accountUpdateService.updateBalance(account_no, balance + doubleAmount);
-            }
-
-            if(!status) {
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your payment was rejected." +
-                        " Internal Server Error!");
-                return transactionResponse;
-            } else {
-                transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Money Deposited, Your transaction is successful");
-            }
-
-
-
-        }catch(Exception e){
-
-            transactionResponse.setSuccess(false);
-            transactionResponse.setMessage("Sorry! Your payment was rejected." +
-                    " Ran into Exceptiom!");
-        }
-
-        return transactionResponse;
-
-    }
-
     @RequestMapping("/WithdrawMoney")
     public TransactionResponse withdrawMoneyToSavingsAccount(@RequestParam("account_no") int account_no, @RequestParam("amount") String amount)
     {
