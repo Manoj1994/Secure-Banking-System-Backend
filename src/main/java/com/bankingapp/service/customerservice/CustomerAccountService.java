@@ -2,6 +2,7 @@ package com.bankingapp.service.customerservice;
 
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
+import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,10 +49,10 @@ public class CustomerAccountService {
         return query.getResultList();
     }
 
-    public List<Account> getAllAccounts() {
+    public List<Customer> getAllCustomers() {
 
-        String sql = "SELECT d FROM "+ Account.class.getName() +" d";
-        Query query = entityManager.createQuery(sql, Account.class);
+        String sql = "SELECT d FROM "+ Customer.class.getName() +" d";
+        Query query = entityManager.createQuery(sql, Customer.class);
         return query.getResultList();
     }
 

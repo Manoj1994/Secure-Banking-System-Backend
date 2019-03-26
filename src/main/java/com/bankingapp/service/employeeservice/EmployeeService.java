@@ -37,6 +37,13 @@ public class EmployeeService {
         return query.getResultList();
     }
 
+    public List<Account> getAllEmployees() {
+
+        String sql = "SELECT d FROM "+ Employee.class.getName() +" d";
+        Query query = entityManager.createQuery(sql, Employee.class);
+        return query.getResultList();
+    }
+
     public int getTierEmployeeId(int tier) {
 
         List<Employee> employeeList = getEmployeesByTier(tier);

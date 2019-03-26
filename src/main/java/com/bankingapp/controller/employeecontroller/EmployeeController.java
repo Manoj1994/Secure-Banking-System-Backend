@@ -2,6 +2,7 @@ package com.bankingapp.controller.employeecontroller;
 
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.AccountResponse;
+import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.employee.Employee;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.employeeservice.EmployeeService;
@@ -52,16 +53,30 @@ public class EmployeeController {
     }
 
     @RequestMapping("/getCustomerAccounts")
-    public List<Account> getAllUserAccounts() {
+    public List<Customer> getAllUserAccounts() {
 
-        List<Account> accounts = new ArrayList<>();
+        List<Customer> customers = new ArrayList<>();
         try{
-            accounts = customerAccountService.getAllAccounts();
-            return accounts;
+            customers = customerAccountService.getAllCustomers();
+            return customers;
 
         }catch(Exception e){
         }
 
-        return accounts;
+        return customers;
+    }
+
+    @RequestMapping("/getEmployeeAccounts")
+    public List<Employee> getAllEmployeeAccounts() {
+
+        List<Employee> employees = new ArrayList<>();
+        try{
+            employees = employeeService.getEmployeeAccounts();
+            return employees;
+
+        }catch(Exception e){
+        }
+
+        return employees;
     }
 }
