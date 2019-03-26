@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -27,15 +25,12 @@ public class CustomerDetailsController {
     }
 
     @RequestMapping("/getCustomerDetails")
-    public Customer UserDetailsContoller(@RequestParam(name = "userId") int userId){
+    public Customer UserDetailsContoller(@RequestParam(name = "customerId") int customerId){
         try{
-
-            Customer customer = customerService.getCustomer(userId);
-
+            Customer customer = customerService.getCustomer(customerId);
             return customer;
         }catch(Exception e){
             throw new RuntimeException();
         }
-
     }
 }

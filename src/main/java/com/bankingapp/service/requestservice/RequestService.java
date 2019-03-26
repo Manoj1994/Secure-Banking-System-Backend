@@ -1,18 +1,27 @@
 package com.bankingapp.service.requestservice;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
-import com.bankingapp.model.login.User;
+import com.bankingapp.model.account.CreditCard;
+import com.bankingapp.model.account.Customer;
+import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.repository.requestrepository.RequestRepository;
 import com.bankingapp.service.accountservice.AccountUpdateService;
+import com.bankingapp.service.accountservice.CreditCardService;
+import com.bankingapp.service.accountservice.DebitCardService;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import java.sql.Timestamp;
 
-
+@Component
+@Transactional
 public class RequestService {
 
     @Autowired
@@ -21,14 +30,25 @@ public class RequestService {
     @Autowired
     RequestRepository requestRepository;
 
-    private final String TABLE_NAME = Request.class.getName(); // change this according to your request table name
+    @Autowired
+    CreditCardService creditCardService;
+
+    @Autowired
+    DebitCardService debitCardService;
+
+    @Autowired
+    AccountUpdateService accountUpdateService;
+
+
+    private final String TABLE_NAME = "request"; // change this according to your request table name
+    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate; // so far I haven't use this yet - Waris
 
     /*
     Assumes the status o New Request is always Pending at first
      */
     public Boolean add_new_request(Request request){
         boolean status = true;
-        // set up SQL connection
 
         try {
             // Update tuple
@@ -47,17 +67,16 @@ public class RequestService {
 
     /*
     Assumes The request id is unique
-    * */
+    */
     public Request getByID(int id){
 
         Request request = new Request();
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request where id=:id";
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("id", request.getRequesterId());
-
+            String sql = "select r from "+Request.class.getName()+" r where r.id=:id";
+            Query query = entityManager.createQuery(sql, Request.class);
+            query.setParameter("id", id);
 
             List<Request> rs = query.getResultList();
             request = rs.get(0);
@@ -75,9 +94,7 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "delete from request where id=?";
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("id", request.getRequesterId());
+            requestRepository.deleteById((long)id);
         } catch (NoResultException e) {
             status=false;
         } catch (Exception e) {
@@ -89,35 +106,34 @@ public class RequestService {
 
     public List<Request> getByAllRequest(){
 
-        List<Request> requests = new ArrayList<Request>();
-        boolean status=true;
+        List<Request> requests=null;
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request order by id desc";
-            Query query = entityManager.createQuery(sql, User.class);
+            String sql = "select r from "+ Request.class.getName() +" r order by r.id";
+            Query query = entityManager.createQuery(sql, Request.class);
+            requests = query.getResultList();
 
-            List<Request> rs = query.getResultList();
+            System.out.println("The list of requests collected s"+requests.size());
         } catch (NoResultException e) {
             e.printStackTrace();
-            status=false;
         } catch (Exception e) {
             e.printStackTrace();
-            status=false;
         }
         return requests;
     }
 
-    public ArrayList<Request> getByRequesterID(int id){
+    public List<Request> getByRequesterID(int id){
 
-        ArrayList<Request> requests = new ArrayList<Request>();
+        List<Request> requests = null;
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "select * from request where requester_id=?";
-            Query query = entityManager.createQuery(sql, User.class);
+            String sql = "select r from "+ Request.class.getName() +" r where requester_id=:requester_id";
+            Query query = entityManager.createQuery(sql, Request.class);
+            query.setParameter("requester_id",id);
 
-            List<Request> rs = query.getResultList();
+            requests = query.getResultList();
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -138,11 +154,28 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            //TODO: See how to handle email string vs mobile no int
-            String sql = "update "+ table +" set "+ column +" = "+newValue+" where user_id =:id";
+            String sql = "select c from "+ Customer.class.getName() +" c where c.user_id =:id";
 
-            Query query = entityManager.createQuery(sql, User.class);
+            Query query = entityManager.createQuery(sql, Customer.class);
             query.setParameter("id", cus_id);
+
+            List<Customer> customers = query.getResultList();
+            Customer customer = customers.get(0);
+
+            switch(column)
+            {
+                case "Email":
+                    customer.setEmail(newValue);
+                    break;
+                case "Mobile":
+                    customer.setContact(newValue);
+                    break;
+                case "Name":
+                    customer.setName(newValue);
+                    break;
+                default:
+                    return false;
+            }
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -166,20 +199,7 @@ public class RequestService {
             {
                 case "Update":
                     int cus_id=request.getRequesterId();
-                    switch(request.getDescription())
-                    {
-                        case "Email":
-                            update_contact_value(cus_id,"email_id",request.getRequested_value());
-                            break;
-                        case "Mobile":
-                            update_contact_value(cus_id,"contact",request.getRequested_value());
-                            break;
-                        case "Name":
-                            update_contact_value(cus_id,"name",request.getRequested_value());
-                            break;
-                        default:
-                            return false;
-                    }
+                    status=update_contact_value(cus_id,request.getDescription(),request.getRequested_value());
                     break;
                 case "Create":
                     int req_val = Integer.parseInt(request.getRequested_value());
@@ -188,9 +208,17 @@ public class RequestService {
                     {
                         case "Credit Card":
                             //req+val =account id
+                            CreditCard creditCard=new CreditCard();
+                            creditCard.setAccount_no(req_val);
+                            //TODO:card limit hardcoded
+                            creditCard.setCard_limit(750);
+                            //status= creditCardService.addNewCreditCard(creditCard);
                             break;
                         case "Debit Card":
                             //req+val =account id
+                            DebitCard debitCard=new DebitCard();
+                            debitCard.setAccount_no(req_val);
+                            //status= debitCardService.AddNewDebitCard(debitCard);
                             break;
                         case "Current Account":
                             //Requester id =customer id
@@ -206,25 +234,28 @@ public class RequestService {
                     }
                     break;
                 case "Delete":
-                    int requested_val = Integer.parseInt(request.getRequested_value());
+                    String requested_val = request.getRequested_value();
                     switch(request.getDescription())
                     {
-                        case "Credit Card":
+                        case "Credit Card":{
                             //req+val =Card id
+                            long card_no=Long.parseLong(requested_val);
+                            //creditCardService.deleteCreditCard(card_no);
                             break;
-                        case "Debit Card":
+                        }
+                        case "Debit Card": {
                             //req+val =Card id
+                            long card_no = Long.parseLong(requested_val);
+                            //debitCardService.deleteDebitCard(card_no);
                             break;
+                        }
                         case "Current Account":
-                            ////req_val = account-id
-                            AccountUpdateService acc1=new AccountUpdateService();
-                            status=acc1.deleteAccount(requested_val);
-                            break;
-                        case "Savings Account":
+                        case "Savings Account": {
                             //req_val = account -id
-                            AccountUpdateService acc2=new AccountUpdateService();
-                            status=acc2.deleteAccount(requested_val);
+                            int account_id=Integer.parseInt(requested_val);
+                            status = accountUpdateService.deleteAccount(account_id);
                             break;
+                        }
                         default:
                             return false;
                     }
@@ -234,10 +265,10 @@ public class RequestService {
             }
 
             // Update tuple
-            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=:approver_id, status=:status, timestamp_updated=CURRENT_TIMESTAMP() WHERE id=?";
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("approver_id",approver_id );
-            query.setParameter("status","APPROVED" );
+            Timestamp createdDateTime = new Timestamp(new java.util.Date().getTime());
+            request.setStatus("Approved");
+            request.setTimestamp_updated(createdDateTime);
+            requestRepository.save(request);
 
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -257,11 +288,19 @@ public class RequestService {
         // set up SQL connection
         try {
             // Update tuple
-            String sql = "UPDATE " + TABLE_NAME + " SET approver_id=?, status=?, timestamp_updated=? WHERE id=?";
-            Query query = entityManager.createQuery(sql, User.class);
-            query.setParameter("approver_id",approver_id );
-            query.setParameter("status","APPROVED" );
+            Timestamp createdDateTime = new Timestamp(new java.util.Date().getTime());
 
+            //String sql = "UPDATE " + Request.class.getName() + " r SET r.approver_id=:approver_id, r.status=:status, r.timestamp_updated=:time WHERE r.id=:id";
+            String sql = "Select r from " + Request.class.getName() + " r WHERE r.id=:id";
+
+            Query query = entityManager.createQuery(sql, Request.class);
+            query.setParameter("id",req_id);
+
+            List<Request> rs = query.getResultList();
+            Request request = rs.get(0);
+            request.setStatus("Rejected");
+            request.setTimestamp_updated(createdDateTime);
+            requestRepository.save(request);
         } catch (NoResultException e) {
             e.printStackTrace();
             status = false;

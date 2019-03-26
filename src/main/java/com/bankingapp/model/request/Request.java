@@ -1,6 +1,7 @@
 package com.bankingapp.model.request;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "request")
@@ -8,26 +9,32 @@ public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false)
     private int id;
 
-    @Column(name = "request_id", updatable = false, nullable = false)
+    @Column(name = "requester_id", updatable = false, nullable = false)
     private int requester_id;
 
-    @Column(name = "approver_id", nullable = false)
+    @Column(name = "approver_id")
     private int approver_id;
 
-    @Column(name = "request_type", updatable = false, nullable = false)
+    @Column(name = "request_type")
     private String request_type;
 
-    @Column(name = "requested_value", updatable = false)
+    @Column(name = "requested_value")
     private String requested_value;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private String status;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "timestamp_created")
+    private Timestamp timestamp_created;
+
+    @Column(name = "timestamp_updated")
+    private Timestamp timestamp_updated;
 
     public int getId() {
         return id;
@@ -84,5 +91,21 @@ public class Request {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setTimestamp_updated(Timestamp timestamp_updated) {
+        this.timestamp_updated = timestamp_updated;
+    }
+
+    public Timestamp getTimestamp_updated() {
+        return timestamp_updated;
+    }
+
+    public Timestamp getTimestamp_created() {
+        return timestamp_created;
+    }
+
+    public void setTimestamp_created(Timestamp timestamp_created) {
+        this.timestamp_created = timestamp_created;
     }
 }
