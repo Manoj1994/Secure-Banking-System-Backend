@@ -33,7 +33,7 @@ public class CustomerRequestController {
     private int admin = 3;
 
     @RequestMapping(value = "/customerEditRequest", method = RequestMethod.GET)
-    public TransactionResponse customerEditAccountRequest(@RequestParam("requester_id") int user_id, @RequestParam("name") String name, @RequestParam("contact") String contact, @RequestParam("address") String address, @RequestParam("email") String email)
+    public TransactionResponse customerEditAccountRequest(@RequestParam("customer_id") int user_id, @RequestParam("name") String name, @RequestParam("contact") String contact, @RequestParam("address") String address, @RequestParam("email") String email)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
 

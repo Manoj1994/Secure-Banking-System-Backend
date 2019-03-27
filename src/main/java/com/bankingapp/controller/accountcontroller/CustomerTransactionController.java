@@ -95,8 +95,6 @@ public class CustomerTransactionController {
             System.out.println("Balance = "+balance);
             boolean status = false;
 
-            int empployeeId = 2;
-
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
             TransactionRequest transactionRequest = new TransactionRequest();
@@ -109,13 +107,11 @@ public class CustomerTransactionController {
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
 
-            empployeeId = employeeService.getTierEmployeeId(admin);
             transactionRequest.setApproved_by(admin);
 
             if(doubleAmount >= appConfig.getCriticalAmount()) {
                 transactionRequest.setCritical(true);
             } else {
-                empployeeId = employeeService.getTierEmployeeId(admin);
                 transactionRequest.setCritical(false);
             }
 
