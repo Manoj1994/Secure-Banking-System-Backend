@@ -111,8 +111,7 @@ public class EmployeeController {
                                                              @RequestParam("to_account_no") int to_account_no,
                                                              @RequestParam("amount") String amount,
                                                              @RequestParam("routing_no") int routing_no,
-                                                             @RequestParam("employee_id") int employee_id,
-                                                             @RequestParam("employee_type") String employee_type)
+                                                             @RequestParam("employee_id") int employee_id)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
