@@ -7,6 +7,7 @@ import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
+import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class ProcessTransactionController {
     @Autowired
     AmountUtils amountUtils;
 
+    @Autowired
+    TransactionRequestService transactionRequestService;
+
     @RequestMapping("/viewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
 
@@ -57,14 +61,25 @@ public class ProcessTransactionController {
         return transactionRequestList;
     }
 
-    @RequestMapping("/approvedTransaction")
-    public TransactionResponse approveTransaction(@RequestParam("request_id")  int request_id) {
+    @RequestMapping("/handleTransaction")
+    public TransactionResponse getRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-
             TransactionRequest transactionRequest = transactionService.getPendingTransaction(request_id);
+
+            if(action == 0) {
+
+                transactionRequest.setStatus_id(3);
+                transactionRequest.setApproved_by(employee_id);
+
+                transactionRequestService.saveTransactionRequest(transactionRequest);
+
+                transactionResponse.setMessage("Transaction is Rejected");
+                transactionResponse.setSuccess(true);
+                return transactionResponse;
+            }
 
             int payerAccountNumber = transactionRequest.getFrom_account();
             int payeeAccountNumber = transactionRequest.getTo_account();
@@ -72,12 +87,10 @@ public class ProcessTransactionController {
 
             Double balance = accountBalanceService.getBalance(payerAccountNumber);
 
-
-
             if (!accountCheckService.checkAccountExists(payerAccountNumber)) {
 
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! transaction request was rejected." +
+                transactionResponse.setMessage("Sorry! transaction was rejected." +
                         " Invalid payer account chosen!");
                 return transactionResponse;
             }
@@ -108,7 +121,7 @@ public class ProcessTransactionController {
                         " Internal Server Error!");
                 return transactionResponse;
             } else {
-
+                
                 //DebitTransaction
 
                 Transaction transaction1 = new Transaction();
@@ -155,7 +168,6 @@ public class ProcessTransactionController {
 
                 return transactionResponse;
             }
-
 
         }catch(Exception e){
         }
