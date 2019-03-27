@@ -3,6 +3,7 @@ import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.request.TransactionRequest;
+import com.bankingapp.model.transaction.Transaction;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
@@ -10,6 +11,8 @@ import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
+import com.bankingapp.service.transactionservice.TransactionService;
+import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -49,6 +52,10 @@ public class EmployeeController {
     @Autowired
     AccountUpdateService accountUpdateService;
 
+    @Autowired
+    TransactionServiceImpl transactionService;
+
+    private int admin = 3;
 
     @RequestMapping("/getAllEmployees")
     public List<Employee> getAllEmployees() {
@@ -111,8 +118,7 @@ public class EmployeeController {
                                                              @RequestParam("to_account_no") int to_account_no,
                                                              @RequestParam("amount") String amount,
                                                              @RequestParam("routing_no") int routing_no,
-                                                             @RequestParam("employee_id") int employee_id)
-    {
+                                                             @RequestParam("employee_id") int employee_id) {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
@@ -159,44 +165,101 @@ public class EmployeeController {
                 return transactionResponse;
             }
 
-            System.out.println("Balance = "+balance);
             boolean status = false;
 
-            int empployeeId = 2;
-
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-            TransactionRequest transactionRequest = new TransactionRequest();
-
-            transactionRequest.setFrom_account(from_account_no);
-            transactionRequest.setTo_account(to_account_no);
-
-            transactionRequest.setCreated_by(from_account_no);
-            transactionRequest.setStatus_id(1);
-            transactionRequest.setCreated_at(timestamp);
-            transactionRequest.setTransaction_amount(doubleAmount);
-
             if(doubleAmount >= appConfig.getCriticalAmount()) {
-                empployeeId = employeeService.getTierEmployeeId(2);
+
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                TransactionRequest transactionRequest = new TransactionRequest();
+
+                transactionRequest.setFrom_account(from_account_no);
+                transactionRequest.setTo_account(to_account_no);
+
+                transactionRequest.setCreated_by(from_account_no);
+                transactionRequest.setStatus_id(1);
+                transactionRequest.setCreated_at(timestamp);
+                transactionRequest.setTransaction_amount(doubleAmount);
+
+                transactionRequest.setApproved_by(admin);
                 transactionRequest.setCritical(true);
+
+                System.out.println("Transaction Request = "+transactionRequest);
+                status = transactionRequestService.saveTransactionRequest(transactionRequest);
+
+                if(!status) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                            " Internal Server Error!");
+                    return transactionResponse;
+                } else {
+                    transactionResponse.setSuccess(true);
+                    transactionResponse.setMessage("Your transaction request is Pending");
+                }
+
             } else {
-                empployeeId = employeeService.getTierEmployeeId(1);
+
+
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                TransactionRequest transactionRequest = new TransactionRequest();
+
+                transactionRequest.setFrom_account(from_account_no);
+                transactionRequest.setTo_account(to_account_no);
+
+                transactionRequest.setCreated_by(from_account_no);
+                transactionRequest.setStatus_id(2);
+                transactionRequest.setCreated_at(timestamp);
+                transactionRequest.setTransaction_amount(doubleAmount);
+
+                transactionRequest.setApproved_by(employee_id);
                 transactionRequest.setCritical(false);
-            }
 
-            transactionRequest.setApproved_by(empployeeId);
+                transactionRequestService.saveTransactionRequest(transactionRequest);
 
-            System.out.println("Transaction Request = "+transactionRequest);
-            status = transactionRequestService.saveTransactionRequest(transactionRequest);
+                int payerAccountNumber = from_account_no;
+                int payeeAccountNumber = to_account_no;
 
-            if(!status) {
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
-                        " Internal Server Error!");
-                return transactionResponse;
-            } else {
+                Transaction transaction1 = new Transaction();
+
+                transaction1.setAccount_no(payerAccountNumber);
+                transaction1.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+
+                String debit_description = "Debited from your account to "+payeeAccountNumber;
+                transaction1.setDescription(debit_description);
+
+                transaction1.setStatus(1);
+                transaction1.setTransaction_type(1);
+                transaction1.setTransaction_timestamp(timestamp);
+                transaction1.setTransaction_amount(doubleAmount);
+
+                transactionService.save(transaction1);
+
+                accountUpdateService.updateMoney(payerAccountNumber, -doubleAmount);
+
+
+                // Credit Transaction
+
+                Transaction transaction2 = new Transaction();
+
+                transaction2.setAccount_no(payerAccountNumber);
+                transaction2.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+
+                String credit_description = "Credited from  account "+payeeAccountNumber+" To your account";
+                transaction2.setDescription(credit_description);
+
+                transaction2.setStatus(1);
+                transaction2.setTransaction_type(2);
+                transaction2.setTransaction_timestamp(timestamp);
+                transaction2.setTransaction_amount(doubleAmount);
+
+                transactionService.save(transaction2);
+                accountUpdateService.updateMoney(payeeAccountNumber, doubleAmount);
+
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction request is Pending");
+                transactionResponse.setMessage("Your transaction is successful");
+
+                return transactionResponse;
             }
 
         }catch(Exception e){
@@ -205,10 +268,7 @@ public class EmployeeController {
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
                     " Ran into Exceptiom!");
         }
-
         return transactionResponse;
-
     }
-
 
 }
