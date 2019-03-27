@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
-public class Customer implements Serializable {
+public class Customer implements Serializable,Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -111,18 +111,39 @@ public class Customer implements Serializable {
         this.created = created;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    public boolean shortEquals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return getName().equals(customer.getName()) &&
-                getContact().equals(customer.getContact()) &&
-                getAddress().equals(customer.getAddress());
+        return Objects.equals(getName(), customer.getName()) &&
+                Objects.equals(getContact(), customer.getContact()) &&
+                Objects.equals(getEmail(), customer.getEmail()) &&
+                Objects.equals(getAddress(), customer.getAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getContact(), getAddress());
+        return Objects.hash(getName(), getContact(), getEmail(), getAddress());
+    }
+
+    public Object clone() throws
+            CloneNotSupportedException
+    {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "user_id=" + user_id +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dob='" + dob + '\'' +
+                ", contact='" + contact + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", user_type=" + user_type +
+                ", created=" + created +
+                '}';
     }
 }

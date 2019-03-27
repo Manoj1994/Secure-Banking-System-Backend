@@ -1,10 +1,11 @@
 package com.bankingapp.controller.requestcontroller;
 
 import com.bankingapp.model.account.Customer;
-import com.bankingapp.model.account.CustomerCompressor;
+import com.bankingapp.model.account.ObjectCompressor;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.requestservice.RequestService;
+import com.bankingapp.service.transactionservice.TransactionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +23,7 @@ public class EmployeeRequestController {
     RequestService requestService;
 
     @Autowired
-    CustomerCompressor customerCompressor;
+    ObjectCompressor objectCompressor;
 
     @Autowired
     CustomerService customerService;
@@ -59,8 +60,11 @@ public class EmployeeRequestController {
 
             if(request.getRequest_type().equals("Update Customer")) {
                 try {
-                    Customer customer = (Customer) customerCompressor.fromString(request.getRequested_value());
+                    Customer customer = (Customer) objectCompressor.fromString(request.getRequested_value());
+                    System.out.println(customer);
                     boolean requestStatus = customerService.save(customer);
+                    requestService.delete(request);
+
                 } catch(Exception e) {
 
                 }

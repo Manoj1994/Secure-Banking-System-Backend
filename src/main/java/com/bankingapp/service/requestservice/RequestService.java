@@ -48,6 +48,24 @@ public class RequestService {
     Assumes the status o New Request is always Pending at first
      */
 
+    public Boolean delete(Request request){
+        boolean status = true;
+
+        try {
+            // Update tuple
+            requestRepository.delete(request);
+            return true;
+
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            status = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = false;
+        }
+        return status;
+    }
+
     public Boolean save(Request request){
         boolean status = true;
 

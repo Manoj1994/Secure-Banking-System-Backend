@@ -5,7 +5,7 @@ import java.util.*;
 import java.io.*;
 
 @Component
-public class CustomerCompressor {
+public class ObjectCompressor {
 
     public Object fromString( String s ) throws IOException ,
             ClassNotFoundException {

@@ -1,13 +1,13 @@
 package com.bankingapp.controller.requestcontroller;
 
 import com.bankingapp.model.account.Customer;
-import com.bankingapp.model.account.CustomerCompressor;
-import com.bankingapp.model.employee.Employee;
+import com.bankingapp.model.account.ObjectCompressor;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.requestservice.RequestService;
+import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,17 +28,25 @@ public class CustomerRequestController {
     EmployeeService employeeService;
 
     @Autowired
-    CustomerCompressor customerCompressor;
+    ObjectCompressor objectCompressor;
+
+    @Autowired
+    RequestUtils requestUtils;
 
     private int admin = 3;
 
     @RequestMapping(value = "/customerEditRequest", method = RequestMethod.GET)
-    public TransactionResponse customerEditAccountRequest(@RequestParam("customer_id") int user_id, @RequestParam("name") String name, @RequestParam("contact") String contact, @RequestParam("address") String address, @RequestParam("email") String email)
+    public TransactionResponse customerEditAccountRequest(@RequestParam("customer_id") int user_id,
+                                                          @RequestParam("name") String name,
+                                                          @RequestParam("contact") String contact,
+                                                          @RequestParam("address") String address,
+                                                          @RequestParam("email") String email)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
 
         Customer customer = customerService.getCustomer(user_id);
 
+        System.out.println(customer);
         if(customer == null) {
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Customer with account id is not available! ");
@@ -46,18 +54,39 @@ public class CustomerRequestController {
 
         try{
 
-            Customer newCustomer = new Customer();
-            customer.setAddress(address);
-            customer.setContact(contact);
-            customer.setEmail(email);
-            customer.setName(name);
+            if(!requestUtils.validateEmail(email)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your Email is not valid! ");
 
-            if(customer.equals(newCustomer)) {
+                return transactionResponse;
+            }
+
+            if(name.length() <= 5) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your name is should be atleast 5 characters long! ");
+
+                return transactionResponse;
+            }
+
+            if(!requestUtils.validateContact(contact)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your contact is not valid! ");
+
+                return transactionResponse;
+            }
+
+            Customer newCustomer = (Customer) customer.clone();
+            newCustomer.setAddress(address);
+            newCustomer.setContact(contact);
+            newCustomer.setEmail(email);
+            newCustomer.setName(name);
+
+            if(customer.shortEquals(newCustomer)) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! You didn't modify any details! ");
             }
 
-            String customerString = customerCompressor.toString(customer);
+            String customerString = objectCompressor.toString(newCustomer);
 
             Request request=new Request();
             request.setRequesterId(user_id);

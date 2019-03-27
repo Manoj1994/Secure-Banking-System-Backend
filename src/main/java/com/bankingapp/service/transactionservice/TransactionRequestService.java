@@ -28,4 +28,15 @@ public class TransactionRequestService {
         }
         return false;
     }
+
+    public boolean delete(TransactionRequest transactionRequest) {
+
+        try {
+            transactionRequestRepository.delete(transactionRequest);
+            return  true;
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
 }

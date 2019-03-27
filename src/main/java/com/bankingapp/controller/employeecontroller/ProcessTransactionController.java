@@ -147,8 +147,8 @@ public class ProcessTransactionController {
 
                 Transaction transaction2 = new Transaction();
 
-                transaction2.setAccount_no(payerAccountNumber);
-                transaction2.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+                transaction2.setAccount_no(payeeAccountNumber);
+                transaction2.setBalance(accountBalanceService.getBalance(payeeAccountNumber));
                 transaction2.setRequest_id(transactionRequest.getRequest_id());
 
                 String credit_description = "Credited from  account "+payeeAccountNumber+" To your account";
