@@ -30,6 +30,8 @@ public class CustomerRequestController {
     @Autowired
     CustomerCompressor customerCompressor;
 
+    private int admin = 3;
+
     @RequestMapping(value = "/customerEditRequest", method = RequestMethod.GET)
     public TransactionResponse customerEditAccountRequest(@RequestParam("requester_id") int user_id, @RequestParam("name") String name, @RequestParam("contact") String contact, @RequestParam("address") String address, @RequestParam("email") String email)
     {
@@ -63,7 +65,7 @@ public class CustomerRequestController {
             request.setRequested_value(customerString);
             request.setDescription("Changing Details of Customer");
             request.setStatus("Pending");
-            request.setApproverId(employeeService.getTierEmployeeId(2));
+            request.setApproverId(admin);
 
             System.out.println(request.toString());
 

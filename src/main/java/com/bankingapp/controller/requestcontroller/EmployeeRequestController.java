@@ -19,11 +19,11 @@ public class EmployeeRequestController {
     RequestService requestService;
 
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
-    public List<Request> gerRequests(@RequestParam("employee_id") int employee_id) {
+    public List<Request> gerRequests() {
 
         List<Request> requests = new ArrayList<>();
         try {
-            requests = requestService.getByApproverID(employee_id);
+            requests = requestService.getByAllRequest();
 
             System.out.println(requests);
             return requests;
