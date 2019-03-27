@@ -117,7 +117,7 @@ public class ProcessTransactionController {
 
             if(!status) {
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! transaction request was rejected." +
+                transactionResponse.setMessage("Sorry! transaction was rejected." +
                         " Internal Server Error!");
                 return transactionResponse;
             } else {
@@ -159,12 +159,16 @@ public class ProcessTransactionController {
                 transaction2.setTransaction_timestamp(timestamp);
                 transaction2.setTransaction_amount(transactionAmount);
 
-
                 transactionService.save(transaction2);
                 accountUpdateService.updateMoney(payeeAccountNumber, transactionAmount);
 
+                transactionRequest.setStatus_id(2);
+                transactionRequest.setApproved_by(employee_id);
+
+                transactionRequestService.saveTransactionRequest(transactionRequest);
+
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction request is Pending");
+                transactionResponse.setMessage("Your transaction is Successful");
 
                 return transactionResponse;
             }

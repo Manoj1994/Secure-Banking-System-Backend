@@ -2,6 +2,7 @@ package com.bankingapp.service.transactionservice;
 
 import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.Transaction;
+import com.bankingapp.repository.requestrepository.TransactionRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,9 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    TransactionRequestRepository transactionRequestRepository;
 
     private final int TRANSACTION_PENDING = 1;
     private final int TRANSACTION_APPROVED = 2;
@@ -40,10 +44,11 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
 
     public TransactionRequest getPendingTransaction(int transactionId) {
 
-        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.request_id = :request_id";
+        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.request_id = :request_id and t.status_id = :status_id";
 
         Query query = entityManager.createQuery(sql, TransactionRequest.class);
         query.setParameter("request_id", transactionId);
+        query.setParameter("status_id", TRANSACTION_PENDING);
         return (TransactionRequest) query.getSingleResult();
     }
 
@@ -59,11 +64,10 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     public Boolean approveTransaction(int transactionID) {
 
         try {
-            String sql = "update transaction t set t.status = :status where t.id = :id and t.status = :pending_status";
-            Query query = entityManager.createQuery(sql);
-            query.setParameter("status", TRANSACTION_APPROVED);
-            query.setParameter("id", transactionID);
-            query.setParameter("pending_status", TRANSACTION_PENDING);;
+
+            TransactionRequest transactionRequest = getPendingTransaction(transactionID);
+            transactionRequest.setStatus_id(TRANSACTION_APPROVED);
+            transactionRequestRepository.save(transactionRequest);
 
             return true;
         } catch(Exception e) {
@@ -75,11 +79,10 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     public Boolean rejectTransaction(int transactionID) {
 
         try {
-            String sql = "update transaction t set t.status = :status where t.id = :id and t.status = :pending_status";
-            Query query = entityManager.createQuery(sql);
-            query.setParameter("status", TRANSACTION_REJECTED);
-            query.setParameter("id", transactionID);
-            query.setParameter("pending_status", TRANSACTION_PENDING);;
+
+            TransactionRequest transactionRequest = getPendingTransaction(transactionID);
+            transactionRequest.setStatus_id(TRANSACTION_REJECTED);
+            transactionRequestRepository.save(transactionRequest);
 
             return true;
         } catch(Exception e) {
