@@ -1,17 +1,19 @@
 package com.bankingapp.controller.logincontroller;
 
+import com.bankingapp.model.employee.AdminLog;
 import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
 import com.bankingapp.model.login.User;
+import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.UserService;
 import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
 
 @CrossOrigin
 @RestController
@@ -26,6 +28,9 @@ public class UserController {
 
     @Autowired
     OtpService otpService;
+
+    @Autowired
+    AdminLogService adminLogService;
 
     @RequestMapping(value = "/api/login", method = RequestMethod.GET)
     public LoginResponse login(ServletResponse response, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
@@ -50,6 +55,13 @@ public class UserController {
 
             // otpService.getOtp();
 
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            AdminLog adminLog = new AdminLog();
+            adminLog.setRelated_user_id(auth_user_id);
+            adminLog.setTimestamp(timestamp);
+            adminLog.setMessage("User Entered Login Credentials");
+            adminLogService.save(adminLog);
+
             loginResponse = new LoginResponse(user.getFirst_name()+" "+user.getLast_name(), role.getAuth_role_id(), user.getAuth_user_id()) ;
         }
 
@@ -62,5 +74,7 @@ public class UserController {
     public void logout() {
 
     }
+
+
 
 }
