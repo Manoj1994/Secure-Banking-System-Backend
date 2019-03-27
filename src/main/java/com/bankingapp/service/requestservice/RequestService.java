@@ -47,6 +47,25 @@ public class RequestService {
     /*
     Assumes the status o New Request is always Pending at first
      */
+
+    public Boolean save(Request request){
+        boolean status = true;
+
+        try {
+            // Update tuple
+            requestRepository.save(request);
+            return true;
+
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            status = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = false;
+        }
+        return status;
+    }
+
     public Boolean add_new_request(Request request){
         boolean status = true;
 

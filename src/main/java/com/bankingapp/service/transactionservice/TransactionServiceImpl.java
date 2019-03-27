@@ -19,13 +19,13 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     private final int TRANSACTION_APPROVED = 2;
     private final int TRANSACTION_REJECTED = 3;
 
-    public List<TransactionRequest> getAllPending(int employeeId) {
+    public List<TransactionRequest> getAllPending() {
 
-        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id and t.approved_by = :approved_by";
+        String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id";
 
         Query query = entityManager.createQuery(sql, TransactionRequest.class);
         query.setParameter("status_id", TRANSACTION_PENDING);
-        query.setParameter("approved_by", employeeId);
+        //query.setParameter("approved_by", employeeId);
         return query.getResultList();
     }
 

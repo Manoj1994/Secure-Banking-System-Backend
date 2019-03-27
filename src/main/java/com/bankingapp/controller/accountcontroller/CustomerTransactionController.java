@@ -44,7 +44,10 @@ public class CustomerTransactionController {
     private int admin = 3;
 
     @RequestMapping("/TransferMoneyFromAccount")
-    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no, @RequestParam("to_account_no") int to_account_no, @RequestParam("amount") String amount, @RequestParam("routing_no") int routing_no)
+    public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no,
+                                                             @RequestParam("to_account_no") int to_account_no,
+                                                             @RequestParam("amount") String amount,
+                                                             @RequestParam("routing_no") int routing_no)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{

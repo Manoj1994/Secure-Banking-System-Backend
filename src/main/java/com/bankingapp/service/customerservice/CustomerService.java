@@ -2,6 +2,7 @@ package com.bankingapp.service.customerservice;
 
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
+import com.bankingapp.repository.customerrepository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,9 @@ public class CustomerService {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    CustomerRepository customerRepository;
 
     public Customer getCustomer(int id) {
         String sql = "Select e from " + Customer.class.getName() + " e " //
@@ -36,6 +40,16 @@ public class CustomerService {
 
         query.setParameter("user_id", customerId);
         return query.getResultList();
+    }
+
+    public boolean save(Customer customer) {
+         try {
+             customerRepository.save(customer);
+             return true;
+         } catch(Exception e) {
+
+         }
+         return false;
     }
 
 }

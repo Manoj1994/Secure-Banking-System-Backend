@@ -1,6 +1,9 @@
 package com.bankingapp.controller.requestcontroller;
 
+import com.bankingapp.model.account.Customer;
+import com.bankingapp.model.account.CustomerCompressor;
 import com.bankingapp.model.request.Request;
+import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.requestservice.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,15 @@ public class EmployeeRequestController {
     @Autowired
     RequestService requestService;
 
+    @Autowired
+    CustomerCompressor customerCompressor;
+
+    @Autowired
+    CustomerService customerService;
+
+    private final int Processed = 2;
+    private final int declined = 3;
+
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
     public List<Request> gerRequests() {
 
@@ -33,4 +45,46 @@ public class EmployeeRequestController {
         }
         return requests;
     }
+
+    @RequestMapping(value = "/handleRequest", method = RequestMethod.GET)
+    public Boolean gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") boolean action) {
+
+        Request request = requestService.getByID(request_id);
+        if(!action) {
+
+            request.setStatus("Declined");
+            requestService.save(request);
+        } else {
+
+
+            if(request.getRequest_type().equals("Update Customer")) {
+                try {
+                    Customer customer = (Customer) customerCompressor.fromString(request.getRequested_value());
+                    boolean requestStatus = customerService.save(customer);
+                } catch(Exception e) {
+
+                }
+
+            } else if(request.getRequest_type().equals("Update Employee")) {
+
+            } else if(request.getRequest_type().equals("Create Customer")) {
+
+            } else if(request.getRequest_type().equals("Create Employee")) {
+
+            } else if(request.getRequest_type().equals("Create Account")) {
+
+            } else if(request.getRequest_type().equals("Create Account")) {
+
+            } else if(request.getRequest_type().equals("Create DebitCard")) {
+
+            } else if(request.getRequest_type().equals("Create CreditCard")) {
+
+            }
+
+            request.setStatus("Processed");
+            requestService.save(request);
+        }
+        return true;
+    }
+
 }

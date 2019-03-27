@@ -41,13 +41,13 @@ public class ProcessTransactionController {
     @Autowired
     AmountUtils amountUtils;
 
-    @RequestMapping("/ViewPendingTransactions")
+    @RequestMapping("/viewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
 
         List<TransactionRequest> transactionRequestList = new ArrayList<>();
         try{
 
-            transactionRequestList = transactionService.getAllPending(employee_id);
+            transactionRequestList = transactionService.getAllPending();
 
             return transactionRequestList;
 
