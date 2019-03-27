@@ -1,7 +1,6 @@
 package com.bankingapp.service.roleservice;
 
 import com.bankingapp.model.login.Role;
-import com.bankingapp.model.login.User;
 import com.bankingapp.repository.loginrepository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,12 +1,12 @@
 package com.bankingapp.service.accountservice;
 
 import com.bankingapp.model.account.DebitCard;
-import com.bankingapp.model.login.User;
 import com.bankingapp.repository.cardrepository.DebitCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 

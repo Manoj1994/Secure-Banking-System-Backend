@@ -1,7 +1,7 @@
 package com.bankingapp.model.transaction;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.sql.Date;
 
 @Entity
 @Table(name = "transaction")

@@ -1,10 +1,7 @@
 package com.bankingapp.service.accountservice;
 
 import com.bankingapp.model.account.CreditCard;
-import com.bankingapp.model.account.DebitCard;
-import com.bankingapp.model.login.User;
 import com.bankingapp.repository.cardrepository.CreditCardRepository;
-import com.bankingapp.repository.cardrepository.DebitCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

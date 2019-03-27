@@ -8,6 +8,7 @@ import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
+import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +49,9 @@ public class CustomerAccountController {
 
     @Autowired
     TransactionServiceImpl transactionService;
+
+    @Autowired
+    AdminLogService adminLogService;
 
     @RequestMapping("/getAccounts")
     public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId)
