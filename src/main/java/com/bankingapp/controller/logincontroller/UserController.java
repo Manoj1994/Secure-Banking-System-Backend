@@ -4,6 +4,7 @@ import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
 import com.bankingapp.model.login.User;
 import com.bankingapp.service.loginservice.UserService;
+import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    OtpService otpService;
 
     @RequestMapping(value = "/api/login", method = RequestMethod.GET)
     public LoginResponse login(ServletResponse response, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
@@ -44,6 +48,8 @@ public class UserController {
             int auth_user_id = user.getAuth_user_id();
             Role role = roleService.findRoleByUserId(auth_user_id);
 
+            // otpService.getOtp();
+
             loginResponse = new LoginResponse(user.getFirst_name()+" "+user.getLast_name(), role.getAuth_role_id(), user.getAuth_user_id()) ;
         }
 
@@ -51,4 +57,10 @@ public class UserController {
 
         return loginResponse;
     }
+
+    @RequestMapping(value = "/api/logout", method = RequestMethod.GET)
+    public void logout() {
+
+    }
+
 }
