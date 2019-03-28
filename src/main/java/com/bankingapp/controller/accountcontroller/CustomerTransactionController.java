@@ -76,6 +76,15 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
+            if(from_account_no == to_account_no) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                        " from and to accounts can't be same!");
+                return transactionResponse;
+
+            }
+
             if (!amountUtils.isValidAmount(amount)) {
 
                 transactionResponse.setSuccess(false);
@@ -264,20 +273,40 @@ public class CustomerTransactionController {
             System.out.println("Balance = "+balance);
             boolean status = false;
 
-            if(doubleAmount < appConfig.getCriticalAmount()) {
-                status = accountUpdateService.updateBalance(account_no, balance - doubleAmount);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            TransactionRequest transactionRequest = new TransactionRequest();
+
+            transactionRequest.setFrom_account(account_no);
+            transactionRequest.setTo_account(account_no);
+
+            transactionRequest.setCreated_by(account_no);
+            transactionRequest.setStatus_id(1);
+            transactionRequest.setCreated_at(timestamp);
+            transactionRequest.setTransaction_amount(doubleAmount);
+
+            transactionRequest.setApproved_by(admin);
+
+            if(doubleAmount >= appConfig.getCriticalAmount()) {
+                transactionRequest.setCritical(true);
+            } else {
+                transactionRequest.setCritical(false);
             }
+
+            System.out.println("Transaction Request = "+transactionRequest);
+            status = transactionRequestService.saveTransactionRequest(transactionRequest);
 
             if(!status) {
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
                         " Internal Server Error!");
                 return transactionResponse;
             } else {
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Money Withdrawn, Your transaction is successful");
+                transactionResponse.setMessage("Your transaction request is Pending");
             }
 
+            return transactionResponse;
 
 
         }catch(Exception e){

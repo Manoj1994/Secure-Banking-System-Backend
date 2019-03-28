@@ -45,6 +45,8 @@ public class ProcessTransactionController {
     @Autowired
     TransactionRequestService transactionRequestService;
 
+    private static final int admin = 3;
+
     @RequestMapping("/viewPendingTransactions")
     public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
 
@@ -121,8 +123,41 @@ public class ProcessTransactionController {
                         " Internal Server Error!");
                 return transactionResponse;
             } else {
-                
+
                 //DebitTransaction
+
+                if (payeeAccountNumber == payerAccountNumber) {
+
+                    Transaction transaction1 = new Transaction();
+
+                    transaction1.setAccount_no(payerAccountNumber);
+                    transaction1.setBalance(accountBalanceService.getBalance(payerAccountNumber));
+                    transaction1.setRequest_id(transactionRequest.getRequest_id());
+
+                    String debit_description = "Debited from your account to " + payeeAccountNumber;
+                    transaction1.setDescription(debit_description);
+
+                    transaction1.setStatus(3);
+                    transaction1.setTransaction_type(1);
+                    transaction1.setTransaction_timestamp(timestamp);
+                    transaction1.setTransaction_amount(transactionAmount);
+
+                    transactionService.save(transaction1);
+
+                    accountUpdateService.updateMoney(payerAccountNumber, -transactionAmount);
+
+                    transactionRequest.setStatus_id(2);
+                    transactionRequest.setApproved_by(employee_id);
+
+                    transactionRequestService.saveTransactionRequest(transactionRequest);
+
+                    transactionResponse.setSuccess(true);
+                    transactionResponse.setMessage("Your transaction is Successful");
+
+                    return transactionResponse;
+
+
+                } else {
 
                 Transaction transaction1 = new Transaction();
 
@@ -130,7 +165,7 @@ public class ProcessTransactionController {
                 transaction1.setBalance(accountBalanceService.getBalance(payerAccountNumber));
                 transaction1.setRequest_id(transactionRequest.getRequest_id());
 
-                String debit_description = "Debited from your account to "+payeeAccountNumber;
+                String debit_description = "Debited from your account to " + payeeAccountNumber;
                 transaction1.setDescription(debit_description);
 
                 transaction1.setStatus(1);
@@ -151,7 +186,7 @@ public class ProcessTransactionController {
                 transaction2.setBalance(accountBalanceService.getBalance(payeeAccountNumber));
                 transaction2.setRequest_id(transactionRequest.getRequest_id());
 
-                String credit_description = "Credited from  account "+payeeAccountNumber+" To your account";
+                String credit_description = "Credited from  account " + payeeAccountNumber + " To your account";
                 transaction2.setDescription(credit_description);
 
                 transaction2.setStatus(1);
@@ -171,6 +206,7 @@ public class ProcessTransactionController {
                 transactionResponse.setMessage("Your transaction is Successful");
 
                 return transactionResponse;
+            }
             }
 
         }catch(Exception e){
@@ -206,19 +242,40 @@ public class ProcessTransactionController {
             Double doubleAmount = Double.parseDouble(amount);
             boolean status = false;
 
-            if(doubleAmount < appConfig.getCriticalAmount()) {
-                status = accountUpdateService.updateBalance(account_no, doubleAmount);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            TransactionRequest transactionRequest = new TransactionRequest();
+
+            transactionRequest.setFrom_account(account_no);
+            transactionRequest.setTo_account(account_no);
+
+            transactionRequest.setCreated_by(account_no);
+            transactionRequest.setStatus_id(1);
+            transactionRequest.setCreated_at(timestamp);
+            transactionRequest.setTransaction_amount(doubleAmount);
+
+            transactionRequest.setApproved_by(admin);
+
+            if(doubleAmount >= appConfig.getCriticalAmount()) {
+                transactionRequest.setCritical(true);
+            } else {
+                transactionRequest.setCritical(false);
             }
+
+            System.out.println("Transaction Request = "+transactionRequest);
+            status = transactionRequestService.saveTransactionRequest(transactionRequest);
 
             if(!status) {
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
                         " Internal Server Error!");
                 return transactionResponse;
             } else {
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Money Deposited, Your transaction is successful");
+                transactionResponse.setMessage("Your transaction request is Pending");
             }
+
+            return transactionResponse;
         }catch(Exception e){
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +

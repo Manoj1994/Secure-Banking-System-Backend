@@ -76,15 +76,16 @@ public class EmployeeRequestController {
     }
 
     @RequestMapping(value = "/handleRequest", method = RequestMethod.GET)
-    public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") boolean action) {
+    public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
         Request request = null;
 
         try {
             request = requestService.getByID(request_id);
+            request.setApproverId(employee_id);
 
-        if(!action) {
+        if(action == 0) {
             request.setStatus("Declined");
             requestService.save(request);
 

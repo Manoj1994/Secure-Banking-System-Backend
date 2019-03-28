@@ -117,16 +117,16 @@ public class CustomerRequestController {
     }
 
     @RequestMapping(value = "/createNewAccount", method = RequestMethod.GET)
-    public TransactionResponse customerCreateNewAccount(@RequestParam("customerId") int user_id,
-                                                        @RequestParam("type") String type) {
+    public TransactionResponse customerCreateNewAccount(@RequestParam("customer_id") int user_id,
+                                                        @RequestParam("type") int type) {
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
             Request request = new Request();
             request.setRequesterId(user_id);
 
-            if (type.equals("Savings")) {
+            if (type == 1) {
                 request.setRequest_type("Create Savings Account");
-            } else if (type.equals("Checking")) {
+            } else if (type == 2) {
                 request.setRequest_type("Create Checking Account");
             }
             request.setRequested_value(String.valueOf(user_id));
