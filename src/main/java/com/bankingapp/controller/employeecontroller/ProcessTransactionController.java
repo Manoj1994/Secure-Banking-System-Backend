@@ -144,7 +144,7 @@ public class ProcessTransactionController {
 
                     transactionService.save(transaction1);
 
-                    accountUpdateService.updateMoney(payerAccountNumber, -transactionAmount);
+                    accountUpdateService.updateBalance(payerAccountNumber, -transactionAmount);
 
                     transactionRequest.setStatus_id(2);
                     transactionRequest.setApproved_by(employee_id);
@@ -175,7 +175,7 @@ public class ProcessTransactionController {
 
                 transactionService.save(transaction1);
 
-                accountUpdateService.updateMoney(payerAccountNumber, -transactionAmount);
+                accountUpdateService.updateBalance(payerAccountNumber, -transactionAmount);
 
 
                 // Credit Transaction
