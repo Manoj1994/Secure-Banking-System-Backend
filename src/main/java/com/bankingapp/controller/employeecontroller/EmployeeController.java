@@ -177,6 +177,8 @@ public class EmployeeController {
 
                 transactionRequest.setCreated_by(from_account_no);
                 transactionRequest.setStatus_id(1);
+                transactionRequest.setRequest_type(1);
+                transactionRequest.setRequest_description("Funds Transfer");
                 transactionRequest.setCreated_at(timestamp);
                 transactionRequest.setTransaction_amount(doubleAmount);
 
