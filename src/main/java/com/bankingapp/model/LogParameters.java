@@ -3,7 +3,7 @@ package com.bankingapp.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Parameters {
+public class LogParameters {
 
     public String LOGGING_USER = "User Entered Login Credentials";
     public String OTP_LOGGING_USER = "User Logged In";

@@ -1,6 +1,6 @@
 package com.bankingapp.controller.accountcontroller;
 
-import com.bankingapp.model.Parameters;
+import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.CreditCard;
 import com.bankingapp.model.account.DebitCard;
@@ -33,7 +33,7 @@ public class CustomerCardsController {
     AdminLogService adminLogService;
 
     @Autowired
-    Parameters parameters;
+    LogParameters logParameters;
 
     @RequestMapping("/getDebitCards")
     public List<DebitCard> getDebitcards(@RequestParam("customerId") int customerId) {
@@ -51,7 +51,7 @@ public class CustomerCardsController {
 
         }
 
-        adminLogService.createUserLog(customerId, parameters.GET_DEBIT_CARDS);
+        adminLogService.createUserLog(customerId, logParameters.GET_DEBIT_CARDS);
         return allDebitCards;
     }
 
@@ -86,7 +86,7 @@ public class CustomerCardsController {
 
         }
 
-        adminLogService.createUserLog(customerId, parameters.GET_CREDIT_CARDS);
+        adminLogService.createUserLog(customerId, logParameters.GET_CREDIT_CARDS);
         return allCreditCards;
     }
 
@@ -98,7 +98,7 @@ public class CustomerCardsController {
             debitCard.setAccount_no(account_no);
             debitCardService.addNewDebitCard(debitCard);
 
-            //adminLogService.createUserLog(account_no, parameters.)
+            //adminLogService.createUserLog(account_no, logParameters.)
             return true;
         } catch (Exception e) {
 

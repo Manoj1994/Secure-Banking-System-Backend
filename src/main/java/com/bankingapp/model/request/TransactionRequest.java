@@ -18,6 +18,12 @@ public class TransactionRequest {
     @Column(name = "status_id")
     private int status_id;
 
+    @Column(name = "request_type")
+    private int request_type;
+
+    @Column(name = "request_description")
+    private String request_description;
+
     @Column(name = "created_by")
     private int created_by;
 
@@ -27,10 +33,10 @@ public class TransactionRequest {
     @Column(name = "approved_at")
     private Timestamp approved_at;
 
-    @Column(name = "from_account")
+    @Column(name = "from_account", nullable = true)
     private int from_account;
 
-    @Column(name = "to_account")
+    @Column(name = "to_account", nullable = true)
     private int to_account;
 
     @Column(name = "critical")
@@ -38,6 +44,22 @@ public class TransactionRequest {
 
     @Column(name = "transaction_amount")
     private Double transaction_amount;
+
+    public String getRequest_description() {
+        return request_description;
+    }
+
+    public void setRequest_description(String request_description) {
+        this.request_description = request_description;
+    }
+
+    public int getRequest_type() {
+        return request_type;
+    }
+
+    public void setRequest_type(int request_type) {
+        this.request_type = request_type;
+    }
 
     public int getRequest_id() {
         return request_id;

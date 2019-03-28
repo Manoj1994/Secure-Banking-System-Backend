@@ -2,6 +2,7 @@ package com.bankingapp.controller.accountcontroller;
 
 import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.request.TransactionRequest;
+import com.bankingapp.model.transaction.TransactionParameters;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
@@ -40,6 +41,9 @@ public class CustomerTransactionController {
 
     @Autowired
     AccountUpdateService accountUpdateService;
+
+    @Autowired
+    TransactionParameters transactionParameters;
 
     private int admin = 3;
 
@@ -116,6 +120,8 @@ public class CustomerTransactionController {
             transactionRequest.setTo_account(to_account_no);
 
             transactionRequest.setCreated_by(customer_id);
+            transactionRequest.setRequest_type(1);
+            transactionRequest.setRequest_description("Funds Transfer");
             transactionRequest.setStatus_id(1);
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
@@ -282,10 +288,12 @@ public class CustomerTransactionController {
             TransactionRequest transactionRequest = new TransactionRequest();
 
             transactionRequest.setFrom_account(account_no);
-            transactionRequest.setTo_account(account_no);
+            //transactionRequest.setTo_account(account_no);
 
             transactionRequest.setCreated_by(customer_id);
             transactionRequest.setStatus_id(1);
+            transactionRequest.setRequest_type(2);
+            transactionRequest.setRequest_description("Issue Cashiers Check");
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
 

@@ -1,7 +1,7 @@
 package com.bankingapp.controller.accountcontroller;
 
 import com.bankingapp.configuration.AppConfig;
-import com.bankingapp.model.Parameters;
+import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.AccountResponse;
 import com.bankingapp.model.transaction.Transaction;
@@ -55,7 +55,7 @@ public class CustomerAccountController {
     AdminLogService adminLogService;
 
     @Autowired
-    Parameters parameters;
+    LogParameters logParameters;
 
     @RequestMapping("/getAccounts")
     public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId)
@@ -86,7 +86,7 @@ public class CustomerAccountController {
             throw new RuntimeException();
         }
 
-        adminLogService.createUserLog(customerId, parameters.GET_ACCOUNTS);
+        adminLogService.createUserLog(customerId, logParameters.GET_ACCOUNTS);
         return accountResponseList;
 
     }

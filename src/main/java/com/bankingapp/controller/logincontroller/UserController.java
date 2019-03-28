@@ -1,7 +1,6 @@
 package com.bankingapp.controller.logincontroller;
 
-import com.bankingapp.model.Parameters;
-import com.bankingapp.model.employee.AdminLog;
+import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
 import com.bankingapp.model.login.User;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
 
 @CrossOrigin
 @RestController
@@ -34,7 +32,7 @@ public class UserController {
     AdminLogService adminLogService;
 
     @Autowired
-    Parameters parameters;
+    LogParameters logParameters;
 
     @RequestMapping(value = "/api/login", method = RequestMethod.GET)
     public LoginResponse login(ServletResponse response, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
@@ -58,7 +56,7 @@ public class UserController {
             Role role = roleService.findRoleByUserId(auth_user_id);
 
             // otpService.getOtp();
-            adminLogService.createUserLog(auth_user_id, parameters.LOGGING_USER);
+            adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER);
 
             loginResponse = new LoginResponse(user.getFirst_name()+" "+user.getLast_name(), role.getAuth_role_id(), user.getAuth_user_id()) ;
         }
