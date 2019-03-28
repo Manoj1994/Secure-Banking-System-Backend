@@ -180,8 +180,15 @@ public class CustomerRequestController {
             request.setStatus("Pending");
             request.setApproverId(admin);
 
-            transactionResponse.setSuccess(true);
-            transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            if (!requestService.add_new_request(request)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your request is not valid!");
+                return transactionResponse;
+            }
+            else{
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            }
 
             return transactionResponse;
 
