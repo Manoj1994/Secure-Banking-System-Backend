@@ -41,4 +41,28 @@ public class DebitCardService {
 
         return query.getResultList();
     }
+
+    public DebitCard getDebitcard(int card_no) {
+
+        String sql = "Select e from " + DebitCard.class.getName() + " e " //
+                + " Where e.card_no = :card_no";
+
+        Query query = entityManager.createQuery(sql, DebitCard.class);
+        query.setParameter("card_no", card_no);
+
+        return (DebitCard) query.getSingleResult();
+    }
+
+    public boolean delete(int card_no) {
+
+        boolean status = false;
+        try {
+            DebitCard debitCard = getDebitcard(card_no);
+            debitCardRepository.delete(debitCard);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return status;
+    }
 }

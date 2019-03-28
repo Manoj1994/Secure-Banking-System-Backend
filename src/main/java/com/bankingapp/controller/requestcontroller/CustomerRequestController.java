@@ -114,4 +114,94 @@ public class CustomerRequestController {
         }
         return transactionResponse;
     }
+
+    @RequestMapping(value = "/createNewAccount", method = RequestMethod.GET)
+    public TransactionResponse customerCreateNewAccount(@RequestParam("customer_id") int user_id,
+                                                          @RequestParam("type") String type) {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try {
+            Request request = new Request();
+            request.setRequesterId(user_id);
+
+            if (type.equals("Savings")) {
+                request.setRequest_type("Create Savings Account");
+            } else if (type.equals("Checking")) {
+                request.setRequest_type("Create Checking Account");
+            }
+            request.setRequested_value("Savings");
+            request.setDescription("Create Account");
+            request.setStatus("Pending");
+            request.setApproverId(admin);
+
+            transactionResponse.setSuccess(true);
+            transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+
+            return transactionResponse;
+        } catch(Exception e) {
+
+        }
+        return transactionResponse;
+    }
+
+    @RequestMapping(value = "/createNewCard", method = RequestMethod.GET)
+    public TransactionResponse customerCreateNewCard(@RequestParam("customer_id") int user_id,
+                                                        @RequestParam("type") String type) {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try {
+            Request request = new Request();
+            request.setRequesterId(user_id);
+
+            if (type.equals("Debit")) {
+                request.setRequest_type("Create Debit Card");
+            } else if (type.equals("Credit")) {
+                request.setRequest_type("Create Credit Card");
+            } else {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry!, Wrong type selected");
+                return transactionResponse;
+            }
+
+            request.setRequested_value("Savings");
+            request.setDescription("Create Account");
+            request.setStatus("Pending");
+            request.setApproverId(admin);
+
+            transactionResponse.setSuccess(true);
+            transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+
+            return transactionResponse;
+        } catch(Exception e) {
+
+        }
+        return transactionResponse;
+    }
+
+    @RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
+    public TransactionResponse deleteAccountRequest(@RequestParam("account_id") int account_id) {
+
+        TransactionResponse transactionResponse = new TransactionResponse();
+
+        try {
+
+        } catch (Exception e) {
+
+        }
+
+        return transactionResponse;
+    }
+
+    @RequestMapping(value = "/deleteCard", method = RequestMethod.GET)
+    public TransactionResponse deleteCardRequest(@RequestParam("card_id") int card_id) {
+
+        TransactionResponse transactionResponse = new TransactionResponse();
+
+        try {
+
+        } catch (Exception e) {
+
+        }
+
+        return transactionResponse;
+    }
 }

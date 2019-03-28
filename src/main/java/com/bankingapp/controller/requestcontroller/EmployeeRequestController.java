@@ -1,9 +1,13 @@
 package com.bankingapp.controller.requestcontroller;
 
+import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.account.ObjectCompressor;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.service.accountservice.CreditCardService;
+import com.bankingapp.service.accountservice.DebitCardService;
+import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.requestservice.RequestService;
 import com.bankingapp.utils.RequestUtils;
@@ -30,11 +34,30 @@ public class EmployeeRequestController {
     CustomerService customerService;
 
     @Autowired
+    CustomerAccountService customerAccountService;
+
+    @Autowired
+    DebitCardService debitCardService;
+
+    @Autowired
+    CreditCardService creditCardService;
+
+    @Autowired
     RequestUtils requestUtils;
 
     private final int Processed = 2;
+
     private final int declined = 3;
+
     private final static int admin = 3;
+
+    private final Double defaultSavingsBalance = 1000.0;
+
+    private final Double defaultCheckingBalance = 500.0;
+
+    private final Double defaultSavingsInterest = 12.0;
+
+    private final Double defaultCheckingInterest = 5.0;
 
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
     public List<Request> gerRequests() {
@@ -53,22 +76,25 @@ public class EmployeeRequestController {
     }
 
     @RequestMapping(value = "/handleRequest", method = RequestMethod.GET)
-    public Boolean gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") boolean action) {
+    public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") boolean action) {
 
         Request request = requestService.getByID(request_id);
-        if(!action) {
+        TransactionResponse transactionResponse = new TransactionResponse();
 
+        if(!action) {
             request.setStatus("Declined");
             requestService.save(request);
+
         } else {
-
-
             if(request.getRequest_type().equals("Update Customer")) {
                 try {
                     Customer customer = (Customer) objectCompressor.fromString(request.getRequested_value());
                     System.out.println(customer);
+
                     boolean requestStatus = customerService.save(customer);
-                    requestService.delete(request);
+
+                    request.setStatus("Processed");
+                    requestService.save(request);
 
                 } catch(Exception e) {
 
@@ -76,13 +102,88 @@ public class EmployeeRequestController {
 
             } else if(request.getRequest_type().equals("Update Employee")) {
 
-            } else if(request.getRequest_type().equals("Create Customer")) {
+            } else if(request.getRequest_type().equals("Create Savings Account")) {
 
-            } else if(request.getRequest_type().equals("Create Employee")) {
+                try {
+                    int customer_id = request.getRequesterId();
+                    Account account = new Account();
+                    account.setAccount_type(1);
+                    account.setUser_id(customer_id);
+                    account.setBalance(defaultSavingsBalance);
+                    account.setInterest(defaultSavingsInterest);
 
-            } else if(request.getRequest_type().equals("Create Account")) {
+                    boolean status = customerAccountService.save(account);
 
-            } else if(request.getRequest_type().equals("Create Account")) {
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new savings account");
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+                return transactionResponse;
+
+            } else if(request.getRequest_type().equals("Create Checking Account")) {
+
+                try {
+                    int customer_id = request.getRequesterId();
+                    Account account = new Account();
+                    account.setAccount_type(2);
+                    account.setUser_id(customer_id);
+                    account.setBalance(defaultCheckingBalance);
+                    account.setInterest(defaultCheckingInterest);
+
+                    boolean status = customerAccountService.save(account);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new checking account");
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+
+                return transactionResponse;
+
+
+            } else if(request.getRequest_type().equals("Delete DebitCard")) {
+
+                try {
+
+                    int card_no = Integer.parseInt(request.getRequested_value());
+                    boolean status = debitCardService.delete(card_no);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, deleted debit card");
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+                return transactionResponse;
+
+            } else if(request.getRequest_type().equals("Delete CreditCard")) {
 
             } else if(request.getRequest_type().equals("Create DebitCard")) {
 
@@ -90,10 +191,9 @@ public class EmployeeRequestController {
 
             }
 
-            request.setStatus("Processed");
-            requestService.save(request);
         }
-        return true;
+
+        return transactionResponse;
     }
 
     @RequestMapping(value = "/employeeEditRequest", method = RequestMethod.GET)

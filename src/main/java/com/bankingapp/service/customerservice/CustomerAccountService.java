@@ -3,6 +3,7 @@ package com.bankingapp.service.customerservice;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.transaction.Transaction;
+import com.bankingapp.repository.accountrepository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class CustomerAccountService {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     public List<Transaction> getTransactions(int accountNumber, int interval) {
 
@@ -84,5 +88,17 @@ public class CustomerAccountService {
 
         Customer customer = (Customer) query.getSingleResult();
         return customer.getEmail();
+    }
+
+    public boolean save(Account account) {
+
+        boolean status = false;
+        try {
+            accountRepository.save(account);
+            return status;
+        } catch(Exception e) {
+
+        }
+        return status;
     }
 }

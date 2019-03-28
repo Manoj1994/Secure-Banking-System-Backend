@@ -1,6 +1,7 @@
 package com.bankingapp.service.accountservice;
 
 import com.bankingapp.model.account.CreditCard;
+import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.repository.cardrepository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,5 +40,29 @@ public class CreditCardService {
         query.setParameter("account_no", account_no);
 
         return query.getResultList();
+    }
+
+    public CreditCard getCreditcard(int card_no) {
+
+        String sql = "Select e from " + CreditCard.class.getName() + " e " //
+                + " Where e.card_no = :card_no";
+
+        Query query = entityManager.createQuery(sql, DebitCard.class);
+        query.setParameter("card_no", card_no);
+
+        return (CreditCard) query.getSingleResult();
+    }
+
+    public boolean delete(int card_no) {
+
+        boolean status = false;
+        try {
+            CreditCard creditCard = getCreditcard(card_no);
+            creditCardRepository.delete(creditCard);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return status;
     }
 }

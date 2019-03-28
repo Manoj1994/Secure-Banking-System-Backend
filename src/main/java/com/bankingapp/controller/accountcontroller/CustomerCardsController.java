@@ -1,10 +1,12 @@
 package com.bankingapp.controller.accountcontroller;
 
+import com.bankingapp.model.Parameters;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.CreditCard;
 import com.bankingapp.model.account.DebitCard;
 import com.bankingapp.service.accountservice.CreditCardService;
 import com.bankingapp.service.accountservice.DebitCardService;
+import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,12 @@ public class CustomerCardsController {
     @Autowired
     CustomerService customerService;
 
+    @Autowired
+    AdminLogService adminLogService;
+
+    @Autowired
+    Parameters parameters;
+
     @RequestMapping("/getDebitCards")
     public List<DebitCard> getDebitcards(@RequestParam("customerId") int customerId) {
 
@@ -42,6 +50,8 @@ public class CustomerCardsController {
         } catch(Exception e) {
 
         }
+
+        adminLogService.createUserLog(customerId, parameters.GET_DEBIT_CARDS);
         return allDebitCards;
     }
 
@@ -75,6 +85,8 @@ public class CustomerCardsController {
         } catch(Exception e) {
 
         }
+
+        adminLogService.createUserLog(customerId, parameters.GET_CREDIT_CARDS);
         return allCreditCards;
     }
 
@@ -86,6 +98,7 @@ public class CustomerCardsController {
             debitCard.setAccount_no(account_no);
             debitCardService.addNewDebitCard(debitCard);
 
+            //adminLogService.createUserLog(account_no, parameters.)
             return true;
         } catch (Exception e) {
 

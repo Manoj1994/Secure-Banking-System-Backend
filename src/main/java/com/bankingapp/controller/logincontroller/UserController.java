@@ -1,5 +1,6 @@
 package com.bankingapp.controller.logincontroller;
 
+import com.bankingapp.model.Parameters;
 import com.bankingapp.model.employee.AdminLog;
 import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
@@ -32,6 +33,9 @@ public class UserController {
     @Autowired
     AdminLogService adminLogService;
 
+    @Autowired
+    Parameters parameters;
+
     @RequestMapping(value = "/api/login", method = RequestMethod.GET)
     public LoginResponse login(ServletResponse response, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
 
@@ -54,13 +58,7 @@ public class UserController {
             Role role = roleService.findRoleByUserId(auth_user_id);
 
             // otpService.getOtp();
-
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            AdminLog adminLog = new AdminLog();
-            adminLog.setRelated_user_id(auth_user_id);
-            adminLog.setTimestamp(timestamp);
-            adminLog.setMessage("User Entered Login Credentials");
-            adminLogService.save(adminLog);
+            adminLogService.createUserLog(auth_user_id, parameters.LOGGING_USER);
 
             loginResponse = new LoginResponse(user.getFirst_name()+" "+user.getLast_name(), role.getAuth_role_id(), user.getAuth_user_id()) ;
         }
@@ -74,7 +72,4 @@ public class UserController {
     public void logout() {
 
     }
-
-
-
 }
