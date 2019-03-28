@@ -218,7 +218,9 @@ public class ProcessTransactionController {
     }
 
     @RequestMapping("/DepositMoney")
-    public TransactionResponse DepositMoneyToSavingsAccount(@RequestParam("account_no") int account_no, @RequestParam("amount") String amount)
+    public TransactionResponse DepositMoneyToSavingsAccount(@RequestParam("account_no") int account_no,
+                                                            @RequestParam("amount") String amount,
+                                                            @RequestParam("employee_id") int employee_id)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
@@ -249,7 +251,7 @@ public class ProcessTransactionController {
             transactionRequest.setFrom_account(account_no);
             transactionRequest.setTo_account(account_no);
 
-            transactionRequest.setCreated_by(account_no);
+            transactionRequest.setCreated_by(employee_id);
             transactionRequest.setStatus_id(1);
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
