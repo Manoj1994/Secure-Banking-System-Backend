@@ -201,8 +201,10 @@ public class CustomerRequestController {
             Request request = new Request();
             request.setRequesterId(user_id);
             request.setRequested_value(String.valueOf(accountNo));
-
+            request.setStatus("Pending");
             request.setRequest_type("Delete Account");
+            request.setApproverId(admin);
+            request.setDescription("Customer requested to delete the account");
 
             if (!requestService.add_new_request(request)) {
                 transactionResponse.setSuccess(false);
