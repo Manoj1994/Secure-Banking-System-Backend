@@ -32,7 +32,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
             query.setParameter("critical", critical);
             return query.getResultList();
         } else {
-            sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id and c";
+            sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t";
             Query query = entityManager.createQuery(sql, TransactionRequest.class);
             return query.getResultList();
         }

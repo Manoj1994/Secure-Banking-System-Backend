@@ -45,23 +45,19 @@ public class EmployeeRequestController {
 
                 return transactionResponse;
             }
-
             if(employee.getEmployee_name().length() <= 5) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your name is should be atleast 5 characters long! ");
 
                 return transactionResponse;
             }
-
             if(!requestUtils.validateContact(employee.getContact_no())) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your contact is not valid! ");
 
                 return transactionResponse;
             }
-
             String employeeString = objectCompressor.toString(employee);
-
             Request request=new Request();
             request.setRequesterId(employee.getEmployee_id());
             request.setRequest_type("Update Employee");
@@ -69,9 +65,7 @@ public class EmployeeRequestController {
             request.setDescription("Changing Details of Employee");
             request.setStatus("Pending");
             request.setApproverId(admin);
-
             System.out.println(request.toString());
-
             if (!requestService.add_new_request(request)) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your request is not valid!");

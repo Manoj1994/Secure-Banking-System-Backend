@@ -62,7 +62,9 @@ public class ProcessTransactionController {
         List<TransactionRequest> transactionRequestList = new ArrayList<>();
         try{
 
+            System.out.println(employee_id);
             int role_id = employeeService.getRoleOfEmployee(employee_id);
+            System.out.println(role_id);
 
             if(role_id == 1) {
                 transactionRequestList = transactionService.getAllPending(false);

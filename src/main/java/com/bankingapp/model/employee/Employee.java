@@ -40,6 +40,22 @@ public class Employee implements Serializable {
     @Column(name = "created")
     private Timestamp created;
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "employee_id=" + employee_id +
+                ", employee_name='" + employee_name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", age=" + age +
+                ", tier_level=" + tier_level +
+                ", designation_id=" + designation_id +
+                ", contact_no='" + contact_no + '\'' +
+                ", email_id='" + email_id + '\'' +
+                ", address='" + address + '\'' +
+                ", created=" + created +
+                '}';
+    }
+
     public int getEmployee_id() {
         return employee_id;
     }

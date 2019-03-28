@@ -37,12 +37,12 @@ public class EmployeeService {
         return query.getResultList();
     }
 
-    public Integer getRoleOfEmployee(int employee_id) {
-        String sql = "SELECT d FROM "+ Employee.class.getName() +" d where d.employee_id =: employee_id ";
+    public int getRoleOfEmployee(int employee_id) {
+        String sql = "SELECT d FROM "+ Employee.class.getName() +" d where d.employee_id = :employee_id ";
         Query query = entityManager.createQuery(sql, Employee.class);
         query.setParameter("employee_id", employee_id);
 
-        Employee employee = (Employee) query.getResultList();
+        Employee employee = (Employee) query.getSingleResult();
         return employee.getTier_level();
     }
 
