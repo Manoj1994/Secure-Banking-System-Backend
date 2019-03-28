@@ -24,7 +24,7 @@ public class EmployeeService {
 
     public Employee getEmployeeAccount(int employee_id) {
         String sql = "SELECT d FROM "+ Employee.class.getName() +" d where d.employee_id = :employee_id";
-        Query query = entityManager.createQuery(sql, Account.class);
+        Query query = entityManager.createQuery(sql, Employee.class);
         query.setParameter("employee_id", employee_id);
 
         return (Employee) query.getSingleResult();
