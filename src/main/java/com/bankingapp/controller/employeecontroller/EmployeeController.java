@@ -72,7 +72,7 @@ public class EmployeeController {
         return employeeList;
     }
 
-    @RequestMapping("/getAllEmployee")
+    @RequestMapping("/getEmployee")
     public Employee getAllEmployees(int employee_id) {
 
         try{
@@ -210,6 +210,8 @@ public class EmployeeController {
 
                 transactionRequest.setCreated_by(from_account_no);
                 transactionRequest.setStatus_id(2);
+                transactionRequest.setRequest_type(1);
+                transactionRequest.setRequest_description("Funds Transfer");
                 transactionRequest.setCreated_at(timestamp);
                 transactionRequest.setTransaction_amount(doubleAmount);
 
