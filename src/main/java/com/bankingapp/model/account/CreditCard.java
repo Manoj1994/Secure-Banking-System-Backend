@@ -20,6 +20,16 @@ public class CreditCard {
     @Column(name = "statement_balance")
     private Double statement_balance;
 
+    @Override
+    public String  toString() {
+        return "CreditCard{" +
+                "card_no=" + card_no +
+                ", account_no=" + account_no +
+                ", card_limit=" + card_limit +
+                ", statement_balance=" + statement_balance +
+                '}';
+    }
+
     public long getCard_no() {
         return card_no;
     }

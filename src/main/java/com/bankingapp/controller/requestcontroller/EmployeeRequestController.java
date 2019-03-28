@@ -206,26 +206,61 @@ public class EmployeeRequestController {
                 return transactionResponse;
 
 
-            } else if(request.getRequest_type().equals("Delete Debit Card")) {
+            } else if(request.getRequest_type().equals("Delete Card")) {
 
                 try {
 
-                    int card_no = Integer.parseInt(request.getRequested_value());
-                    boolean status = debitCardService.delete(card_no);
+                    System.out.println(request.getRequested_value());
+                    long card_no = Long.parseLong(request.getRequested_value());
+                    System.out.println(card_no);
 
-                    if(status) {
-                        transactionResponse.setSuccess(true);
-                        transactionResponse.setMessage("Request is successful, deleted debit card");
-                        request.setStatus("Processed");
-                        requestService.save(request);
+                    boolean cardStatus = debitCardService.checkCard(card_no);
+                    boolean status;
+
+                    if(cardStatus) {
+
+                        status = debitCardService.delete(card_no);
+                        if(status) {
+                            transactionResponse.setSuccess(true);
+                            transactionResponse.setMessage("Request is successful, deleted debit card");
+                            request.setStatus("Processed");
+                            requestService.save(request);
+                        } else {
+                            transactionResponse.setSuccess(false);
+                            transactionResponse.setMessage("Request is unsuccessful");
+                        }
+
+                        return transactionResponse;
+
                     } else {
-                        transactionResponse.setSuccess(false);
-                        transactionResponse.setMessage("Request is unsuccessful");
+
+                        cardStatus = creditCardService.checkCard(card_no);
+
+                        if(cardStatus) {
+
+                            status = creditCardService.delete(card_no);
+                            if(status) {
+                                transactionResponse.setSuccess(true);
+                                transactionResponse.setMessage("Request is successful, deleted credit card");
+                                request.setStatus("Processed");
+                                requestService.save(request);
+                            } else {
+                                transactionResponse.setSuccess(false);
+                                transactionResponse.setMessage("Request is unsuccessful");
+                            }
+
+                            return transactionResponse;
+
+                        } else {
+
+                            transactionResponse.setSuccess(false);
+                            transactionResponse.setMessage("Request is unsuccessful, card with this id didn't exist");
+
+                        }
                     }
-
-                    return transactionResponse;
-
                 } catch(Exception e) {
+
+                    e.printStackTrace();
                     transactionResponse.setSuccess(false);
                     transactionResponse.setMessage("Request ran into exception");
                 }
@@ -279,6 +314,7 @@ public class EmployeeRequestController {
                     return transactionResponse;
 
                 } catch(Exception e) {
+
                     transactionResponse.setSuccess(false);
                     transactionResponse.setMessage("Request ran into exception");
                 }

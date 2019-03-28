@@ -42,22 +42,38 @@ public class CreditCardService {
         return query.getResultList();
     }
 
-    public CreditCard getCreditcard(int card_no) {
+    public boolean checkCard(long card_no) {
+
+        String sql = "Select e from " + CreditCard.class.getName() + " e " //
+                + " Where e.card_no = :card_no";
+        Query query = entityManager.createQuery(sql, CreditCard.class);
+        query.setParameter("card_no", card_no);
+
+        if(query.getResultList().size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public CreditCard getCreditcard(long card_no) {
 
         String sql = "Select e from " + CreditCard.class.getName() + " e " //
                 + " Where e.card_no = :card_no";
 
-        Query query = entityManager.createQuery(sql, DebitCard.class);
+        Query query = entityManager.createQuery(sql, CreditCard.class);
         query.setParameter("card_no", card_no);
 
         return (CreditCard) query.getSingleResult();
     }
 
-    public boolean delete(int card_no) {
+    public boolean delete(long card_no) {
 
         boolean status = false;
         try {
             CreditCard creditCard = getCreditcard(card_no);
+
+            System.out.println(creditCard);
             creditCardRepository.delete(creditCard);
             return true;
         } catch(Exception e) {

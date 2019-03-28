@@ -230,15 +230,16 @@ public class CustomerRequestController {
     }
 
     @RequestMapping(value = "/deleteCard", method = RequestMethod.GET)
-    public TransactionResponse deleteCardRequest(@RequestParam("card_id") int card_id,
-                                                 @RequestParam("user_id") int user_id) {
+    public TransactionResponse deleteCardRequest(@RequestParam("cardNo") String card_id,
+                                                 @RequestParam("customer_id") int user_id) {
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
 
             Request request = new Request();
             request.setRequesterId(user_id);
-            request.setRequested_value(String.valueOf(card_id));
+            request.setRequested_value(card_id);
             request.setStatus("Pending");
+            request.setApproverId(admin);
             request.setRequest_type("Delete Card");
             request.setDescription("Customer requested to delete the card");
 
