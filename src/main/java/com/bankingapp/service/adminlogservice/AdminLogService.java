@@ -16,6 +16,7 @@ public class AdminLogService {
     public Boolean save(AdminLog adminLog) {
 
         try {
+            System.out.println(adminLog);
             adminLogRepository.save(adminLog);
             return true;
         } catch(Exception e) {
@@ -28,7 +29,7 @@ public class AdminLogService {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         AdminLog adminLog = new AdminLog();
-        adminLog.setTimestamp(timestamp);
+        adminLog.setLog_timestamp(timestamp);
         adminLog.setMessage(message);
         return adminLog;
     }
@@ -38,8 +39,7 @@ public class AdminLogService {
         try {
             AdminLog adminLog = buildLog(message);
             adminLog.setRelated_user_id(user_id);
-            save(adminLog);
-            return true;
+            return save(adminLog);
         } catch(Exception e) {
 
         }

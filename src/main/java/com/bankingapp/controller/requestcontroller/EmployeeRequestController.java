@@ -91,6 +91,10 @@ public class EmployeeRequestController {
             request.setStatus("Declined");
             requestService.save(request);
 
+            transactionResponse.setMessage("Transaction is Rejected");
+            transactionResponse.setSuccess(true);
+            return transactionResponse;
+
         } else {
             if(request.getRequest_type().equals("Update Customer")) {
                 try {
@@ -443,5 +447,7 @@ public class EmployeeRequestController {
         }
         return transactionResponse;
     }
+
+
 
 }

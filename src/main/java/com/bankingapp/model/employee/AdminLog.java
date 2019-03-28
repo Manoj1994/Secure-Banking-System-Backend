@@ -12,8 +12,8 @@ public class AdminLog {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "timestamp")
-    private Timestamp timestamp;
+    @Column(name = "log_timestamp")
+    private Timestamp log_timestamp;
 
     @Column(name = "related_user_id")
     private int related_user_id;
@@ -24,6 +24,17 @@ public class AdminLog {
     @Column(name = "message")
     private String message;
 
+    @Override
+    public String toString() {
+        return "AdminLog{" +
+                "id=" + id +
+                ", log_timestamp=" + log_timestamp +
+                ", related_user_id=" + related_user_id +
+                ", related_employee_id=" + related_employee_id +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
     public int getId() {
         return id;
     }
@@ -32,12 +43,12 @@ public class AdminLog {
         this.id = id;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getLog_timestamp() {
+        return log_timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setLog_timestamp(Timestamp log_timestamp) {
+        this.log_timestamp = log_timestamp;
     }
 
     public int getRelated_user_id() {
