@@ -201,7 +201,7 @@ public class ProcessTransactionController {
 
                         transactionService.save(transaction1);
 
-                        accountUpdateService.updateBalance(accountNumber, transactionAmount);
+                        accountUpdateService.updateBalance(accountNumber, -transactionAmount);
 
                         transactionRequest.setStatus_id(2);
                         transactionRequest.setApproved_by(employee_id);
@@ -263,7 +263,7 @@ public class ProcessTransactionController {
 
                         transactionService.save(transaction1);
 
-                        accountUpdateService.updateBalance(accountNumber, transactionAmount);
+                        accountUpdateService.updateBalance(accountNumber, -transactionAmount);
 
                         transactionRequest.setStatus_id(2);
                         transactionRequest.setApproved_by(employee_id);
