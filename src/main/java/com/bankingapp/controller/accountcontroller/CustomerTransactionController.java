@@ -239,7 +239,10 @@ public class CustomerTransactionController {
 
 
     @RequestMapping("/issueCashiersCheck")
-    public TransactionResponse issueCashiersCheck(@RequestParam("account_no") int account_no, @RequestParam("amount") String amount, @RequestParam("beneficiary") String beneficiary_name)
+    public TransactionResponse issueCashiersCheck(@RequestParam("account_no") int account_no,
+                                                  @RequestParam("amount") String amount,
+                                                  @RequestParam("beneficiary") String beneficiary_name,
+                                                  @RequestParam("customer_id") int customer_id)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
@@ -281,7 +284,7 @@ public class CustomerTransactionController {
             transactionRequest.setFrom_account(account_no);
             transactionRequest.setTo_account(account_no);
 
-            transactionRequest.setCreated_by(account_no);
+            transactionRequest.setCreated_by(customer_id);
             transactionRequest.setStatus_id(1);
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
