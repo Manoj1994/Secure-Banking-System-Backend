@@ -254,7 +254,7 @@ public class EmployeeRequestController {
                 }
                 return transactionResponse;
 
-            } else if(request.getRequest_type().equals("Create DebitCard")) {
+            } else if(request.getRequest_type().equals("Create Debit Card")) {
 
                 try {
                     int customer_id = request.getRequesterId();
@@ -283,7 +283,7 @@ public class EmployeeRequestController {
 
                 return transactionResponse;
 
-            } else if(request.getRequest_type().equals("Create CreditCard")) {
+            } else if(request.getRequest_type().equals("Create Credit Card")) {
 
                 try {
                     int customer_id = request.getRequesterId();
