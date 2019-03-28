@@ -15,7 +15,10 @@ public class CreditCard {
     private int account_no;
 
     @Column(name = "card_limit")
-    private int card_limit;
+    private Double card_limit;
+
+    @Column(name = "statement_balance")
+    private Double statement_balance;
 
     public long getCard_no() {
         return card_no;
@@ -33,11 +36,18 @@ public class CreditCard {
         this.account_no = account_no;
     }
 
-    public int getCard_limit() {
+    public Double getCard_limit() {
         return card_limit;
     }
 
-    public void setCard_limit(int card_limit) {
+    public void setCard_limit(Double card_limit) {
         this.card_limit = card_limit;
+    }
+
+    public Double getStatement_balance() {
+        return statement_balance;
+    }
+    public void setStatement_balance(Double statement_balance) {
+        this.statement_balance = statement_balance;
     }
 }
