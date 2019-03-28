@@ -295,7 +295,7 @@ public class EmployeeRequestController {
 
                     if(status) {
                         transactionResponse.setSuccess(true);
-                        transactionResponse.setMessage("Request is successful, Created new Debit Card");
+                        transactionResponse.setMessage("Request is successful, Created new Credit Card");
                         request.setStatus("Processed");
                         requestService.save(request);
                     } else {

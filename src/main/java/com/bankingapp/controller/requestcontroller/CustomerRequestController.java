@@ -154,8 +154,8 @@ public class CustomerRequestController {
     }
 
     @RequestMapping(value = "/createNewCard", method = RequestMethod.GET)
-    public TransactionResponse customerCreateNewCard(@RequestParam("account_id") int account_id,
-                                                     @RequestParam("type") String type,
+    public TransactionResponse customerCreateNewCard(@RequestParam("accountNo") int account_id,
+                                                     @RequestParam("type") int type,
                                                      @RequestParam("customer_id") int customer_id) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
@@ -165,9 +165,9 @@ public class CustomerRequestController {
             request.setRequesterId(customer_id);
             request.setRequested_value(String.valueOf(account_id));
 
-            if (type.equals("Debit")) {
+            if (type == 1) {
                 request.setRequest_type("Create Debit Card");
-            } else if (type.equals("Credit")) {
+            } else if (type == 2) {
                 request.setRequest_type("Create Credit Card");
             } else {
 
