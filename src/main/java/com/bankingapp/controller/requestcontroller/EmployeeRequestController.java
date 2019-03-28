@@ -59,6 +59,8 @@ public class EmployeeRequestController {
 
     private int routing_no = 2563;
 
+    private final Double defaultCardLImit = 1000.0;
+
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
     public List<Request> gerRequests() {
 
@@ -204,7 +206,7 @@ public class EmployeeRequestController {
                 return transactionResponse;
 
 
-            } else if(request.getRequest_type().equals("Delete DebitCard")) {
+            } else if(request.getRequest_type().equals("Delete Debit Card")) {
 
                 try {
 
@@ -229,7 +231,7 @@ public class EmployeeRequestController {
                 }
                 return transactionResponse;
 
-            } else if(request.getRequest_type().equals("Delete CreditCard")) {
+            } else if(request.getRequest_type().equals("Delete Credit Card")) {
 
                 try {
 
@@ -291,6 +293,8 @@ public class EmployeeRequestController {
 
                     CreditCard creditCard = new CreditCard();
                     creditCard.setAccount_no(account_no);
+                    creditCard.setCard_limit(defaultCardLImit);
+                    creditCard.setStatement_balance(0.0);
                     boolean status = creditCardService.addNewCreditCard(creditCard);
 
                     if(status) {
