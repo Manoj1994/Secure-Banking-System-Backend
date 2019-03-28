@@ -1,8 +1,6 @@
 package com.bankingapp.controller.requestcontroller;
 
-import com.bankingapp.model.account.Account;
-import com.bankingapp.model.account.Customer;
-import com.bankingapp.model.account.ObjectCompressor;
+import com.bankingapp.model.account.*;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.CreditCardService;
@@ -59,6 +57,8 @@ public class EmployeeRequestController {
 
     private final Double defaultCheckingInterest = 5.0;
 
+    private int routing_no = 2563;
+
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
     public List<Request> gerRequests() {
 
@@ -78,8 +78,11 @@ public class EmployeeRequestController {
     @RequestMapping(value = "/handleRequest", method = RequestMethod.GET)
     public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") boolean action) {
 
-        Request request = requestService.getByID(request_id);
         TransactionResponse transactionResponse = new TransactionResponse();
+        Request request = null;
+
+        try {
+            request = requestService.getByID(request_id);
 
         if(!action) {
             request.setStatus("Declined");
@@ -89,17 +92,19 @@ public class EmployeeRequestController {
             if(request.getRequest_type().equals("Update Customer")) {
                 try {
                     Customer customer = (Customer) objectCompressor.fromString(request.getRequested_value());
-                    System.out.println(customer);
+                    boolean status = customerService.save(customer);
 
-                    boolean requestStatus = customerService.save(customer);
-
-                    request.setStatus("Processed");
-                    requestService.save(request);
-
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new savings account");
+                        request.setStatus("Processed");
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
                 } catch(Exception e) {
-
                 }
-
             } else if(request.getRequest_type().equals("Update Employee")) {
 
             } else if(request.getRequest_type().equals("Create Savings Account")) {
@@ -109,14 +114,19 @@ public class EmployeeRequestController {
                     Account account = new Account();
                     account.setAccount_type(1);
                     account.setUser_id(customer_id);
+                    account.setRouting_no(routing_no);
                     account.setBalance(defaultSavingsBalance);
                     account.setInterest(defaultSavingsInterest);
+
+                    System.out.println(account);
 
                     boolean status = customerAccountService.save(account);
 
                     if(status) {
                         transactionResponse.setSuccess(true);
                         transactionResponse.setMessage("Request is successful, Created new savings account");
+                        request.setStatus("Processed");
+                        requestService.save(request);
                     } else {
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Request is unsuccessful");
@@ -137,6 +147,7 @@ public class EmployeeRequestController {
                     Account account = new Account();
                     account.setAccount_type(2);
                     account.setUser_id(customer_id);
+                    account.setRouting_no(routing_no);
                     account.setBalance(defaultCheckingBalance);
                     account.setInterest(defaultCheckingInterest);
 
@@ -145,6 +156,8 @@ public class EmployeeRequestController {
                     if(status) {
                         transactionResponse.setSuccess(true);
                         transactionResponse.setMessage("Request is successful, Created new checking account");
+                        request.setStatus("Processed");
+                        requestService.save(request);
                     } else {
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Request is unsuccessful");
@@ -170,6 +183,8 @@ public class EmployeeRequestController {
                     if(status) {
                         transactionResponse.setSuccess(true);
                         transactionResponse.setMessage("Request is successful, deleted debit card");
+                        request.setStatus("Processed");
+                        requestService.save(request);
                     } else {
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Request is unsuccessful");
@@ -185,12 +200,94 @@ public class EmployeeRequestController {
 
             } else if(request.getRequest_type().equals("Delete CreditCard")) {
 
+                try {
+
+                    int card_no = Integer.parseInt(request.getRequested_value());
+                    boolean status = creditCardService.delete(card_no);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, deleted credit card");
+                        request.setStatus("Processed");
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+                return transactionResponse;
+
             } else if(request.getRequest_type().equals("Create DebitCard")) {
+
+                try {
+                    int customer_id = request.getRequesterId();
+                    int account_no = Integer.parseInt(request.getRequested_value());
+
+                    DebitCard debitCard = new DebitCard();
+                    debitCard.setAccount_no(account_no);
+                    boolean status = debitCardService.addNewDebitCard(debitCard);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new Debit Card");
+                        request.setStatus("Processed");
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+
+                return transactionResponse;
 
             } else if(request.getRequest_type().equals("Create CreditCard")) {
 
+                try {
+                    int customer_id = request.getRequesterId();
+                    int account_no = Integer.parseInt(request.getRequested_value());
+
+                    CreditCard creditCard = new CreditCard();
+                    creditCard.setAccount_no(account_no);
+                    boolean status = creditCardService.addNewCreditCard(creditCard);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new Debit Card");
+                        request.setStatus("Processed");
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+
+                return transactionResponse;
+
             }
 
+            }
+        } catch (Exception e) {
+
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Request with given id didn't exist");
         }
 
         return transactionResponse;

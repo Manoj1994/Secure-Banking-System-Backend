@@ -20,7 +20,7 @@ public class CreditCardService {
     CreditCardRepository creditCardRepository;
 
 
-    public Boolean addNewDebitCard(CreditCard creditCard) {
+    public Boolean addNewCreditCard(CreditCard creditCard) {
 
         try {
             creditCardRepository.save(creditCard);

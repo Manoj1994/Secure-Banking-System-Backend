@@ -4,6 +4,7 @@ import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.account.ObjectCompressor;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.requestservice.RequestService;
@@ -110,14 +111,14 @@ public class CustomerRequestController {
         }catch(Exception e){
 
             transactionResponse.setSuccess(false);
-            transactionResponse.setMessage("Sorry! Your request has." + " ran into Exception!");
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
         return transactionResponse;
     }
 
     @RequestMapping(value = "/createNewAccount", method = RequestMethod.GET)
-    public TransactionResponse customerCreateNewAccount(@RequestParam("customer_id") int user_id,
-                                                          @RequestParam("type") String type) {
+    public TransactionResponse customerCreateNewAccount(@RequestParam("customerId") int user_id,
+                                                        @RequestParam("type") String type) {
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
             Request request = new Request();
@@ -128,28 +129,41 @@ public class CustomerRequestController {
             } else if (type.equals("Checking")) {
                 request.setRequest_type("Create Checking Account");
             }
-            request.setRequested_value("Savings");
+            request.setRequested_value(String.valueOf(user_id));
             request.setDescription("Create Account");
             request.setStatus("Pending");
             request.setApproverId(admin);
 
-            transactionResponse.setSuccess(true);
-            transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            if (!requestService.add_new_request(request)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your request is not valid!");
+                return transactionResponse;
+            }
+            else{
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            }
 
             return transactionResponse;
-        } catch(Exception e) {
 
+        } catch(Exception e) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
         return transactionResponse;
     }
 
     @RequestMapping(value = "/createNewCard", method = RequestMethod.GET)
-    public TransactionResponse customerCreateNewCard(@RequestParam("customer_id") int user_id,
-                                                        @RequestParam("type") String type) {
+    public TransactionResponse customerCreateNewCard(@RequestParam("account_id") int account_id,
+                                                     @RequestParam("type") String type,
+                                                     @RequestParam("customer_id") int customer_id) {
+
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
+
             Request request = new Request();
-            request.setRequesterId(user_id);
+            request.setRequesterId(customer_id);
+            request.setRequested_value(String.valueOf(account_id));
 
             if (type.equals("Debit")) {
                 request.setRequest_type("Create Debit Card");
@@ -162,8 +176,7 @@ public class CustomerRequestController {
                 return transactionResponse;
             }
 
-            request.setRequested_value("Savings");
-            request.setDescription("Create Account");
+            request.setDescription("Create New Card");
             request.setStatus("Pending");
             request.setApproverId(admin);
 
@@ -171,37 +184,67 @@ public class CustomerRequestController {
             transactionResponse.setMessage("The request was successfully added to list of Pending requests");
 
             return transactionResponse;
-        } catch(Exception e) {
 
+        } catch(Exception e) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
         return transactionResponse;
     }
 
     @RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
-    public TransactionResponse deleteAccountRequest(@RequestParam("account_id") int account_id) {
+    public TransactionResponse deleteAccountRequest(@RequestParam("account_id") int account_id,
+                                                    @RequestParam("user_id") int user_id) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
-
         try {
+            Request request = new Request();
+            request.setRequesterId(user_id);
+            request.setRequested_value(String.valueOf(account_id));
 
+            request.setRequest_type("Delete Account");
+
+            if (!requestService.add_new_request(request)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your request is not valid!");
+                return transactionResponse;
+            }
+            else{
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            }
         } catch (Exception e) {
-
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
-
         return transactionResponse;
     }
 
     @RequestMapping(value = "/deleteCard", method = RequestMethod.GET)
-    public TransactionResponse deleteCardRequest(@RequestParam("card_id") int card_id) {
-
+    public TransactionResponse deleteCardRequest(@RequestParam("card_id") int card_id,
+                                                 @RequestParam("user_id") int user_id) {
         TransactionResponse transactionResponse = new TransactionResponse();
-
         try {
 
+            Request request = new Request();
+            request.setRequesterId(user_id);
+            request.setRequested_value(String.valueOf(card_id));
+
+            request.setRequest_type("Delete Card");
+
+            if (!requestService.add_new_request(request)) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your request is not valid!");
+                return transactionResponse;
+            }
+            else{
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("The request was successfully added to list of Pending requests");
+            }
         } catch (Exception e) {
-
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
-
         return transactionResponse;
     }
 }

@@ -95,7 +95,7 @@ public class CustomerAccountService {
         boolean status = false;
         try {
             accountRepository.save(account);
-            return status;
+            return true;
         } catch(Exception e) {
 
         }
