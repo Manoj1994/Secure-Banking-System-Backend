@@ -193,14 +193,14 @@ public class CustomerRequestController {
     }
 
     @RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
-    public TransactionResponse deleteAccountRequest(@RequestParam("account_id") int account_id,
-                                                    @RequestParam("user_id") int user_id) {
+    public TransactionResponse deleteAccountRequest(@RequestParam("accountNo") int accountNo,
+                                                    @RequestParam("requester_id") int user_id) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
             Request request = new Request();
             request.setRequesterId(user_id);
-            request.setRequested_value(String.valueOf(account_id));
+            request.setRequested_value(String.valueOf(accountNo));
 
             request.setRequest_type("Delete Account");
 

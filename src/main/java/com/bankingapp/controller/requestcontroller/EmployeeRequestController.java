@@ -141,6 +141,35 @@ public class EmployeeRequestController {
                 }
                 return transactionResponse;
 
+            } else if(request.getRequest_type().equals("Delete Account")) {
+
+                try {
+                    int customer_id = request.getRequesterId();
+                    int account_id = Integer.parseInt(request.getRequested_value());
+
+                    boolean status = customerAccountService.delete(account_id);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new checking account");
+                        request.setStatus("Processed");
+                        request.setApproverId(employee_id);
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+
+                    return transactionResponse;
+
+                } catch(Exception e) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request ran into exception");
+                }
+
+                return transactionResponse;
+
+
             } else if(request.getRequest_type().equals("Create Checking Account")) {
 
                 try {

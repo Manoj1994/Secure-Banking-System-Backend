@@ -80,6 +80,14 @@ public class CustomerAccountService {
 
     }
 
+    public Account getAccount(int account_no) {
+        String sql = "SELECT d FROM "+ Account.class.getName() +" d where d.account_no = :account_no";
+
+        Query query = entityManager.createQuery(sql, Account.class);
+        query.setParameter("account_no", account_no);
+        return (Account)query.getSingleResult();
+    }
+
     public String getEmailID(Integer userID)
     {
         String sql = "SELECT b from "+ Customer.class.getName() + " b where b.id= :id";
@@ -95,6 +103,19 @@ public class CustomerAccountService {
         boolean status = false;
         try {
             accountRepository.save(account);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return status;
+    }
+
+    public boolean delete(int account_no) {
+
+        boolean status = false;
+        try {
+            Account account = getAccount(account_no);
+            accountRepository.delete(account);
             return true;
         } catch(Exception e) {
 
