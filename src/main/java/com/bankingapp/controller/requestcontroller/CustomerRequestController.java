@@ -231,8 +231,9 @@ public class CustomerRequestController {
             Request request = new Request();
             request.setRequesterId(user_id);
             request.setRequested_value(String.valueOf(card_id));
-
+            request.setStatus("Pending");
             request.setRequest_type("Delete Card");
+            request.setDescription("Customer requested to delete the card");
 
             if (!requestService.add_new_request(request)) {
                 transactionResponse.setSuccess(false);

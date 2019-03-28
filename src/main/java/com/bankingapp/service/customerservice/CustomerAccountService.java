@@ -115,6 +115,7 @@ public class CustomerAccountService {
         boolean status = false;
         try {
             Account account = getAccount(account_no);
+            System.out.println(account);
             accountRepository.delete(account);
             return true;
         } catch(Exception e) {

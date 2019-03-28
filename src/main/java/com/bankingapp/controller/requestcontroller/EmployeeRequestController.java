@@ -148,10 +148,11 @@ public class EmployeeRequestController {
                     int account_id = Integer.parseInt(request.getRequested_value());
 
                     boolean status = customerAccountService.delete(account_id);
+                    System.out.println("Manoj");
 
                     if(status) {
                         transactionResponse.setSuccess(true);
-                        transactionResponse.setMessage("Request is successful, Created new checking account");
+                        transactionResponse.setMessage("Request is successful, Deleted the account");
                         request.setStatus("Processed");
                         request.setApproverId(employee_id);
                         requestService.save(request);
