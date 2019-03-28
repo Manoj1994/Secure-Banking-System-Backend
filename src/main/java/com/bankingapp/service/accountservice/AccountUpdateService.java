@@ -59,22 +59,6 @@ public class AccountUpdateService {
         return status;
     }
 
-    public boolean updateMoney(int accountNumber, Double amount) {
-
-        try {
-
-            String sql = "update " + Account.class.getName() + " a set a.balance = :balance where a.account_no = :account_no";
-            Query query = entityManager.createQuery(sql);
-            query.setParameter("account_no", accountNumber);
-            query.setParameter("balance", amount);
-            return true;
-
-        } catch(Exception e) {
-
-        }
-        return false;
-    }
-
     public boolean updateBalance(int account_no, Double amount) {
 
         try {

@@ -234,7 +234,7 @@ public class EmployeeController {
 
                 transactionService.save(transaction1);
 
-                accountUpdateService.updateMoney(payerAccountNumber, -doubleAmount);
+                accountUpdateService.updateBalance(payerAccountNumber, -doubleAmount);
 
 
                 // Credit Transaction
@@ -253,7 +253,7 @@ public class EmployeeController {
                 transaction2.setTransaction_amount(doubleAmount);
 
                 transactionService.save(transaction2);
-                accountUpdateService.updateMoney(payeeAccountNumber, doubleAmount);
+                accountUpdateService.updateBalance(payeeAccountNumber, doubleAmount);
 
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Your transaction is successful");

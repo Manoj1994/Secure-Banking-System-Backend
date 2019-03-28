@@ -195,7 +195,7 @@ public class ProcessTransactionController {
                 transaction2.setTransaction_amount(transactionAmount);
 
                 transactionService.save(transaction2);
-                accountUpdateService.updateMoney(payeeAccountNumber, transactionAmount);
+                accountUpdateService.updateBalance(payeeAccountNumber, transactionAmount);
 
                 transactionRequest.setStatus_id(2);
                 transactionRequest.setApproved_by(employee_id);
