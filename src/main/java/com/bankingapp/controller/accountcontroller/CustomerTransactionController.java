@@ -47,7 +47,8 @@ public class CustomerTransactionController {
     public TransactionResponse transferMoneyToSavingsAccount(@RequestParam("from_account_no") int from_account_no,
                                                              @RequestParam("to_account_no") int to_account_no,
                                                              @RequestParam("amount") String amount,
-                                                             @RequestParam("routing_no") int routing_no)
+                                                             @RequestParam("routing_no") int routing_no,
+                                                             @RequestParam("customer_id") int customer_id)
     {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
@@ -114,7 +115,7 @@ public class CustomerTransactionController {
             transactionRequest.setFrom_account(from_account_no);
             transactionRequest.setTo_account(to_account_no);
 
-            transactionRequest.setCreated_by(from_account_no);
+            transactionRequest.setCreated_by(customer_id);
             transactionRequest.setStatus_id(1);
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
