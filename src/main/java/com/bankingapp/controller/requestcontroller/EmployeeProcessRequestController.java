@@ -1,12 +1,14 @@
 package com.bankingapp.controller.requestcontroller;
 
 import com.bankingapp.model.account.*;
+import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.CreditCardService;
 import com.bankingapp.service.accountservice.DebitCardService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
+import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.requestservice.RequestService;
 import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class EmployeeProcessRequestController {
 
     @Autowired
     RequestUtils requestUtils;
+
+    @Autowired
+    EmployeeService employeeService;
 
     private final int Processed = 2;
 
@@ -112,7 +117,30 @@ public class EmployeeProcessRequestController {
                     }
                 } catch(Exception e) {
                 }
+
+                return transactionResponse;
             } else if(request.getRequest_type().equals("Update Employee")) {
+
+                try {
+                    Employee employee = (Employee) objectCompressor.fromString(request.getRequested_value());
+                    boolean status = employeeService.save(employee);
+
+                    if(status) {
+                        transactionResponse.setSuccess(true);
+                        transactionResponse.setMessage("Request is successful, Created new savings account");
+                        request.setStatus("Processed");
+                        requestService.save(request);
+                    } else {
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Request is unsuccessful");
+                    }
+                } catch(Exception e) {
+
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Request is unsuccessful");
+                }
+
+                return transactionResponse;
 
             } else if(request.getRequest_type().equals("Create Savings Account")) {
 

@@ -57,6 +57,7 @@ public class EmployeeRequestController {
 
                 return transactionResponse;
             }
+
             String employeeString = objectCompressor.toString(employee);
             Request request=new Request();
             request.setRequesterId(employee.getEmployee_id());

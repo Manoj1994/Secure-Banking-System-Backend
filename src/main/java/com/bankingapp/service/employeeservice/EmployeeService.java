@@ -2,6 +2,7 @@ package com.bankingapp.service.employeeservice;
 
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.employee.Employee;
+import com.bankingapp.repository.accountrepository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class EmployeeService {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     public List<Employee> getEmployeeAccounts() {
         String sql = "SELECT d FROM "+ Employee.class.getName() +" d";
@@ -62,5 +66,17 @@ public class EmployeeService {
             Random rand = new Random();
             return employeeList.get(rand.nextInt(employeeList.size())).getEmployee_id();
         }
+    }
+
+    public boolean save(Employee employee) {
+
+        boolean status = false;
+        try {
+            employeeRepository.save(employee);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return status;
     }
 }
