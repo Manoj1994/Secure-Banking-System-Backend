@@ -39,6 +39,21 @@ public class Customer implements Serializable,Cloneable {
     @Column(name ="created")
     private Timestamp created;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Customer)) return false;
+        Customer customer = (Customer) o;
+        return getUser_id() == customer.getUser_id() &&
+                getUser_type() == customer.getUser_type() &&
+                getName().equals(customer.getName()) &&
+                getGender().equals(customer.getGender()) &&
+                getDob().equals(customer.getDob()) &&
+                getContact().equals(customer.getContact()) &&
+                getEmail().equals(customer.getEmail()) &&
+                getAddress().equals(customer.getAddress());
+    }
+
     public int getUser_id() {
         return user_id;
     }
