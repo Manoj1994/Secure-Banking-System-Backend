@@ -56,7 +56,7 @@ public class AdminController {
                 return transactionResponse;
             }
 
-            boolean status = customerService.save(customer);
+            boolean status = customerService.save(editedCustomer);
 
             if(status) {
 
@@ -76,7 +76,6 @@ public class AdminController {
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
-
         return transactionResponse;
     }
 
