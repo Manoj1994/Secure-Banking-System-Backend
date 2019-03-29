@@ -34,5 +34,10 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.1.2.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-test
+    compile group: 'org.springframework.security', name: 'spring-security-test', version: '5.1.2.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.1.2.RELEASE'
+
 
 }
