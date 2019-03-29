@@ -4,15 +4,20 @@ import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.login.LoginResponse;
 import com.bankingapp.model.login.Role;
 import com.bankingapp.model.login.User;
+import com.bankingapp.security.MyUserDetailsService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.UserService;
 import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import java.net.Authenticator;
+import java.util.Collection;
 
 @CrossOrigin
 @RestController
@@ -34,14 +39,20 @@ public class UserController {
     @Autowired
     LogParameters logParameters;
 
-    @RequestMapping(value = "/api/login", method = RequestMethod.GET)
-    public LoginResponse login(ServletResponse response, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
+    @Autowired
+    MyUserDetailsService userDetailsService;
 
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-        res.setHeader("Access-Control-Max-Age", "3600");
-        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, x-requested-with, Cache-Control");
+    @RequestMapping(value = "/api/login", method = RequestMethod.GET)
+    public LoginResponse login(Authentication authentication, @RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
+
+        //HttpServletResponse res = (HttpServletResponse) response;
+
+//        res.setHeader("Access-Control-Allow-Origin", "*");
+//        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+//        res.setHeader("Access-Control-Max-Age", "3600");
+//        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, x-requested-with, Cache-Control");
+
+        System.out.println(authentication);
         System.out.println("Username = "+userName+" "+"password = "+password);
 
         User user = userService.findByUserNameAndPassword(userName, password);

@@ -1,6 +1,8 @@
 package com.bankingapp.model.login;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "auth_user")
@@ -28,6 +30,18 @@ public class User {
 
     @Column(name = "status")
     private String status;
+
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "auth_user_id"), inverseJoinColumns = @JoinColumn(name = "auth_role_id"))
+//    private Set<Role> roles;
+//
+//    public Set<Role> getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(Set<Role> roles) {
+//        this.roles = roles;
+//    }
 
     public int getAuth_user_id() {
         return auth_user_id;
