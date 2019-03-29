@@ -13,9 +13,12 @@ public class EmailService  {
 
     public void sendOtpMessage(String to, String subject, String message) {
 
+        System.out.println(to+","+subject+","+message);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(to);
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
+
+        javaMailSender.send(simpleMailMessage);
     }
 }
