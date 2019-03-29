@@ -3,7 +3,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Override
@@ -15,9 +15,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(
                 "app/css/**",
-                "/js/**", "/")
+                "app/js/**", "app/js/", "/")
                 .addResourceLocations(
-                        "classpath:/static/app/controllers",
                         "classpath:/static/app/css",
                         "classpath:/static/app/js",
                         "classpath:/static/views",

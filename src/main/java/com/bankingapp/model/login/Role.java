@@ -12,20 +12,9 @@ public class Role implements Serializable {
     @Column(name = "auth_user_id", updatable = false, nullable = false)
     private int auth_user_id;
 
-    @Column(name = "role")
-    private String role;
-
     @Id
     @Column(name = "auth_role_id", updatable = false, nullable = false)
     private int auth_role_id;
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public int getAuth_user_id() {
         return auth_user_id;
@@ -42,4 +31,5 @@ public class Role implements Serializable {
     public void setAuth_role_id(int auth_role_id) {
         this.auth_role_id = auth_role_id;
     }
+
 }
