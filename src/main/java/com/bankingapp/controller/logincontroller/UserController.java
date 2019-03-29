@@ -1,11 +1,7 @@
 package com.bankingapp.controller.logincontroller;
 
 import com.bankingapp.model.LogParameters;
-import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.login.*;
-import com.bankingapp.security.CustomException;
-import com.bankingapp.security.JwtTokenProvider;
-import com.bankingapp.security.MyUserDetailsService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.loginservice.UserService;
@@ -13,20 +9,7 @@ import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import com.bankingapp.utils.CryptographyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Collection;
 
 //@CrossOrigin
 @RestController
@@ -46,15 +29,6 @@ public class UserController {
 
     @Autowired
     LogParameters logParameters;
-
-    @Autowired
-    MyUserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     SessionService sessionService;

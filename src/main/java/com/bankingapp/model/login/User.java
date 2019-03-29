@@ -32,30 +32,6 @@ public class User {
     @Column(name = "status")
     private String status;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "auth_user_id=" + auth_user_id +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", status='" + status + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
-
-    @Transient
-    public List<RoleType> roles;
-
-    public List<RoleType> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<RoleType> roles) {
-        this.roles = roles;
-    }
 //    @ManyToMany(cascade = CascadeType.ALL)
 //    @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "auth_user_id"), inverseJoinColumns = @JoinColumn(name = "auth_role_id"))
 //    private Set<Role> roles;
