@@ -24,20 +24,23 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.2.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '5.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '5.0.0.RELEASE'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.14'
-    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '1.2.0.RELEASE'
-    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '5.0.0.RELEASE'
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
-    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.1.2.RELEASE'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-test
-    compile group: 'org.springframework.security', name: 'spring-security-test', version: '5.1.2.RELEASE'
-    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
-    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.1.2.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.0.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-test', version: '5.0.0.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.0.0.RELEASE'
+    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '5.0.0.RELEASE'
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.1'
+    compile group: 'com.h2database', name: 'h2', scope: 'runtime'
+
+
+
+
+
+
 
 
 }
