@@ -75,6 +75,18 @@ public class SessionService {
         return false;
     }
 
+    public void deleteById(int id) {
+
+        try{
+            Session session = sessionRepository.findById(id);
+            sessionRepository.delete(session);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     public boolean check(String username, String password, String token) {
 
         return true;

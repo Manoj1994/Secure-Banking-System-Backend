@@ -1,5 +1,6 @@
 package com.bankingapp.utils;
 
+import com.bankingapp.model.login.Session;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyFactory;
@@ -72,6 +73,7 @@ public class CryptographyUtil {
         byte[] privateKey = generateKeyPair.getPrivate().getEncoded();
 
         String data = "hi this is Visruth here";
+
 
         byte[] encryptedData = cryptographyUtil.encrypt(publicKey, data.getBytes());
 

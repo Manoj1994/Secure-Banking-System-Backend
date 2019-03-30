@@ -3,11 +3,11 @@ package com.bankingapp.model.login;
 public class Response {
 
     private boolean success;
-    private String msg;
+    private String message;
 
-    public Response(boolean success, String msg) {
+    public Response(boolean success, String message) {
         this.success = success;
-        this.msg = msg;
+        this.message = message;
     }
 
     public boolean isSuccess() {
@@ -18,11 +18,11 @@ public class Response {
         this.success = success;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

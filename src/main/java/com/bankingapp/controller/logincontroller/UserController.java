@@ -12,7 +12,6 @@ import com.bankingapp.utils.CryptographyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-//@CrossOrigin
 @RestController
 public class UserController {
 
@@ -148,11 +147,15 @@ public class UserController {
         return new LoginResponse(false, "Ran into Exception");
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public void logout(@RequestParam(name = "userName") String userName,
-                       @RequestParam(name = "password") String password) {
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public Response logout(@RequestBody LogoutObj obj) {
 
-        //User user = userService.findByUserNameAndPassword(userName, password);
-        // return new Response();
+        try {
+            sessionService.deleteById(obj.getId());
+            return new Response(true, "Logged Out Successfully");
+        } catch(Exception e) {
+
+        }
+        return new Response(true, "Logged Out Successfully");
     }
 }
