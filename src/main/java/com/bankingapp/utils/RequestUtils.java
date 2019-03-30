@@ -13,6 +13,13 @@ public class RequestUtils {
 
     private static final Pattern VALID_MOBILE_NUMBER = Pattern.compile("^(1\\-)?[0-9]{3}\\-?[0-9]{3}\\-?[0-9]{4}$");
 
+    private static Pattern DATE_PATTERN = Pattern.compile(
+            "^\\d{4}-\\d{2}-\\d{2}$");
+
+    public boolean validateDate(String date) {
+        return DATE_PATTERN.matcher(date).matches();
+    }
+
     public boolean validateEmail(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
         return matcher.find();
@@ -23,4 +30,15 @@ public class RequestUtils {
         return matcher.find();
     }
 
+    public Boolean validateGender(String gender) {
+        if(gender.isEmpty()) {
+            return false;
+        } else {
+            if(gender.equals("M") || gender.equals("F")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }

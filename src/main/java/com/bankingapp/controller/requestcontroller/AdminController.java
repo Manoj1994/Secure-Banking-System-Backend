@@ -278,25 +278,65 @@ public class AdminController {
         }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
+
+
+            if(!requestUtils.validateEmail(customer.getEmail())) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Email is not valid! ");
+
+                return transactionResponse;
+            }
+
+            if(customer.getName().length() <= 5) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Name is should be atleast 5 characters long! ");
+
+                return transactionResponse;
+            }
+
+            if(!requestUtils.validateContact(customer.getContact())) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Contact is not valid! ");
+
+                return transactionResponse;
+            }
+
+            if(!requestUtils.validateGender(customer.getGender())) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Gender is not valid, should be in single letter ! ");
+
+                return transactionResponse;
+            }
+
+            if(!requestUtils.validateDate(customer.getDob())) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Date is not valid!");
+
+                return transactionResponse;
+            }
+
             List<Customer> customerList = new ArrayList<>();
             customerList = customerService.getAllCustomers();
+            System.out.println(customerList);
             for(Customer customer1 : customerList) {
                 if(customer.equals(customer1)) {
                     transactionResponse.setSuccess(false);
-                    transactionResponse.setMessage("Sorry! Can't create another Employee with Similar Details!");
+                    transactionResponse.setMessage("Sorry! Can't create another customer with Similar Details!");
                     return transactionResponse;
                 }
             }
             boolean status = customerService.save(customer);
             if(status) {
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Employee Account is created");
+                transactionResponse.setMessage("Customer Account is created");
             } else {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Internal Server Error!");
                 return transactionResponse;
             }
         } catch(Exception e) {
+
+            e.printStackTrace();
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }

@@ -45,8 +45,7 @@ public class Customer implements Serializable,Cloneable {
         if (this == o) return true;
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return getUser_id() == customer.getUser_id() &&
-                getUser_type() == customer.getUser_type() &&
+        return getUser_type() == customer.getUser_type() &&
                 getName().equals(customer.getName()) &&
                 getGender().equals(customer.getGender()) &&
                 getDob().equals(customer.getDob()) &&
