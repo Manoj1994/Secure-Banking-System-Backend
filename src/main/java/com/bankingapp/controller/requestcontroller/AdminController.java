@@ -38,6 +38,11 @@ public class AdminController {
     @Autowired
     AccountDetailsService accountDetailsService;
 
+    @RequestMapping(value = "/getAccount", method = RequestMethod.POST)
+    public Account getAccount(@RequestBody Id id) throws Exception {
+        return accountDetailsService.getAccount(id.getId());
+    }
+
     @RequestMapping(value = "/editCustomerDetails", method = RequestMethod.POST)
     public TransactionResponse changeCustomerDetails(@RequestBody Customer editedCustomer) throws Exception {
 
