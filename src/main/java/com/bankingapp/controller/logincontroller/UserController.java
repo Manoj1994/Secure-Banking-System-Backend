@@ -183,6 +183,12 @@ public class UserController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(loginResponse);
 
+        Cookie cookie1 = new Cookie("website", "javapointers");
+        //set the expiration time
+        //1 hour = 60 seconds x 60 minutes
+        cookie1.setMaxAge(60 * 60);
+        //add the cookie to the  response
+        response.addCookie(cookie1);
         System.out.println(rp);
         return rp;
         //return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);

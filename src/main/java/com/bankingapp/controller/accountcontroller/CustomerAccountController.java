@@ -72,16 +72,16 @@ public class CustomerAccountController {
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
-
-        try {
-            Cookie cookie = WebUtils.getCookie(req, "heroku-nav-data");
-            System.out.println(cookie);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Cookie cookie = WebUtils.getCookie(req, "heroku-nav-data");
+//            System.out.println(cookie);
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
         try {
             for (Cookie c : req.getCookies()) {
-                if (c.getName().equals("name"))
+                if (c.getName().equals("website"))
                     System.out.println(c.getValue());
             }
         } catch(Exception e) {
