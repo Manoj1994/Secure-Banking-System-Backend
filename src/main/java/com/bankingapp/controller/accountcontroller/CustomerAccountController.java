@@ -66,7 +66,9 @@ public class CustomerAccountController {
     SessionService sessionService;
 
     @RequestMapping("/getAccounts")
-    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, HttpServletRequest req, HttpServletResponse resp) throws Exception
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId,
+                                             HttpServletRequest req,
+                                             HttpServletResponse resp) throws Exception
     {
 
         List<AccountResponse> accountResponseList = new ArrayList<>();

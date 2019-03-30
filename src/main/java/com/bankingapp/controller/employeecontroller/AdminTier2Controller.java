@@ -298,11 +298,14 @@ public class AdminTier2Controller {
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+            TransactionRequest transactionRequest = new TransactionRequest();
+
+            //transactionRequest.setFrom_account(account_no)
+
             Transaction transaction1 = new Transaction();
 
             transaction1.setAccount_no(account_no);
             transaction1.setBalance(accountBalanceService.getBalance(account_no));
-            transaction1.setRequest_id(1234);
 
             String debit_description = "Money withdrawed from your account " + account_no;
             transaction1.setDescription(debit_description);
@@ -365,7 +368,6 @@ public class AdminTier2Controller {
 
             transaction1.setAccount_no(account_no);
             transaction1.setBalance(accountBalanceService.getBalance(account_no));
-            transaction1.setRequest_id(1234);
 
             String debit_description = "Money withdrawed from your account " + account_no;
             transaction1.setDescription(debit_description);
