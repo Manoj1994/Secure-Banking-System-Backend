@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -72,10 +73,20 @@ public class CustomerAccountController {
             throw new Exception();
         }
 
-        for (Cookie c : req.getCookies()) {
-            if (c.getName().equals("name"))
-                System.out.println(c.getValue());
+        try {
+            WebUtils.getCookie(req, "name");
+        } catch(Exception e) {
+            e.printStackTrace();
         }
+        try {
+            for (Cookie c : req.getCookies()) {
+                if (c.getName().equals("name"))
+                    System.out.println(c.getValue());
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         try{
 
             List<Account> savingsAccounts = customerAccountService.getAccounts(customerId);
