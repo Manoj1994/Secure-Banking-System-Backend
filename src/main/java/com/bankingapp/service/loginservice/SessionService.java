@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Component
 public class SessionService {
@@ -24,7 +25,8 @@ public class SessionService {
     public boolean createSession(String username,
                                  String password,
                                  int id,
-                                 int role_id) {
+                                 int role_id,
+                                 String access_key) {
 
         try {
 
@@ -36,7 +38,7 @@ public class SessionService {
             session.setAccess_right(role_id);
             session.setId(id);
             session.setTimestamp_created(timestamp);
-            session.setAccess_key(String.valueOf(id));
+            session.setAccess_key(access_key);
             session.setStatus(true);
 
             System.out.println(session);
@@ -75,6 +77,31 @@ public class SessionService {
         return false;
     }
 
+    public boolean checkAcceessKey(int id, String given_access_key) {
+
+        try {
+            String sql = "Select e from " + Session.class.getName() + " e " //
+                    + " Where e.id = :id";
+            Query query = entityManager.createQuery(sql, Session.class);
+            query.setParameter("id", id);
+
+            if(query.getResultList().size()== 1) {
+
+                Session session = (Session) query.getSingleResult();
+                if(session.getAccess_key().equals(given_access_key)) {
+                    return true;
+                }
+                return false;
+            } else {
+                return false;
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void deleteById(int id) {
 
         try{
@@ -92,6 +119,26 @@ public class SessionService {
                 return true;
             } else {
                 return false;
+            }
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
+
+    public boolean deleteInvalidRows() {
+        try {
+            List<Session> sessionList = sessionRepository.findAll();
+
+            for(Session session : sessionList) {
+                Timestamp created = session.getTimestamp_created();
+                Timestamp current = new Timestamp(System.currentTimeMillis());
+
+                long seconds = (current.getTime() - created.getTime())/1000;
+
+                if((seconds % 3600) % 60 >= 1) {
+                    sessionRepository.delete(session);
+                }
             }
         } catch(Exception e) {
 

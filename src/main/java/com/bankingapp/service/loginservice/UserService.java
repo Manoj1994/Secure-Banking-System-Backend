@@ -32,8 +32,6 @@ public class UserService {
 
             User user = (User) query.getSingleResult();
 
-
-
             return (User) query.getSingleResult();
         } catch (NoResultException e) {
 

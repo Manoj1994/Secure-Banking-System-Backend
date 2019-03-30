@@ -1,5 +1,7 @@
 package com.bankingapp.application;
 
+import com.bankingapp.model.login.ThreadForDeletingRow;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -14,7 +16,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
 public class BackendApplication {
 
+    @Autowired
+    ThreadForDeletingRow threadForDeletingRow;
+
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(BackendApplication.class, args);
+        ThreadForDeletingRow thread = (ThreadForDeletingRow) applicationContext.getBean("threadForDeletingRow");
+        thread.setName("Clean bad logins");
+        thread.start();
     }
 }

@@ -65,11 +65,15 @@ public class CustomerAccountController {
     SessionService sessionService;
 
     @RequestMapping("/getAccounts")
-    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, HttpServletRequest req) throws Exception
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, String access_key, HttpServletRequest req) throws Exception
     {
 
         List<AccountResponse> accountResponseList = new ArrayList<>();
         if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
+
+        if(!sessionService.checkAcceessKey(customerId, access_key)) {
             throw new Exception();
         }
 //

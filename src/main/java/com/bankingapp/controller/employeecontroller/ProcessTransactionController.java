@@ -87,7 +87,9 @@ public class ProcessTransactionController {
     }
 
     @RequestMapping("/handleTransaction")
-    public TransactionResponse getRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) throws Exception{
+    public TransactionResponse getRequests(@RequestParam("request_id") int request_id,
+                                           @RequestParam("employee_id") int employee_id,
+                                           @RequestParam("action") int action) throws Exception{
 
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();

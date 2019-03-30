@@ -1,6 +1,6 @@
 package com.bankingapp.controller.logincontroller;
-
 import com.bankingapp.model.LogParameters;
+import com.bankingapp.model.account.AccountResponse;
 import com.bankingapp.model.login.*;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.SessionService;
@@ -9,14 +9,16 @@ import com.bankingapp.service.otpservice.EmailService;
 import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import com.bankingapp.utils.CryptographyUtil;
+import com.bankingapp.utils.LoginUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -44,6 +46,9 @@ public class UserController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    LoginUtils loginUtils;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Response login(HttpSession session, @RequestBody LoginCredentials loginCredentials) {
@@ -136,11 +141,15 @@ public class UserController {
                             response.addCookie(new Cookie("foo", "bar"));
                             response.addCookie(new Cookie("heroku-nav-data", "manoj"));
 
+                            String saltString = loginUtils.getSaltString();
+
+                            System.out.println(saltString);
                             sessionService.createSession(
                                     otpLoginCredentials.getUserName(),
                                     otpLoginCredentials.getPassword(),
                                     user.getAuth_user_id(),
-                                    role.getAuth_role_id());
+                                    role.getAuth_role_id(),
+                                    loginUtils.getSaltString());
 
                             adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER+" at "+ new Timestamp((System.currentTimeMillis())));
 
@@ -172,7 +181,6 @@ public class UserController {
             loginResponse = new LoginResponse(false, "Ran into Exception");
         }
 
-
         HttpHeaders headers1 = new HttpHeaders();
         headers1.add("Set-Cookie","key="+"value");
 
@@ -199,8 +207,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public Response logout(HttpSession httpSession, @RequestBody LogoutObj obj) {
+    public Response logout(HttpSession httpSession, @RequestBody LogoutObj obj) throws Exception{
 
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try {
             sessionService.deleteById(obj.getId());
             httpSession.removeAttribute("id");
