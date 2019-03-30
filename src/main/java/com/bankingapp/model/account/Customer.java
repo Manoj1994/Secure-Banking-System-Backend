@@ -2,6 +2,7 @@ package com.bankingapp.model.account;
 
 
 import javax.persistence.*;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;

@@ -1,21 +1,25 @@
 package com.bankingapp.controller.accountcontroller;
 
 import com.bankingapp.configuration.AppConfig;
+import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.request.TransactionRequest;
+import com.bankingapp.model.transaction.EmailTransactionParams;
+import com.bankingapp.model.transaction.OtpEmailTransactionParams;
 import com.bankingapp.model.transaction.TransactionParameters;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
+import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
+import com.bankingapp.service.otpservice.EmailService;
+import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.utils.AmountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 
 @RestController
@@ -46,6 +50,18 @@ public class CustomerTransactionController {
     @Autowired
     TransactionParameters transactionParameters;
 
+    @Autowired
+    SessionService sessionService;
+
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    OtpService otpService;
+
     private int admin = 3;
 
     @Autowired
@@ -57,7 +73,11 @@ public class CustomerTransactionController {
                                                              @RequestParam("amount") String amount,
                                                              @RequestParam("routing_no") int routing_no,
                                                              @RequestParam("customer_id") int customer_id)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
@@ -173,13 +193,19 @@ public class CustomerTransactionController {
 
     }
 
-    @RequestMapping("/TransferMoneyFromAccountViaEmail")
-    public TransactionResponse transferMoneyToSavingsAccountViaEmail(@RequestParam("from_account_no") int from_account_no, @RequestParam("email") int to_account_no, @RequestParam("amount") String amount)
-    {
-        TransactionResponse transactionResponse = new TransactionResponse();
-        try{
+    @RequestMapping(value = "/TransferMoneyFromAccountViaEmail", method = RequestMethod.POST)
+    public TransactionResponse transferMoneyToSavingsAccountViaEmail1(@RequestBody EmailTransactionParams emailTransactionParams)
+            throws Exception {
 
-            if (!accountCheckService.checkAccountExists(from_account_no)) {
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
+
+        TransactionResponse transactionResponse = new TransactionResponse();
+
+        try {
+
+            if (!accountCheckService.checkAccountExists(emailTransactionParams.getCustomer_id())) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -187,7 +213,39 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExists(to_account_no)) {
+            Customer customer = customerService.getCustomer(emailTransactionParams.getCustomer_id());
+            int otp = otpService.generateOTP(String.valueOf(customer.getUser_id()));
+            String message = "OTP: "+otp;
+            emailService.sendOtpMessage(customer.getEmail(), "Secure Banking System Login OTP ", message);
+        } catch(Exception e) {
+
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                    " Ran into Exception!");
+        }
+        return transactionResponse;
+    }
+
+    @RequestMapping(value = "/TransferMoneyFromAccountViaEmailOtp", method = RequestMethod.POST)
+    public TransactionResponse transferMoneyToSavingsAccountViaEmail2(
+            @RequestBody OtpEmailTransactionParams otpEmailTransactionParams)
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try{
+
+            if (!accountCheckService.checkAccountExists(otpEmailTransactionParams.getAccount_no())) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                        " Invalid payer account chosen!");
+                return transactionResponse;
+            }
+
+            if (!accountCheckService.checkAccountExists(otpEmailTransactionParams.getAccount_no())) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -195,7 +253,7 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
-            if (!amountUtils.isValidAmount(amount)) {
+            if (!amountUtils.isValidAmount(otpEmailTransactionParams.getAmount().toString())) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -203,8 +261,8 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
-            Double doubleAmount = Double.parseDouble(amount);
-            Double balance = accountBalanceService.getBalance(from_account_no);
+            Double doubleAmount = otpEmailTransactionParams.getAmount();
+            Double balance = accountBalanceService.getBalance(otpEmailTransactionParams.getAccount_no());
 
             if (doubleAmount > balance) {
 
@@ -221,10 +279,10 @@ public class CustomerTransactionController {
 
             TransactionRequest transactionRequest = new TransactionRequest();
 
-            transactionRequest.setFrom_account(from_account_no);
-            transactionRequest.setTo_account(to_account_no);
+            transactionRequest.setFrom_account(otpEmailTransactionParams.getAccount_no());
+            transactionRequest.setTo_account(otpEmailTransactionParams.getAccount_no());
 
-            transactionRequest.setCreated_by(from_account_no);
+            transactionRequest.setCreated_by(otpEmailTransactionParams.getAccount_no());
             transactionRequest.setStatus_id(1);
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
@@ -252,7 +310,7 @@ public class CustomerTransactionController {
 
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
-                    " Ran into Exceptiom!");
+                    " Ran into Exception!");
         }
 
         return transactionResponse;
@@ -265,7 +323,11 @@ public class CustomerTransactionController {
                                                   @RequestParam("amount") String amount,
                                                   @RequestParam("beneficiary") String beneficiary_name,
                                                   @RequestParam("customer_id") int customer_id)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 

@@ -10,6 +10,7 @@ import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
@@ -25,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/employee")
 public class ProcessTransactionController {
-
 
     @Autowired
     TransactionServiceImpl transactionService;
@@ -54,11 +54,17 @@ public class ProcessTransactionController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    SessionService sessionService;
+
     private static final int admin = 3;
 
     @RequestMapping("/viewTransactions")
-    public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) {
+    public List<TransactionRequest> viewPendingTransactions(@RequestParam("employee_id") int employee_id) throws Exception{
 
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         List<TransactionRequest> transactionRequestList = new ArrayList<>();
         try{
 
@@ -81,8 +87,11 @@ public class ProcessTransactionController {
     }
 
     @RequestMapping("/handleTransaction")
-    public TransactionResponse getRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) {
+    public TransactionResponse getRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) throws Exception{
 
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
 
@@ -427,7 +436,11 @@ public class ProcessTransactionController {
     public TransactionResponse DepositMoneyToSavingsAccount(@RequestParam("account_no") int account_no,
                                                             @RequestParam("amount") String amount,
                                                             @RequestParam("employee_id") int employee_id)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
@@ -498,7 +511,11 @@ public class ProcessTransactionController {
     public TransactionResponse WithDrawtMoneyFromSavingsAccount(@RequestParam("account_no") int account_no,
                                                             @RequestParam("amount") String amount,
                                                             @RequestParam("employee_id") int employee_id)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 

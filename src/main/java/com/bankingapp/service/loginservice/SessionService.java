@@ -86,6 +86,18 @@ public class SessionService {
 
     }
 
+    public boolean checkAnyusersExists() {
+        try {
+            if(sessionRepository.findAll().size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
 
     public boolean check(String username, String password, String token) {
 

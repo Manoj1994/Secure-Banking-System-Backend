@@ -3,6 +3,7 @@ package com.bankingapp.model.employee;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity
 @Table(name = "employee")
@@ -54,6 +55,26 @@ public class Employee implements Serializable {
                 ", address='" + address + '\'' +
                 ", created=" + created +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employee)) return false;
+        Employee employee = (Employee) o;
+        return getAge() == employee.getAge() &&
+                getTier_level() == employee.getTier_level() &&
+                getDesignation_id() == employee.getDesignation_id() &&
+                Objects.equals(getEmployee_name(), employee.getEmployee_name()) &&
+                Objects.equals(getGender(), employee.getGender()) &&
+                Objects.equals(getContact_no(), employee.getContact_no()) &&
+                Objects.equals(getEmail_id(), employee.getEmail_id()) &&
+                Objects.equals(getAddress(), employee.getAddress());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEmployee_name(), getGender(), getAge(), getTier_level(), getDesignation_id(), getContact_no(), getEmail_id(), getAddress());
     }
 
     public int getEmployee_id() {

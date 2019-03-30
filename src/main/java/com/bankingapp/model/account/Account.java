@@ -1,6 +1,7 @@
 package com.bankingapp.model.account;
 
 import javax.persistence.*;
+import javax.persistence.Id;
 import java.sql.Timestamp;
 
 @Entity

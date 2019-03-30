@@ -1,5 +1,6 @@
 package com.bankingapp.utils;
 
+import com.bankingapp.model.login.Response;
 import com.bankingapp.model.login.Session;
 import org.springframework.stereotype.Component;
 
@@ -74,8 +75,10 @@ public class CryptographyUtil {
 
         String data = "hi this is Visruth here";
 
+        Response resp = new Response(true, "Logged Out Successfully");
 
-        byte[] encryptedData = cryptographyUtil.encrypt(publicKey, data.getBytes());
+
+        byte[] encryptedData = cryptographyUtil.encrypt(publicKey, resp.toString().getBytes());
 
         byte[] decryptedData = cryptographyUtil.decrypt(privateKey, encryptedData);
 

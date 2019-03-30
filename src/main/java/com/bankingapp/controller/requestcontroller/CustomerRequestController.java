@@ -7,6 +7,7 @@ import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.requestservice.RequestService;
 import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class CustomerRequestController {
     @Autowired
     RequestUtils requestUtils;
 
+    @Autowired
+    SessionService sessionService;
+
     private int admin = 3;
 
     @RequestMapping(value = "/customerEditRequest", method = RequestMethod.GET)
@@ -42,7 +46,11 @@ public class CustomerRequestController {
                                                           @RequestParam("contact") String contact,
                                                           @RequestParam("address") String address,
                                                           @RequestParam("email") String email)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
 
         Customer customer = customerService.getCustomer(user_id);
@@ -118,7 +126,11 @@ public class CustomerRequestController {
 
     @RequestMapping(value = "/createNewAccount", method = RequestMethod.GET)
     public TransactionResponse customerCreateNewAccount(@RequestParam("customer_id") int user_id,
-                                                        @RequestParam("type") int type) {
+                                                        @RequestParam("type") int type) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
             Request request = new Request();
@@ -156,8 +168,11 @@ public class CustomerRequestController {
     @RequestMapping(value = "/createNewCard", method = RequestMethod.GET)
     public TransactionResponse customerCreateNewCard(@RequestParam("accountNo") int account_id,
                                                      @RequestParam("type") int type,
-                                                     @RequestParam("customer_id") int customer_id) {
+                                                     @RequestParam("customer_id") int customer_id) throws Exception{
 
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
 
@@ -201,8 +216,11 @@ public class CustomerRequestController {
 
     @RequestMapping(value = "/deleteAccount", method = RequestMethod.GET)
     public TransactionResponse deleteAccountRequest(@RequestParam("accountNo") int accountNo,
-                                                    @RequestParam("requester_id") int user_id) {
+                                                    @RequestParam("requester_id") int user_id) throws Exception{
 
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
             Request request = new Request();
@@ -231,8 +249,12 @@ public class CustomerRequestController {
 
     @RequestMapping(value = "/deleteCard", method = RequestMethod.GET)
     public TransactionResponse deleteCardRequest(@RequestParam("cardNo") String card_id,
-                                                 @RequestParam("customer_id") int user_id) {
+                                                 @RequestParam("customer_id") int user_id) throws Exception {
         TransactionResponse transactionResponse = new TransactionResponse();
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try {
 
             Request request = new Request();

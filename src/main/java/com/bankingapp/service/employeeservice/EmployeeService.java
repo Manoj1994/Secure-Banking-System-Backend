@@ -79,4 +79,18 @@ public class EmployeeService {
         }
         return status;
     }
+
+    public boolean delete(int id) {
+
+        boolean status = false;
+        try {
+
+            Employee employee = getEmployeeAccount(id);
+            employeeRepository.delete(employee);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return status;
+    }
 }

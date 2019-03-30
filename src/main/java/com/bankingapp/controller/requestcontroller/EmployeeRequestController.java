@@ -6,6 +6,7 @@ import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.request.Request;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.requestservice.RequestService;
 import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,17 @@ public class EmployeeRequestController {
     @Autowired
     RequestService requestService;
 
+    @Autowired
+    SessionService sessionService;
+
     private static final int admin = 3;
 
     @RequestMapping(value = "/editDetails", method = RequestMethod.POST)
-    public TransactionResponse editdetails(@RequestBody Employee employee) {
+    public TransactionResponse editdetails(@RequestBody Employee employee) throws Exception {
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         TransactionResponse transactionResponse = new TransactionResponse();
 

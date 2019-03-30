@@ -1,6 +1,7 @@
 package com.bankingapp.model.account;
 
 import javax.persistence.*;
+import javax.persistence.Id;
 
 @Entity
 @Table(name = "credit_card")

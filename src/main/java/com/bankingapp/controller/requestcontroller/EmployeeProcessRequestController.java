@@ -9,6 +9,7 @@ import com.bankingapp.service.accountservice.DebitCardService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.requestservice.RequestService;
 import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class EmployeeProcessRequestController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    SessionService sessionService;
+
     private final int Processed = 2;
 
     private final int declined = 3;
@@ -67,7 +71,11 @@ public class EmployeeProcessRequestController {
     private final Double defaultCardLImit = 1000.0;
 
     @RequestMapping(value = "/getRequests", method = RequestMethod.GET)
-    public List<Request> gerRequests() {
+    public List<Request> gerRequests() throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         List<Request> requests = new ArrayList<>();
         try {
@@ -83,7 +91,12 @@ public class EmployeeProcessRequestController {
     }
 
     @RequestMapping(value = "/handleRequest", method = RequestMethod.GET)
-    public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action) {
+    public TransactionResponse gerRequests(@RequestParam("request_id") int request_id, @RequestParam("employee_id") int employee_id, @RequestParam("action") int action)
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         TransactionResponse transactionResponse = new TransactionResponse();
         Request request = null;
@@ -402,7 +415,11 @@ public class EmployeeProcessRequestController {
                                                           @RequestParam("contact") String contact,
                                                           @RequestParam("address") String address,
                                                           @RequestParam("email") String email)
-    {
+            throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         TransactionResponse transactionResponse = new TransactionResponse();
 
         Customer customer = customerService.getCustomer(user_id);
@@ -475,7 +492,4 @@ public class EmployeeProcessRequestController {
         }
         return transactionResponse;
     }
-
-
-
 }

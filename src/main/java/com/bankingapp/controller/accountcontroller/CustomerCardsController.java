@@ -4,10 +4,12 @@ import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.CreditCard;
 import com.bankingapp.model.account.DebitCard;
+import com.bankingapp.model.login.Session;
 import com.bankingapp.service.accountservice.CreditCardService;
 import com.bankingapp.service.accountservice.DebitCardService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerService;
+import com.bankingapp.service.loginservice.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,9 +37,15 @@ public class CustomerCardsController {
     @Autowired
     LogParameters logParameters;
 
-    @RequestMapping("/getDebitCards")
-    public List<DebitCard> getDebitcards(@RequestParam("customerId") int customerId) {
+    @Autowired
+    SessionService sessionService;
 
+    @RequestMapping("/getDebitCards")
+    public List<DebitCard> getDebitcards(@RequestParam("customerId") int customerId) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         List<DebitCard> allDebitCards = new ArrayList<>();
         try {
             List<Account> accounts = customerService.getAllAccounts(customerId);
@@ -56,7 +64,11 @@ public class CustomerCardsController {
     }
 
     @RequestMapping("/newDebitCard")
-    public Boolean addDebitCard(@RequestParam("account_no") int account_no) {
+    public Boolean addDebitCard(@RequestParam("account_no") int account_no) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try {
 
             DebitCard debitCard = new DebitCard();
@@ -71,7 +83,11 @@ public class CustomerCardsController {
     }
 
     @RequestMapping("/getCreditCards")
-    public List<CreditCard> getCreditcards(@RequestParam("customerId") int customerId) {
+    public List<CreditCard> getCreditcards(@RequestParam("customerId") int customerId) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         List<CreditCard> allCreditCards = new ArrayList<>();
         try {
@@ -91,7 +107,11 @@ public class CustomerCardsController {
     }
 
     @RequestMapping("/newCreditCard")
-    public Boolean addCreditCard(@RequestParam("account_no") int account_no, @RequestParam("limit") int balance) {
+    public Boolean addCreditCard(@RequestParam("account_no") int account_no, @RequestParam("limit") int balance) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try {
 
             DebitCard debitCard = new DebitCard();

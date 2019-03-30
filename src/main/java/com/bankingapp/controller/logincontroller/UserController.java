@@ -12,6 +12,8 @@ import com.bankingapp.utils.CryptographyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 public class UserController {
 
@@ -40,7 +42,8 @@ public class UserController {
     EmailService emailService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Response login(@RequestBody LoginCredentials loginCredentials) {
+    public Response login(HttpSession session, @RequestBody LoginCredentials loginCredentials) {
+
         try {
             if(loginCredentials.getUserName().isEmpty()) {
                 return new Response(false, "Username can't be empty");
@@ -79,7 +82,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login/otp", method = RequestMethod.POST)
-    public LoginResponse loginWithOtp(@RequestBody OtpLoginCredentials otpLoginCredentials) {
+    public LoginResponse loginWithOtp(HttpSession session, @RequestBody OtpLoginCredentials otpLoginCredentials) {
 
         try {
 
@@ -115,6 +118,8 @@ public class UserController {
                             int auth_user_id = user.getAuth_user_id();
                             Role role = roleService.findRoleByUserId(auth_user_id);
 
+                            session.setAttribute("id", user.getAuth_user_id());
+
                             sessionService.createSession(
                                     otpLoginCredentials.getUserName(),
                                     otpLoginCredentials.getPassword(),
@@ -148,10 +153,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public Response logout(@RequestBody LogoutObj obj) {
+    public Response logout(HttpSession httpSession, @RequestBody LogoutObj obj) {
 
         try {
             sessionService.deleteById(obj.getId());
+            httpSession.removeAttribute("id");
             return new Response(true, "Logged Out Successfully");
         } catch(Exception e) {
 

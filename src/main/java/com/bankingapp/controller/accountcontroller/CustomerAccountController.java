@@ -12,6 +12,7 @@ import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.customerservice.CustomerService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +58,17 @@ public class CustomerAccountController {
     @Autowired
     LogParameters logParameters;
 
+    @Autowired
+    SessionService sessionService;
+
     @RequestMapping("/getAccounts")
-    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId)
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId) throws Exception
     {
+
         List<AccountResponse> accountResponseList = new ArrayList<>();
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try{
 
             List<Account> savingsAccounts = customerAccountService.getAccounts(customerId);

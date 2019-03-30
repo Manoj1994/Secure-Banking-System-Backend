@@ -3,6 +3,7 @@ package com.bankingapp.controller.employeecontroller;
 import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.employee.Employee;
+import com.bankingapp.model.login.Session;
 import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.Transaction;
 import com.bankingapp.model.transaction.TransactionResponse;
@@ -11,6 +12,7 @@ import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.customerservice.CustomerAccountService;
 import com.bankingapp.service.employeeservice.EmployeeService;
+import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.service.transactionservice.TransactionServiceImpl;
 import com.bankingapp.utils.AmountUtils;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +57,19 @@ public class EmployeeController {
     @Autowired
     TransactionServiceImpl transactionService;
 
+    @Autowired
+    SessionService sessionService;
+
     private int admin = 3;
 
     @RequestMapping("/getAllEmployees")
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees(HttpSession httpSession) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
+        System.out.println(httpSession);
+        System.out.println(httpSession.getAttribute("id"));
 
         List<Employee> employeeList = new ArrayList<>();
         try{
@@ -73,7 +85,7 @@ public class EmployeeController {
     }
 
     @RequestMapping("/getEmployee")
-    public Employee getAllEmployees(int employee_id) {
+    public Employee getAllEmployees(int employee_id) throws Exception{
 
         try{
             return employeeService.getEmployeeAccount(employee_id);
@@ -85,7 +97,11 @@ public class EmployeeController {
     }
 
     @RequestMapping("/getCustomerAccounts")
-    public List<Customer> getAllUserAccounts() {
+    public List<Customer> getAllUserAccounts() throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         List<Customer> customers = new ArrayList<>();
         try{
@@ -99,7 +115,11 @@ public class EmployeeController {
     }
 
     @RequestMapping("/getEmployeeAccounts")
-    public List<Employee> getAllEmployeeAccounts() {
+    public List<Employee> getAllEmployeeAccounts() throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
 
         List<Employee> employees = new ArrayList<>();
         try{
@@ -117,8 +137,12 @@ public class EmployeeController {
                                                              @RequestParam("to_account_no") int to_account_no,
                                                              @RequestParam("amount") String amount,
                                                              @RequestParam("routing_no") int routing_no,
-                                                             @RequestParam("employee_id") int employee_id) {
+                                                             @RequestParam("employee_id") int employee_id) throws Exception{
         TransactionResponse transactionResponse = new TransactionResponse();
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
         try{
 
             if (!accountCheckService.checkAccountExists(from_account_no)) {
