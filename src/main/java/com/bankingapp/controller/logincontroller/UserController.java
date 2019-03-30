@@ -10,9 +10,7 @@ import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.roleservice.RoleService;
 import com.bankingapp.utils.CryptographyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -176,7 +174,14 @@ public class UserController {
 
         HttpHeaders headers1 = new HttpHeaders();
         headers1.add("Set-Cookie","key="+"value");
-        return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
+
+        HttpCookie cookie = ResponseCookie.from("heroku-nav-data", "manoj")
+                //.path("/")
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(loginResponse);
+        //return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
