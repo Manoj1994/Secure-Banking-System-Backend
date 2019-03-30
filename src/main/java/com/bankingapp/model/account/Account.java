@@ -3,6 +3,7 @@ package com.bankingapp.model.account;
 import javax.persistence.*;
 import javax.persistence.Id;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity
 @Table(name = "account")
@@ -33,6 +34,24 @@ public class Account {
 
     @Column(name = "updated")
     private Timestamp updated;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return getAccount_no() == account.getAccount_no() &&
+                getUser_id() == account.getUser_id() &&
+                getRouting_no() == account.getRouting_no() &&
+                getAccount_type() == account.getAccount_type() &&
+                Objects.equals(getBalance(), account.getBalance()) &&
+                Objects.equals(getInterest(), account.getInterest());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAccount_no(), getUser_id(), getBalance(), getRouting_no(), getAccount_type(), getInterest(), getCreated(), getUpdated());
+    }
 
     @Override
     public String toString() {

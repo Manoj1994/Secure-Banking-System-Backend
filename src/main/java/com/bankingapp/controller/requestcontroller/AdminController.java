@@ -199,7 +199,7 @@ public class AdminController {
         return transactionResponse;
     }
 
-    @RequestMapping(value = "/changeAccountDetails", method = RequestMethod.POST)
+    @RequestMapping(value = "/editAccountDetails", method = RequestMethod.POST)
     public TransactionResponse changeAccountDetails(@RequestBody Account editedAccount) throws Exception{
         TransactionResponse transactionResponse = new TransactionResponse();
         if(!sessionService.checkAnyusersExists()) {
