@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.sql.Timestamp;
 
 @Component
 public class SessionService {
@@ -26,12 +27,25 @@ public class SessionService {
                                  int role_id) {
 
         try {
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
             Session session = new Session();
             session.setUsername(username);
             session.setPassword(password);
             session.setAccess_right(role_id);
+            session.setId(id);
+            session.setTimestamp_created(timestamp);
             session.setAccess_key(String.valueOf(id));
             session.setStatus(true);
+
+            System.out.println(session);
+
+            try {
+                sessionRepository.save(session);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
 
         } catch(Exception e) {
 
@@ -42,21 +56,21 @@ public class SessionService {
     public boolean checkUserAlreadyLoggedIn(String username, String password) {
 
         try {
-            String sql = "Select e from " + User.class.getName() + " e " //
-                    + " Where e.userName = :userName and e.password = :password and e.status = :status";
-            Query query = entityManager.createQuery(sql, User.class);
+            String sql = "Select e from " + Session.class.getName() + " e " //
+                    + " Where e.username = :username and e.password = :password and e.status = :status";
+            Query query = entityManager.createQuery(sql, Session.class);
             query.setParameter("username", username);
             query.setParameter("password", password);
             query.setParameter("status", true);
 
-            if(query.getResultList().size() > 0) {
+            if(query.getResultList().size()== 1) {
                 return true;
             } else {
                 return false;
             }
 
         } catch(Exception e) {
-
+            e.printStackTrace();
         }
         return false;
     }

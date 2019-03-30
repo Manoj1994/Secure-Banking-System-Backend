@@ -19,22 +19,18 @@ import java.sql.Timestamp;
 @Table(name = "session")
 public class Session {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private int id;
-
     @Column(name = "timestamp_created")
     private Timestamp timestamp_created;
 
+    @Id
     @Column(name = "username")
     private String username;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "user_id")
-    private int user_id;
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "status")
     private boolean status;
@@ -44,6 +40,19 @@ public class Session {
 
     @Column(name = "access_right")
     private int access_right;
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "timestamp_created=" + timestamp_created +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                ", access_key='" + access_key + '\'' +
+                ", access_right=" + access_right +
+                '}';
+    }
 
     public int getId() {
         return id;

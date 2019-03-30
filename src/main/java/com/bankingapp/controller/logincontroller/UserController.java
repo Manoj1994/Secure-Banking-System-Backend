@@ -53,6 +53,12 @@ public class UserController {
             if(userService.checkForUserNameAndPassword(loginCredentials.getUserName(),
                     loginCredentials.getPassword())) {
 
+                if(sessionService.checkUserAlreadyLoggedIn(
+                        loginCredentials.getUserName(),
+                        loginCredentials.getPassword())) {
+                    return new Response(false, "Logged In User Exits, Logout exising session to log in again");
+                }
+
                 User user = userService.findByUserNameAndPassword(loginCredentials.getUserName(),
                         loginCredentials.getPassword());
 
@@ -90,6 +96,12 @@ public class UserController {
 
             if(userService.checkForUserNameAndPassword(otpLoginCredentials.getUserName(),
                     otpLoginCredentials.getPassword())) {
+
+                if(sessionService.checkUserAlreadyLoggedIn(
+                        otpLoginCredentials.getUserName(),
+                        otpLoginCredentials.getPassword())) {
+                    return new LoginResponse(false, "Logged In User Exits, Logout exising session to log in again");
+                }
 
                 int otp = otpLoginCredentials.getOtp();
                 User user = userService.findByUserNameAndPassword(otpLoginCredentials.getUserName(),
