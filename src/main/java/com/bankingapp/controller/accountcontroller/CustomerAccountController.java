@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +64,17 @@ public class CustomerAccountController {
     SessionService sessionService;
 
     @RequestMapping("/getAccounts")
-    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId) throws Exception
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, HttpServletRequest req) throws Exception
     {
 
         List<AccountResponse> accountResponseList = new ArrayList<>();
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
+        }
+
+        for (Cookie c : req.getCookies()) {
+            if (c.getName().equals("name"))
+                System.out.println(c.getValue());
         }
         try{
 

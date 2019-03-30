@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
 
 @RestController
 public class UserController {
@@ -49,6 +50,7 @@ public class UserController {
                 return new Response(false, "Username can't be empty");
             }
             if(loginCredentials.getPassword().isEmpty()) {
+                adminLogService.createUserLog(0, "Username = "+loginCredentials.getUserName()+" entered empty password"+" at "+ new Timestamp((System.currentTimeMillis())));;
                 return new Response(false, "Password can't be empty");
             }
 
@@ -58,7 +60,7 @@ public class UserController {
                 if(sessionService.checkUserAlreadyLoggedIn(
                         loginCredentials.getUserName(),
                         loginCredentials.getPassword())) {
-                    return new Response(false, "Logged In User Exits, Logout exising session to log in again");
+                    return new Response(false, "Logged In User Already Exits, Logout exising session to log in again");
                 }
 
                 User user = userService.findByUserNameAndPassword(loginCredentials.getUserName(),
@@ -70,6 +72,7 @@ public class UserController {
                 String message = "OTP: "+otp;
 
                 emailService.sendOtpMessage(user.getEmail(), "Secure Banking System Login OTP ", message);
+                adminLogService.createUserLog(user.getAuth_user_id(), "User id = "+user.getAuth_user_id()+" entered crendetials waiting to enter otp"+" at "+ new Timestamp((System.currentTimeMillis())));
                 return new Response(true, "Logged In");
             } else {
                 return new Response(false, "Invalid Credentials");
@@ -87,12 +90,16 @@ public class UserController {
         try {
 
             if(String.valueOf(otpLoginCredentials.getOtp()).isEmpty()) {
+
+                adminLogService.createUserLog(0, "Username = "+otpLoginCredentials.getUserName()+" entered empty otp"+" at "+ new Timestamp((System.currentTimeMillis())));;
                 return new LoginResponse(false, "Otp can't be empty");
             }
             if(otpLoginCredentials.getUserName().isEmpty()) {
+                adminLogService.createUserLog(0, "Username = "+otpLoginCredentials.getUserName()+" entered empty username"+" at "+ new Timestamp((System.currentTimeMillis())));;
                 return new LoginResponse(false, "Username can't be empty");
             }
             if(otpLoginCredentials.getPassword().isEmpty()) {
+                adminLogService.createUserLog(0, "Username = "+otpLoginCredentials.getUserName()+" entered empty password"+" at "+ new Timestamp((System.currentTimeMillis())));;
                 return new LoginResponse(false, "Password can't be empty");
             }
 
@@ -126,7 +133,7 @@ public class UserController {
                                     user.getAuth_user_id(),
                                     role.getAuth_role_id());
 
-                            adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER+" at ");
+                            adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER+" at "+ new Timestamp((System.currentTimeMillis())));
 
                             return new LoginResponse(true,
                                     user.getFirst_name()+" "+user.getLast_name(),
@@ -134,21 +141,27 @@ public class UserController {
                                     user.getAuth_user_id(),
                                     "Successful Login") ;
                         }else{
+
+                            adminLogService.createUserLog(user.getAuth_user_id(), "User id = "+user.getAuth_user_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
                             return new LoginResponse(false, "Entered Otp is NOT valid. Please Retry!");
                         }
                     }else {
+                        adminLogService.createUserLog(user.getAuth_user_id(), "User id = "+user.getAuth_user_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
                         return new LoginResponse(false, "Entered Otp is NOT valid. Please Retry!");
                     }
                 }else {
+                    adminLogService.createUserLog(user.getAuth_user_id(), "User id = "+user.getAuth_user_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
                     return new LoginResponse(false, "Entered Otp is NOT valid. Please Retry!");
                 }
             } else {
+                adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" entered invalid crendentials "+" at "+ new Timestamp((System.currentTimeMillis())));
                 return new LoginResponse(false, "Invalid Credentials");
             }
 
         } catch(Exception e) {
 
         }
+        adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" ran into exception "+" at "+ new Timestamp((System.currentTimeMillis())));
         return new LoginResponse(false, "Ran into Exception");
     }
 
@@ -158,10 +171,12 @@ public class UserController {
         try {
             sessionService.deleteById(obj.getId());
             httpSession.removeAttribute("id");
+            adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));;
             return new Response(true, "Logged Out Successfully");
         } catch(Exception e) {
 
         }
+        adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));;
         return new Response(true, "Logged Out Successfully");
     }
 }

@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.resource.HttpResource;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -83,6 +86,33 @@ public class EmployeeProcessRequestController {
 
             System.out.println(requests);
             return requests;
+
+        } catch(Exception e) {
+
+        }
+        return requests;
+    }
+
+    @RequestMapping(value = "tier2/getRequests", method = RequestMethod.GET)
+    public List<Request> getTier2Requests(HttpServletResponse httpServletResponse) throws Exception{
+
+        if(!sessionService.checkAnyusersExists()) {
+            throw new Exception();
+        }
+
+        List<Request> requests = new ArrayList<>();
+        try {
+            requests = requestService.getByAllRequest();
+
+            List<Request> outputRequests = new ArrayList<Request>();
+
+            for(Request request : requests) {
+                if(!request.getRequest_type().equals("Update Employee")) {
+                    outputRequests.add(request);
+                }
+            }
+
+            return outputRequests;
 
         } catch(Exception e) {
 
