@@ -33,6 +33,9 @@ public class Session {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "user_id")
+    private int user_id;
+
     @Column(name = "status")
     private boolean status;
 

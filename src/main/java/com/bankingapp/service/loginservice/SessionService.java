@@ -20,15 +20,22 @@ public class SessionService {
     @Autowired
     EntityManager entityManager;
 
-    public boolean createSession(String username, String password) {
+    public boolean createSession(String username,
+                                 String password,
+                                 int id,
+                                 int role_id) {
 
         try {
-
+            Session session = new Session();
+            session.setUsername(username);
+            session.setPassword(password);
+            session.setAccess_right(role_id);
+            session.setAccess_key(String.valueOf(id));
+            session.setStatus(true);
 
         } catch(Exception e) {
 
         }
-
         return false;
     }
 

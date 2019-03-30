@@ -96,14 +96,21 @@ public class UserController {
                         otpLoginCredentials.getPassword());
 
                 if(otpLoginCredentials.getOtp() >= 0){
-                    int serverOtp = otpService.getOtp(otpLoginCredentials.getUserName());
+                    int serverOtp = otpService.getOtp(otpLoginCredentials.getUserName()+" "+otpLoginCredentials.getPassword());
 
                     if(serverOtp > 0){
                         if(otp == serverOtp){
                             otpService.clearOTP(otpLoginCredentials.getUserName());
                             int auth_user_id = user.getAuth_user_id();
                             Role role = roleService.findRoleByUserId(auth_user_id);
-                            adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER);
+
+                            sessionService.createSession(
+                                    otpLoginCredentials.getUserName(),
+                                    otpLoginCredentials.getPassword(),
+                                    user.getAuth_user_id(),
+                                    role.getAuth_role_id());
+
+                            adminLogService.createUserLog(auth_user_id, logParameters.LOGGING_USER+" at ");
 
                             return new LoginResponse(true,
                                     user.getFirst_name()+" "+user.getLast_name(),
@@ -130,8 +137,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public void logout(@RequestParam(name = "userName") String userName, @RequestParam(name = "password") String password) {
+    public void logout(@RequestParam(name = "userName") String userName,
+                       @RequestParam(name = "password") String password) {
 
-        User user = userService.findByUserNameAndPassword(userName, password);
+        //User user = userService.findByUserNameAndPassword(userName, password);
+        // return new Response();
     }
 }
