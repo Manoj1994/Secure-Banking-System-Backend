@@ -170,11 +170,9 @@ public class UserController {
             }
 
         } catch(Exception e) {
-
+            loginResponse = new LoginResponse(false, "Ran into Exception");
         }
         adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" ran into exception "+" at "+ new Timestamp((System.currentTimeMillis())));
-        loginResponse = new LoginResponse(false, "Ran into Exception");
-
         return new ResponseEntity<LoginResponse>(loginResponse,headers, HttpStatus.OK);
     }
 
