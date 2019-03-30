@@ -24,6 +24,7 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,15 +66,11 @@ public class CustomerAccountController {
     SessionService sessionService;
 
     @RequestMapping("/getAccounts")
-    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, String access_key, HttpServletRequest req) throws Exception
+    public List<AccountResponse> getAccounts(@RequestParam("customerId") int customerId, HttpServletRequest req, HttpServletResponse resp) throws Exception
     {
 
         List<AccountResponse> accountResponseList = new ArrayList<>();
         if(!sessionService.checkAnyusersExists()) {
-            throw new Exception();
-        }
-
-        if(!sessionService.checkAcceessKey(customerId, access_key)) {
             throw new Exception();
         }
 //
@@ -84,8 +81,10 @@ public class CustomerAccountController {
 //            e.printStackTrace();
 //        }
         try {
+
             for (Cookie c : req.getCookies()) {
-                if (c.getName().equals("website"))
+                System.out.println(c);
+                if (c.getName().equals("key"))
                     System.out.println(c.getValue());
             }
         } catch(Exception e) {
