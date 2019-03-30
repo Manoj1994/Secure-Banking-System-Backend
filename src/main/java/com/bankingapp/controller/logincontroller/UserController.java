@@ -178,9 +178,13 @@ public class UserController {
         HttpCookie cookie = ResponseCookie.from("heroku-nav-data", "manoj")
                 //.path("/")
                 .build();
-        return ResponseEntity.ok()
+
+        ResponseEntity<LoginResponse> rp = ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(loginResponse);
+
+        System.out.println(rp);
+        return rp;
         //return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
     }
 
