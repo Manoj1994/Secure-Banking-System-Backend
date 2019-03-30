@@ -2,8 +2,6 @@ package com.bankingapp.model.login;
 
 public class LoginResponse {
 
-    private boolean success;
-
     private String name;
 
     private int role;
@@ -12,8 +10,17 @@ public class LoginResponse {
 
     private String message = "Logged In";
 
-    public LoginResponse() {
+    private boolean success;
 
+    @Override
+    public String toString() {
+        return "LoginResponse{" +
+                "success=" + success +
+                ", name='" + name + '\'' +
+                ", role=" + role +
+                ", id=" + id +
+                ", message='" + message + '\'' +
+                '}';
     }
 
     public LoginResponse(boolean success, String name, int role, int id, String message) {
@@ -29,10 +36,16 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public LoginResponse(String userName, int role, int id) {
-        this.name = userName;
-        this.role = role;
-        this.id = id;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {

@@ -100,7 +100,7 @@ public class UserController {
 
                     if(serverOtp > 0){
                         if(otp == serverOtp){
-                            otpService.clearOTP(otpLoginCredentials.getUserName());
+                            otpService.clearOTP(otpLoginCredentials.getUserName()+" "+otpLoginCredentials.getPassword());
                             int auth_user_id = user.getAuth_user_id();
                             Role role = roleService.findRoleByUserId(auth_user_id);
 
