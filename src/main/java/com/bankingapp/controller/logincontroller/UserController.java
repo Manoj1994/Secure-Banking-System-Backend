@@ -168,9 +168,10 @@ public class UserController {
             }
 
         } catch(Exception e) {
+            adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" ran into exception "+" at "+ new Timestamp((System.currentTimeMillis())));
             loginResponse = new LoginResponse(false, "Ran into Exception");
         }
-        adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" ran into exception "+" at "+ new Timestamp((System.currentTimeMillis())));
+
 
         HttpHeaders headers1 = new HttpHeaders();
         headers1.add("Set-Cookie","key="+"value");
@@ -179,9 +180,6 @@ public class UserController {
                 //.path("/")
                 .build();
 
-        ResponseEntity<LoginResponse> rp = ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(loginResponse);
 
         Cookie cookie1 = new Cookie("website", "javapointers");
         //set the expiration time
@@ -189,6 +187,12 @@ public class UserController {
         cookie1.setMaxAge(60 * 60);
         //add the cookie to the  response
         response.addCookie(cookie1);
+
+        ResponseEntity<LoginResponse> rp = ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .headers(headers1)
+                .body(loginResponse);
+
         System.out.println(rp);
         return rp;
         //return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
@@ -200,12 +204,12 @@ public class UserController {
         try {
             sessionService.deleteById(obj.getId());
             httpSession.removeAttribute("id");
-            adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));;
+            adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" Logged Out Successfully "+" at "+ new Timestamp((System.currentTimeMillis())));;
             return new Response(true, "Logged Out Successfully");
         } catch(Exception e) {
 
         }
-        adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));;
+        adminLogService.createUserLog(obj.getId(), "User id = "+obj.getId()+" Logged Out Successfully "+" at "+ new Timestamp((System.currentTimeMillis())));;
         return new Response(true, "Logged Out Successfully");
     }
 }
