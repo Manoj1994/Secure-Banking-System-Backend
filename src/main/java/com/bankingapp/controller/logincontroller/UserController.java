@@ -89,7 +89,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/login/otp", method = RequestMethod.POST)
-    public ResponseEntity<LoginResponse> loginWithOtp(HttpSession session, @RequestBody OtpLoginCredentials otpLoginCredentials, HttpServletResponse response) {
+    public LoginResponse loginWithOtp(HttpSession session, @RequestBody OtpLoginCredentials otpLoginCredentials, HttpServletResponse response) {
 
         LoginResponse loginResponse = null;
         HttpHeaders headers = new HttpHeaders();
@@ -194,7 +194,7 @@ public class UserController {
                 .body(loginResponse);
 
         System.out.println(rp);
-        return rp;
+        return loginResponse;
         //return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
     }
 
