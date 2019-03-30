@@ -74,7 +74,8 @@ public class CustomerAccountController {
         }
 
         try {
-            WebUtils.getCookie(req, "name");
+            Cookie cookie = WebUtils.getCookie(req, "heroku-nav-data");
+            System.out.println(cookie);
         } catch(Exception e) {
             e.printStackTrace();
         }
