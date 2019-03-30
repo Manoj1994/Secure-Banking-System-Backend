@@ -94,9 +94,7 @@ public class UserController {
     public ResponseEntity<LoginResponse> loginWithOtp(HttpSession session, @RequestBody OtpLoginCredentials otpLoginCredentials, HttpServletResponse response) {
 
         LoginResponse loginResponse = null;
-
         HttpHeaders headers = new HttpHeaders();
-        response.addCookie(new Cookie("heroku-nav-data", "manoj"));
 
         try {
 
@@ -137,6 +135,8 @@ public class UserController {
                             Role role = roleService.findRoleByUserId(auth_user_id);
 
                             session.setAttribute("id", user.getAuth_user_id());
+                            response.addCookie(new Cookie("foo", "bar"));
+                            response.addCookie(new Cookie("heroku-nav-data", "manoj"));
 
                             sessionService.createSession(
                                     otpLoginCredentials.getUserName(),
@@ -173,7 +173,10 @@ public class UserController {
             loginResponse = new LoginResponse(false, "Ran into Exception");
         }
         adminLogService.createUserLog(0, "User name = "+otpLoginCredentials.getUserName()+" ran into exception "+" at "+ new Timestamp((System.currentTimeMillis())));
-        return new ResponseEntity<LoginResponse>(loginResponse,headers, HttpStatus.OK);
+
+        HttpHeaders headers1 = new HttpHeaders();
+        headers1.add("Set-Cookie","key="+"value");
+        return new ResponseEntity<LoginResponse>(loginResponse,headers1, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
