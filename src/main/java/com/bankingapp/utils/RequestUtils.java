@@ -25,6 +25,14 @@ public class RequestUtils {
         return matcher.find();
     }
 
+    public boolean validateAge(int age) {
+       if(age >=10 && age <= 100) {
+           return true;
+       } else {
+           return false;
+       }
+    }
+
     public Boolean validateContact(String mobile) {
         Matcher matcher = VALID_MOBILE_NUMBER.matcher(mobile);
         return matcher.find();

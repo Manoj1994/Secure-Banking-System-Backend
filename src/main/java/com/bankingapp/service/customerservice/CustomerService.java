@@ -52,4 +52,15 @@ public class CustomerService {
          return false;
     }
 
+    public boolean delete(int id) {
+        try {
+            Customer customer = getCustomer(id);
+            customerRepository.delete(customer);
+            return true;
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
+
 }

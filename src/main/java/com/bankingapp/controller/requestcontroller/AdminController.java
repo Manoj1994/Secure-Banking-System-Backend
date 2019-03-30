@@ -100,13 +100,26 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/deleteCustomer", method = RequestMethod.POST)
-    public TransactionResponse deleteCustomer(@RequestBody int customerId) throws Exception{
+    public TransactionResponse deleteCustomer(@RequestBody Id id) throws Exception {
 
-        if(!sessionService.checkAnyusersExists()) {
+        if (!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
         TransactionResponse transactionResponse = new TransactionResponse();
-
+        try {
+            boolean status = customerService.delete(id.getId());
+            if (status) {
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Customer Account is deleted");
+            } else {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Internal Server Error!");
+                return transactionResponse;
+            }
+        } catch (Exception e) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
+        }
         return transactionResponse;
     }
 
@@ -349,6 +362,42 @@ public class AdminController {
             throw new Exception();
         }
         TransactionResponse transactionResponse = new TransactionResponse();
+
+
+        if(!requestUtils.validateEmail(employee.getEmail_id())) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Email is not valid! ");
+
+            return transactionResponse;
+        }
+
+        if(employee.getEmployee_name().length() <= 5) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Name is should be atleast 5 characters long! ");
+
+            return transactionResponse;
+        }
+
+        if(!requestUtils.validateContact(employee.getContact_no())) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Contact is not valid! ");
+
+            return transactionResponse;
+        }
+
+        if(!requestUtils.validateGender(employee.getGender())) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Gender is not valid, should be in single letter ! ");
+
+            return transactionResponse;
+        }
+
+        if(!requestUtils.validateAge(employee.getAge())) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Sorry! Date is not valid!");
+
+            return transactionResponse;
+        }
         try {
             List<Employee> employeeList = new ArrayList<>();
             employeeList = employeeService.getEmployeeAccounts();
@@ -359,6 +408,8 @@ public class AdminController {
                     return transactionResponse;
                 }
             }
+
+            employee.setDesignation_id(employee.getTier_level());
             boolean status = employeeService.save(employee);
             if(status) {
                 transactionResponse.setSuccess(true);
