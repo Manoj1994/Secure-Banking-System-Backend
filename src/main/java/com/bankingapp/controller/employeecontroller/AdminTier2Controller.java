@@ -233,7 +233,6 @@ public class AdminTier2Controller {
 
                 transaction1.setAccount_no(account_no);
                 transaction1.setBalance(accountBalanceService.getBalance(account_no));
-                transaction1.setRequest_id(1234);
 
                 String debit_description = "Cashiers check issued from your account " + account_no;
                 transaction1.setDescription(debit_description);
