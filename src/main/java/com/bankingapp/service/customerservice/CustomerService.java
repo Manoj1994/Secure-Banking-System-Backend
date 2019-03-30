@@ -19,6 +19,20 @@ public class CustomerService {
     @Autowired
     CustomerRepository customerRepository;
 
+    public boolean checkCustomerExists(int id) {
+        String sql = "Select e from " + Customer.class.getName() + " e " //
+                + " Where e.user_id = :user_id ";
+
+        Query query = entityManager.createQuery(sql, Customer.class);
+        query.setParameter("user_id", id);
+
+        if(query.getResultList().size() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Customer getCustomer(int id) {
         String sql = "Select e from " + Customer.class.getName() + " e " //
                 + " Where e.user_id = :user_id ";

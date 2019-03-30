@@ -5,6 +5,7 @@ import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.account.Id;
 import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountDetailsService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
@@ -37,6 +38,9 @@ public class AdminController {
 
     @Autowired
     AccountDetailsService accountDetailsService;
+
+    @Autowired
+    AccountCheckService accountCheckService;
 
     @RequestMapping(value = "/getAccount", method = RequestMethod.POST)
     public Account getAccount(@RequestBody Id id) throws Exception {
@@ -264,6 +268,12 @@ public class AdminController {
         }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
+
+            if(customerService.checkCustomerExists(account.getUser_id())) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! User with give id didn't exist");
+                return transactionResponse;
+            }
             List<Account> accountList = new ArrayList<>();
             accountList = accountDetailsService.getAccounts();
             for(Account account1 : accountList) {
