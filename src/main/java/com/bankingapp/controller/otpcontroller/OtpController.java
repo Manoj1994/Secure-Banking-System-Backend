@@ -1,5 +1,6 @@
 package com.bankingapp.controller.otpcontroller;
 
+import com.bankingapp.model.login.OtpLoginCredentials;
 import com.bankingapp.service.otpservice.EmailService;
 import com.bankingapp.service.otpservice.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,7 @@ public class OtpController {
     @Autowired
     public EmailService emailService;
 
-    @GetMapping("/generateOtp")
-    public String generateOtp(){
+    public String generateOtp(@RequestBody OtpLoginCredentials otpLoginCredentials){
 
         String username="arihant";
 
@@ -25,7 +25,7 @@ public class OtpController {
 
         String message = "Username:"+username+"\n OTP:"+otp;
 
-        emailService.sendOtpMessage("sinhaarihant@gmail.com", "Secure Banking System Login OTP ", message);
+        emailService.sendOtpMessage("murt202@yahoo.co.in", "Secure Banking System Login OTP ", message);
 
         return "otppage";
     }
@@ -34,8 +34,6 @@ public class OtpController {
     public @ResponseBody String validateOtp(@RequestParam("otpnum") int otpnum){
 
         String username="arihant";
-
-
 
         //Validate the Otp
         if(otpnum >= 0){

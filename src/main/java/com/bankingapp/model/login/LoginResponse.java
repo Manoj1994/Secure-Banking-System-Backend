@@ -2,6 +2,8 @@ package com.bankingapp.model.login;
 
 public class LoginResponse {
 
+    private boolean success;
+
     private String name;
 
     private int role;
@@ -12,6 +14,19 @@ public class LoginResponse {
 
     public LoginResponse() {
 
+    }
+
+    public LoginResponse(boolean success, String name, int role, int id, String message) {
+        this.success = success;
+        this.name = name;
+        this.role = role;
+        this.id = id;
+        this.message = message;
+    }
+
+    public LoginResponse(boolean success, String message) {
+        this.success = success;
+        this.message = message;
     }
 
     public LoginResponse(String userName, int role, int id) {
