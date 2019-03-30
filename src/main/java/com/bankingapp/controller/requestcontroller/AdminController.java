@@ -269,7 +269,7 @@ public class AdminController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
 
-            if(customerService.checkCustomerExists(account.getUser_id())) {
+            if(!customerService.checkCustomerExists(account.getUser_id())) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! User with give id didn't exist");
                 return transactionResponse;
