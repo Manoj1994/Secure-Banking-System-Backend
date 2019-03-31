@@ -93,7 +93,7 @@ public class EmployeeProcessRequestController {
         return requests;
     }
 
-    @RequestMapping(value = "tier2/getRequests", method = RequestMethod.GET)
+    @RequestMapping(value = "/getRequestsForTier2", method = RequestMethod.GET)
     public List<Request> getTier2Requests(HttpServletResponse httpServletResponse) throws Exception{
 
         if(!sessionService.checkAnyusersExists()) {
