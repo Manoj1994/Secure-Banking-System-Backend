@@ -3,9 +3,11 @@ package com.bankingapp.service.adminlogservice;
 import com.bankingapp.model.employee.AdminLog;
 import com.bankingapp.repository.adminlogrepository.AdminLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class AdminLogService {
@@ -23,6 +25,10 @@ public class AdminLogService {
 
         }
         return false;
+    }
+
+    public List<AdminLog> getLogs() {
+        return adminLogRepository.findAll();
     }
 
     public AdminLog buildLog(String message) {

@@ -3,10 +3,12 @@ package com.bankingapp.controller.requestcontroller;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.account.Id;
+import com.bankingapp.model.employee.AdminLog;
 import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountDetailsService;
+import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerService;
 import com.bankingapp.service.employeeservice.EmployeeService;
 import com.bankingapp.service.loginservice.SessionService;
@@ -42,8 +44,16 @@ public class AdminController {
     @Autowired
     AccountCheckService accountCheckService;
 
+    @Autowired
+    AdminLogService adminLogService;
+
     @RequestMapping(value = "/getAccount", method = RequestMethod.POST)
-    public Account getAccount(@RequestBody Id id) throws Exception {
+    public List<AdminLog> getAccount(@RequestBody Id id) throws Exception {
+        return adminLogService.getLogs();
+    }
+
+    @RequestMapping(value = "/getLogs", method = RequestMethod.POST)
+    public Account getLogs(@RequestBody Id id) throws Exception {
         return accountDetailsService.getAccount(id.getId());
     }
 
