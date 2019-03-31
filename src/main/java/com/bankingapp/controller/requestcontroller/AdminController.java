@@ -48,13 +48,13 @@ public class AdminController {
     AdminLogService adminLogService;
 
     @RequestMapping(value = "/getAccount", method = RequestMethod.POST)
-    public List<AdminLog> getAccount(@RequestBody Id id) throws Exception {
-        return adminLogService.getLogs();
+    public Account getAccount(@RequestBody Id id) throws Exception {
+        return accountDetailsService.getAccount(id.getId());
     }
 
     @RequestMapping(value = "/getLogs", method = RequestMethod.POST)
-    public Account getLogs(@RequestBody Id id) throws Exception {
-        return accountDetailsService.getAccount(id.getId());
+    public List<AdminLog> getLogs() throws Exception {
+        return adminLogService.getLogs();
     }
 
     @RequestMapping(value = "/editCustomerDetails", method = RequestMethod.POST)
