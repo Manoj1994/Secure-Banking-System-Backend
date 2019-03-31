@@ -1,6 +1,7 @@
 package com.bankingapp.controller.logincontroller;
 import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.account.AccountResponse;
+import com.bankingapp.model.account.Id;
 import com.bankingapp.model.login.*;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.SessionService;
@@ -49,6 +50,16 @@ public class UserController {
 
     @Autowired
     LoginUtils loginUtils;
+
+    @RequestMapping(value = "/timeout", method = RequestMethod.POST)
+    public Boolean userTimeout(@RequestBody Id id) {
+        try {
+            return sessionService.check(id.getId());
+        } catch(Exception e) {
+
+        }
+        return false;
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Response login(HttpSession session, @RequestBody LoginCredentials loginCredentials) {
@@ -209,7 +220,7 @@ public class UserController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public Response logout(HttpSession httpSession, @RequestBody LogoutObj obj) throws Exception{
 
-        List<AccountResponse> accountResponseList = new ArrayList<>();
+        List<AccountResponse> accountResponseList = new ArrayList<AccountResponse>();
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }

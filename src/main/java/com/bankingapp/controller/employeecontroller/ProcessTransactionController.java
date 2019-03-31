@@ -65,7 +65,7 @@ public class ProcessTransactionController {
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
-        List<TransactionRequest> transactionRequestList = new ArrayList<>();
+        List<TransactionRequest> transactionRequestList = new ArrayList<TransactionRequest>();
         try{
 
             System.out.println(employee_id);

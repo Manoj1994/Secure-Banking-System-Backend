@@ -196,15 +196,11 @@ public class CustomerTransactionController {
     @RequestMapping(value = "/TransferMoneyFromAccountViaEmail", method = RequestMethod.POST)
     public TransactionResponse transferMoneyToSavingsAccountViaEmail1(@RequestBody EmailTransactionParams emailTransactionParams)
             throws Exception {
-
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
-
         TransactionResponse transactionResponse = new TransactionResponse();
-
         try {
-
             if (!accountCheckService.checkAccountExists(emailTransactionParams.getCustomer_id())) {
 
                 transactionResponse.setSuccess(false);
@@ -212,7 +208,6 @@ public class CustomerTransactionController {
                         " Invalid payer account chosen!");
                 return transactionResponse;
             }
-
             Customer customer = customerService.getCustomer(emailTransactionParams.getCustomer_id());
             int otp = otpService.generateOTP(String.valueOf(customer.getUser_id()));
             String message = "OTP: "+otp;
@@ -357,35 +352,26 @@ public class CustomerTransactionController {
                         " Insufficient Balance!");
                 return transactionResponse;
             }
-
             System.out.println("Balance = "+balance);
             boolean status = false;
-
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
             TransactionRequest transactionRequest = new TransactionRequest();
-
             transactionRequest.setFrom_account(account_no);
             //transactionRequest.setTo_account(account_no);
-
             transactionRequest.setCreated_by(customer_id);
             transactionRequest.setStatus_id(1);
             transactionRequest.setRequest_type(2);
             transactionRequest.setRequest_description("Issue Cashiers Check");
             transactionRequest.setCreated_at(timestamp);
             transactionRequest.setTransaction_amount(doubleAmount);
-
             transactionRequest.setApproved_by(admin);
-
             if(doubleAmount >= appConfig.getCriticalAmount()) {
                 transactionRequest.setCritical(true);
             } else {
                 transactionRequest.setCritical(false);
             }
-
             System.out.println("Transaction Request = "+transactionRequest);
             status = transactionRequestService.saveTransactionRequest(transactionRequest);
-
             if(!status) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -395,18 +381,12 @@ public class CustomerTransactionController {
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Your transaction request is Pending");
             }
-
             return transactionResponse;
-
-
         }catch(Exception e){
-
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
                     " Ran into Exceptiom!");
         }
-
         return transactionResponse;
-
     }
 }

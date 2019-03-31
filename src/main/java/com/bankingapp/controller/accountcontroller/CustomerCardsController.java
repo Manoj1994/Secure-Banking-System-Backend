@@ -46,7 +46,7 @@ public class CustomerCardsController {
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
-        List<DebitCard> allDebitCards = new ArrayList<>();
+        List<DebitCard> allDebitCards = new ArrayList<DebitCard>();
         try {
             List<Account> accounts = customerService.getAllAccounts(customerId);
             System.out.println(accounts);
@@ -89,7 +89,7 @@ public class CustomerCardsController {
             throw new Exception();
         }
 
-        List<CreditCard> allCreditCards = new ArrayList<>();
+        List<CreditCard> allCreditCards = new ArrayList<CreditCard>();
         try {
             List<Account> accounts = customerService.getAllAccounts(customerId);
             System.out.println(accounts);

@@ -71,7 +71,7 @@ public class CustomerAccountController {
                                              HttpServletResponse resp) throws Exception
     {
 
-        List<AccountResponse> accountResponseList = new ArrayList<>();
+        List<AccountResponse> accountResponseList = new ArrayList<AccountResponse>();
         if(!sessionService.checkAnyusersExists()) {
             throw new Exception();
         }
@@ -126,7 +126,7 @@ public class CustomerAccountController {
     @RequestMapping("/SavingsAccounts")
     public List<AccountResponse> SavingAccount(@RequestParam("customerId") int customerId)
     {
-        List<AccountResponse> accountResponseList = new ArrayList<>();
+        List<AccountResponse> accountResponseList = new ArrayList<AccountResponse>();
         try{
 
             List<Account> savingsAccounts = customerAccountService.getAccounts(customerId, 1);
@@ -150,7 +150,7 @@ public class CustomerAccountController {
     @RequestMapping("/CheckingAccounts")
     public List<AccountResponse> CheckingAccount(@RequestParam("customerId") int customerId)
     {
-        List<AccountResponse> accountResponseList = new ArrayList<>();
+        List<AccountResponse> accountResponseList = new ArrayList<AccountResponse>();
         try{
 
             List<Account> checkingAccountsList = customerAccountService.getAccounts(customerId, 2);

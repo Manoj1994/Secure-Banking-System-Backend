@@ -136,7 +136,7 @@ public class SessionService {
 
                 long seconds = (current.getTime() - created.getTime())/1000;
 
-                if((seconds % 3600) % 60 >= 1) {
+                if((seconds % 3600) % 60 >= 3) {
                     sessionRepository.delete(session);
                 }
             }
@@ -146,8 +146,12 @@ public class SessionService {
         return false;
     }
 
-    public boolean check(String username, String password, String token) {
+    public boolean check(int id) {
+        try {
+            return sessionRepository.existsById(Long.valueOf(id));
+        } catch(Exception e) {
 
-        return true;
+        }
+        return false;
     }
 }

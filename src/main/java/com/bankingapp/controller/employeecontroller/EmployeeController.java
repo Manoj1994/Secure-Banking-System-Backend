@@ -71,7 +71,7 @@ public class EmployeeController {
         System.out.println(httpSession);
         System.out.println(httpSession.getAttribute("id"));
 
-        List<Employee> employeeList = new ArrayList<>();
+        List<Employee> employeeList = new ArrayList<Employee>();
         try{
 
             employeeList = employeeService.getEmployeeAccounts();
@@ -103,7 +103,7 @@ public class EmployeeController {
             throw new Exception();
         }
 
-        List<Customer> customers = new ArrayList<>();
+        List<Customer> customers = new ArrayList<Customer>();
         try{
             customers = customerAccountService.getAllCustomers();
             return customers;
@@ -121,7 +121,7 @@ public class EmployeeController {
             throw new Exception();
         }
 
-        List<Employee> employees = new ArrayList<>();
+        List<Employee> employees = new ArrayList<Employee>();
         try{
             employees = employeeService.getEmployeeAccounts();
             return employees;
@@ -297,5 +297,4 @@ public class EmployeeController {
         }
         return transactionResponse;
     }
-
 }

@@ -88,7 +88,6 @@ public class EmployeeRequestController {
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your request has ran into Exception!");
         }
-
         return transactionResponse;
     }
 }

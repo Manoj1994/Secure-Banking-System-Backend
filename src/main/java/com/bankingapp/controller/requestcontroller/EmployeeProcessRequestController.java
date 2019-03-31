@@ -80,7 +80,7 @@ public class EmployeeProcessRequestController {
             throw new Exception();
         }
 
-        List<Request> requests = new ArrayList<>();
+        List<Request> requests = new ArrayList<Request>();
         try {
             requests = requestService.getByAllRequest();
 
@@ -100,7 +100,7 @@ public class EmployeeProcessRequestController {
             throw new Exception();
         }
 
-        List<Request> requests = new ArrayList<>();
+        List<Request> requests = new ArrayList<Request>();
         try {
             requests = requestService.getByAllRequest();
 

@@ -16,13 +16,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
 public class BackendApplication {
 
-    @Autowired
-    ThreadForDeletingRow threadForDeletingRow;
-
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(BackendApplication.class, args);
         ThreadForDeletingRow thread = (ThreadForDeletingRow) applicationContext.getBean("threadForDeletingRow");
-        thread.setName("Clean bad logins");
+//        thread.setName("Clean bad logins");
         thread.start();
     }
 }

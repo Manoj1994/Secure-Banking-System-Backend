@@ -284,7 +284,7 @@ public class AdminController {
                 transactionResponse.setMessage("Sorry! User with give id didn't exist");
                 return transactionResponse;
             }
-            List<Account> accountList = new ArrayList<>();
+            List<Account> accountList = new ArrayList<Account>();
             accountList = accountDetailsService.getAccounts();
             for(Account account1 : accountList) {
                 if(account.equals(account1)) {
@@ -353,7 +353,7 @@ public class AdminController {
                 return transactionResponse;
             }
 
-            List<Customer> customerList = new ArrayList<>();
+            List<Customer> customerList = new ArrayList<Customer>();
             customerList = customerService.getAllCustomers();
             System.out.println(customerList);
             for(Customer customer1 : customerList) {
@@ -424,7 +424,7 @@ public class AdminController {
             return transactionResponse;
         }
         try {
-            List<Employee> employeeList = new ArrayList<>();
+            List<Employee> employeeList = new ArrayList<Employee>();
             employeeList = employeeService.getEmployeeAccounts();
             for(Employee employee1 : employeeList) {
                 if(employee.equals(employee1)) {
