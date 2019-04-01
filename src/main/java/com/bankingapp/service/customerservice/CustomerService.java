@@ -33,6 +33,43 @@ public class CustomerService {
         }
     }
 
+    public boolean getCustomerByAccountNo(int id) {
+        String sql = "Select e from " + Customer.class.getName() + " e " //
+                + " Where e.user_id = :user_id ";
+
+        Query query = entityManager.createQuery(sql, Customer.class);
+        query.setParameter("user_id", id);
+
+        if(query.getResultList().size() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Customer getCustomerByEmail(String email) {
+        String sql = "Select e from " + Customer.class.getName() + " e " //
+                + " Where e.email = :email ";
+
+        Query query = entityManager.createQuery(sql, Customer.class);
+        query.setParameter("email", email);
+        return (Customer) query.getSingleResult();
+    }
+
+    public Boolean checkCustomerExistsWithEmail(String email) {
+        String sql = "Select e from " + Customer.class.getName() + " e " //
+                + " Where e.email = :email ";
+
+        Query query = entityManager.createQuery(sql, Customer.class);
+        query.setParameter("email", email);
+
+        if(query.getResultList().size() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Customer getCustomer(int id) {
         String sql = "Select e from " + Customer.class.getName() + " e " //
                 + " Where e.user_id = :user_id ";

@@ -1,6 +1,7 @@
 package com.bankingapp.controller.accountcontroller;
 
 import com.bankingapp.configuration.AppConfig;
+import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
 import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.EmailTransactionParams;
@@ -9,6 +10,7 @@ import com.bankingapp.model.transaction.TransactionParameters;
 import com.bankingapp.model.transaction.TransactionResponse;
 import com.bankingapp.service.accountservice.AccountBalanceService;
 import com.bankingapp.service.accountservice.AccountCheckService;
+import com.bankingapp.service.accountservice.AccountDetailsService;
 import com.bankingapp.service.accountservice.AccountUpdateService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.customerservice.CustomerService;
@@ -18,6 +20,7 @@ import com.bankingapp.service.otpservice.EmailService;
 import com.bankingapp.service.otpservice.OtpService;
 import com.bankingapp.service.transactionservice.TransactionRequestService;
 import com.bankingapp.utils.AmountUtils;
+import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
@@ -42,7 +45,13 @@ public class CustomerTransactionController {
     TransactionRequestService transactionRequestService;
 
     @Autowired
+    AccountDetailsService accountDetailsService;
+
+    @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    RequestUtils requestUtils;
 
     @Autowired
     AccountUpdateService accountUpdateService;
@@ -201,17 +210,71 @@ public class CustomerTransactionController {
         }
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
-            if (!accountCheckService.checkAccountExists(emailTransactionParams.getCustomer_id())) {
 
+            if (!accountCheckService.checkAccountExists(emailTransactionParams.getAccount_no())) {
+
+                adminLogService.createUserLog(0, "transaction request was rejected.Invalid payer account chosen!");
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
                         " Invalid payer account chosen!");
                 return transactionResponse;
             }
-            Customer customer = customerService.getCustomer(emailTransactionParams.getCustomer_id());
-            int otp = otpService.generateOTP(String.valueOf(customer.getUser_id()));
-            String message = "OTP: "+otp;
-            emailService.sendOtpMessage(customer.getEmail(), "Secure Banking System Login OTP ", message);
+
+            if (!amountUtils.isValidAmount(emailTransactionParams.getAmount().toString())) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid amount!");
+                return transactionResponse;
+            }
+
+            if (!requestUtils.validateEmail(emailTransactionParams.getEmail())) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid email!");
+                return transactionResponse;
+            }
+
+
+            Double doubleAmount = emailTransactionParams.getAmount();
+            Double balance = accountBalanceService.getBalance(emailTransactionParams.getAccount_no());
+
+            if (doubleAmount > balance) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Insufficient Balance!");
+                return transactionResponse;
+            }
+            boolean customerStatus = false;
+            customerStatus = customerService.checkCustomerExistsWithEmail(emailTransactionParams.getEmail());
+            if(!customerStatus) {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Customer with given email didn't exist");
+                return transactionResponse;
+            }
+            try {
+
+                Account account = accountDetailsService.getAccount(emailTransactionParams.getAccount_no());
+                Customer customer = customerService.getCustomer(account.getUser_id());
+
+                int otp = otpService.generateOTP(
+                        String.valueOf(customer.getUser_id()+" "+
+                                customer.getEmail()+" "+
+                                emailTransactionParams.getAmount()+" $$$$"));
+
+                String message = "OTP: "+otp;
+                emailService.sendOtpMessage(customer.getEmail(), "Secure Banking System Email Transfer OTP ", message);
+
+            } catch (Exception e) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Ran into Exception!");
+            }
+            return transactionResponse;
         } catch(Exception e) {
 
             transactionResponse.setSuccess(false);

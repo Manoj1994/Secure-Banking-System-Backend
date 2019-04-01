@@ -17,9 +17,7 @@ import java.util.Timer;
 @EntityScan("com.bankingapp.model")
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
 public class BackendApplication {
-
     public static void main(String[] args) {
-
         ApplicationContext applicationContext = SpringApplication.run(BackendApplication.class, args);
     }
 }

@@ -2,13 +2,33 @@ package com.bankingapp.model.transaction;
 
 public class EmailTransactionParams {
 
-    private int customer_id;
+    private int account_no;
 
-    public int getCustomer_id() {
-        return customer_id;
+    private String email;
+
+    private Double amount;
+
+    public int getAccount_no() {
+        return account_no;
     }
 
-    public void setCustomer_id(int customer_id) {
-        this.customer_id = customer_id;
+    public void setAccount_no(int account_no) {
+        this.account_no = account_no;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 }
