@@ -15,7 +15,7 @@ public class ThreadForDeletingRow extends Thread{
         System.out.println(getName() + " is running");
         try {
             sessionService.deleteInvalidRows();
-            Thread.sleep(60000);
+            Thread.sleep(600);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

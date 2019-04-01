@@ -4,6 +4,7 @@ import com.bankingapp.model.login.Session;
 import com.bankingapp.model.login.User;
 import com.bankingapp.repository.loginrepository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -126,11 +127,15 @@ public class SessionService {
         return false;
     }
 
+    @Scheduled(fixedRate = 1000)
     public boolean deleteInvalidRows() {
         try {
             List<Session> sessionList = sessionRepository.findAll();
 
+            System.out.println("Printing all sessions");
+
             for(Session session : sessionList) {
+                System.out.println(session);
                 Timestamp created = session.getTimestamp_created();
                 Timestamp current = new Timestamp(System.currentTimeMillis());
 
