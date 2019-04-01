@@ -54,12 +54,12 @@ public class UserController {
     @Autowired
     LoginUtils loginUtils;
 
-    @RequestMapping(value = "/timeout", method = RequestMethod.POST)
-    public TransactionResponse userTimeout(@RequestBody Id id) {
+    @RequestMapping(value = "/timeout", method = RequestMethod.GET)
+    public TransactionResponse userTimeout(@RequestParam("id") int id) {
 
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
-            boolean status = sessionService.check(id.getId());
+            boolean status = sessionService.check(id);
             if(status) {
                 transactionResponse.setSuccess(true);
                 transactionResponse.setMessage("Stay");
