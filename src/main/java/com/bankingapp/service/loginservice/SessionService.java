@@ -136,7 +136,7 @@ public class SessionService {
 
                 long seconds = (current.getTime() - created.getTime())/1000;
 
-                if((seconds % 3600) % 60 >= 3) {
+                if(seconds >= 300) {
                     sessionRepository.delete(session);
                 }
             }
@@ -148,7 +148,21 @@ public class SessionService {
 
     public boolean check(int id) {
         try {
-            return sessionRepository.existsById(Long.valueOf(id));
+
+            Session session = sessionRepository.findById(id);
+            Timestamp created = session.getTimestamp_created();
+            System.out.println(created);
+            Timestamp current = new Timestamp(System.currentTimeMillis());
+            System.out.println(current);
+            long seconds = (current.getTime() - created.getTime())/1000;
+            System.out.println(seconds);
+            if(seconds >= 300) {
+                sessionRepository.delete(session);
+                return false;
+            } else {
+                return true;
+            }
+            //return sessionRepository.existsById(Long.valueOf(id));
         } catch(Exception e) {
 
         }
