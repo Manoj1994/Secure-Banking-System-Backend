@@ -3,6 +3,9 @@ import com.bankingapp.model.LogParameters;
 import com.bankingapp.model.account.AccountResponse;
 import com.bankingapp.model.account.Id;
 import com.bankingapp.model.login.*;
+import com.bankingapp.model.transaction.Transaction;
+import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.repository.transactionrepository.TransactionRepository;
 import com.bankingapp.service.adminlogservice.AdminLogService;
 import com.bankingapp.service.loginservice.SessionService;
 import com.bankingapp.service.loginservice.UserService;
@@ -52,13 +55,24 @@ public class UserController {
     LoginUtils loginUtils;
 
     @RequestMapping(value = "/timeout", method = RequestMethod.POST)
-    public Boolean userTimeout(@RequestBody Id id) {
-        try {
-            return sessionService.check(id.getId());
-        } catch(Exception e) {
+    public TransactionResponse userTimeout(@RequestBody Id id) {
 
+        TransactionResponse transactionResponse = new TransactionResponse();
+        try {
+            boolean status = sessionService.check(id.getId());
+            if(status) {
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Stay");
+            } else {
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Leave");
+            }
+            return transactionResponse;
+        } catch(Exception e) {
+            transactionResponse.setSuccess(false);
+            transactionResponse.setMessage("Leave");
         }
-        return false;
+        return transactionResponse;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
