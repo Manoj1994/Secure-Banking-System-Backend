@@ -395,6 +395,7 @@ public class CustomerTransactionController {
                         transactionRequest.setRequest_description("Funds Transfer Via Email");
                         transactionRequest.setCreated_at(timestamp);
                         transactionRequest.setTransaction_amount(doubleAmount);
+                        transactionRequest.setApproved_by(admin);
                         if(doubleAmount >= appConfig.getCriticalAmount()) {
                             transactionRequest.setCritical(true);
                         } else {
