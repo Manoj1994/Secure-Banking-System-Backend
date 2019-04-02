@@ -145,7 +145,7 @@ public class EmployeeController {
         }
         try{
 
-            if (!accountCheckService.checkAccountExists(from_account_no)) {
+            if (!accountCheckService.checkAccountExists(0, from_account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -161,7 +161,7 @@ public class EmployeeController {
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExists(to_account_no)) {
+            if (!accountCheckService.checkAccountExists(0, to_account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +

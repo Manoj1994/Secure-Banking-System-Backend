@@ -208,7 +208,7 @@ public class CustomerAccountController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0,account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +

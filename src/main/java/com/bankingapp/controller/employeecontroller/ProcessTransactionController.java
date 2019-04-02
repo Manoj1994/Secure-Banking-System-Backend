@@ -115,7 +115,7 @@ public class ProcessTransactionController {
                 if (transactionRequest.getRequest_type() == transactionParameters.DEPOSIT_MONEY) {
 
                     int accountNumber = transactionRequest.getTo_account();
-                    if (!accountCheckService.checkAccountExists(accountNumber)) {
+                    if (!accountCheckService.checkAccountExists(0, accountNumber)) {
 
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Sorry! transaction was rejected." +
@@ -167,7 +167,7 @@ public class ProcessTransactionController {
                 } else if (transactionRequest.getRequest_type() == transactionParameters.WITHDRAW_MONEY) {
 
                     int accountNumber = transactionRequest.getFrom_account();
-                    if (!accountCheckService.checkAccountExists(accountNumber)) {
+                    if (!accountCheckService.checkAccountExists(0, accountNumber)) {
 
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Sorry! transaction was rejected." +
@@ -229,7 +229,7 @@ public class ProcessTransactionController {
                 } else if (transactionRequest.getRequest_type() == transactionParameters.ISSUE_CASHIERS_CHECK) {
 
                     int accountNumber = transactionRequest.getFrom_account();
-                    if (!accountCheckService.checkAccountExists(accountNumber)) {
+                    if (!accountCheckService.checkAccountExists(0, accountNumber)) {
 
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Sorry! transaction was rejected." +
@@ -295,7 +295,7 @@ public class ProcessTransactionController {
 
                     Double balance = accountBalanceService.getBalance(payerAccountNumber);
 
-                    if (!accountCheckService.checkAccountExists(payerAccountNumber)) {
+                    if (!accountCheckService.checkAccountExists(0, payerAccountNumber)) {
 
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Sorry! transaction was rejected." +
@@ -303,7 +303,7 @@ public class ProcessTransactionController {
                         return transactionResponse;
                     }
 
-                    if (!accountCheckService.checkAccountExists(payeeAccountNumber)) {
+                    if (!accountCheckService.checkAccountExists(0, payeeAccountNumber)) {
 
                         transactionResponse.setSuccess(false);
                         transactionResponse.setMessage("Sorry! transaction was rejected." +
@@ -446,7 +446,7 @@ public class ProcessTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -483,24 +483,49 @@ public class ProcessTransactionController {
 
             if(doubleAmount >= appConfig.getCriticalAmount()) {
                 transactionRequest.setCritical(true);
-            } else {
-                transactionRequest.setCritical(false);
-            }
+                System.out.println("Transaction Request = "+transactionRequest);
+                status = transactionRequestService.saveTransactionRequest(transactionRequest);
 
-            System.out.println("Transaction Request = "+transactionRequest);
-            status = transactionRequestService.saveTransactionRequest(transactionRequest);
-
-            if(!status) {
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
-                        " Internal Server Error!");
+                if(!status) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                            " Internal Server Error!");
+                    return transactionResponse;
+                } else {
+                    transactionResponse.setSuccess(true);
+                    transactionResponse.setMessage("Your transaction request is Pending");
+                }
                 return transactionResponse;
             } else {
+                transactionRequest.setCritical(false);
+                Transaction transaction2 = new Transaction();
+
+                transaction2.setAccount_no(account_no);
+                transaction2.setBalance(accountBalanceService.getBalance(account_no));
+                transaction2.setRequest_id(transactionRequest.getRequest_id());
+
+                String credit_description = "Credited to your account " + account_no;
+                transaction2.setDescription(credit_description);
+
+                transaction2.setStatus(1);
+                transaction2.setTransaction_type(2);
+                transaction2.setTransaction_timestamp(timestamp);
+                transaction2.setTransaction_amount(doubleAmount);
+
+                transactionService.save(transaction2);
+                accountUpdateService.updateBalance(account_no, doubleAmount);
+
+                transactionRequest.setStatus_id(2);
+                transactionRequest.setApproved_by(employee_id);
+
+                transactionRequestService.saveTransactionRequest(transactionRequest);
+
                 transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction request is Pending");
+                transactionResponse.setMessage("Your transaction is Successful");
+
+                return transactionResponse;
             }
 
-            return transactionResponse;
         }catch(Exception e){
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -521,7 +546,7 @@ public class ProcessTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -558,24 +583,49 @@ public class ProcessTransactionController {
 
             if(doubleAmount >= appConfig.getCriticalAmount()) {
                 transactionRequest.setCritical(true);
-            } else {
-                transactionRequest.setCritical(false);
-            }
+                System.out.println("Transaction Request = "+transactionRequest);
+                status = transactionRequestService.saveTransactionRequest(transactionRequest);
 
-            System.out.println("Transaction Request = "+transactionRequest);
-            status = transactionRequestService.saveTransactionRequest(transactionRequest);
-
-            if(!status) {
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
-                        " Internal Server Error!");
+                if(!status) {
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                            " Internal Server Error!");
+                    return transactionResponse;
+                } else {
+                    transactionResponse.setSuccess(true);
+                    transactionResponse.setMessage("Your transaction request is Pending");
+                }
                 return transactionResponse;
             } else {
-                transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction request is Pending");
-            }
+                transactionRequest.setCritical(false);
+                Transaction transaction2 = new Transaction();
 
-            return transactionResponse;
+                transaction2.setAccount_no(account_no);
+                transaction2.setBalance(accountBalanceService.getBalance(account_no));
+                transaction2.setRequest_id(transactionRequest.getRequest_id());
+
+                String credit_description = "Debited from  account " + account_no;
+                transaction2.setDescription(credit_description);
+
+                transaction2.setStatus(1);
+                transaction2.setTransaction_type(2);
+                transaction2.setTransaction_timestamp(timestamp);
+                transaction2.setTransaction_amount(doubleAmount);
+
+                transactionService.save(transaction2);
+                accountUpdateService.updateBalance(account_no, doubleAmount);
+
+                transactionRequest.setStatus_id(2);
+                transactionRequest.setApproved_by(employee_id);
+
+                transactionRequestService.saveTransactionRequest(transactionRequest);
+
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Your transaction is Successful");
+
+                return transactionResponse;
+
+            }
         }catch(Exception e){
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +

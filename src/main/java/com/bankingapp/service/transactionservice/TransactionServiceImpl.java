@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
+@Transactional
 public class TransactionServiceImpl extends BasicTransactionServiceImpl {
 
     @Autowired
@@ -23,6 +25,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
     private final int TRANSACTION_APPROVED = 2;
     private final int TRANSACTION_REJECTED = 3;
 
+    @Transactional
     public List<TransactionRequest> getAllPending(boolean critical) {
 
         String sql;
@@ -38,6 +41,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         }
     }
 
+    @Transactional
     public List<Transaction> getAllTransactions(int accountId) {
 
         String sql = "SELECT t FROM "+ Transaction.class.getName() +" t where t.account_no = :account_no";
@@ -47,6 +51,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         return query.getResultList();
     }
 
+    @Transactional
     public TransactionRequest getPendingTransaction(int transactionId) {
 
         String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.request_id = :request_id and t.status_id = :status_id";
@@ -57,6 +62,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         return (TransactionRequest) query.getSingleResult();
     }
 
+    @Transactional
     public List<Transaction> getAllApproved() {
 
         String sql = "SELECT t FROM "+ TransactionRequest.class.getName() +" t where t.status_id = :status_id";
@@ -66,6 +72,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         return query.getResultList();
     }
 
+    @Transactional
     public Boolean approveTransaction(int transactionID) {
 
         try {
@@ -81,6 +88,7 @@ public class TransactionServiceImpl extends BasicTransactionServiceImpl {
         return false;
     }
 
+    @Transactional
     public Boolean rejectTransaction(int transactionID) {
 
         try {

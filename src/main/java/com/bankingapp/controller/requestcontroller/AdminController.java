@@ -6,6 +6,7 @@ import com.bankingapp.model.account.Id;
 import com.bankingapp.model.employee.AdminLog;
 import com.bankingapp.model.employee.Employee;
 import com.bankingapp.model.transaction.TransactionResponse;
+import com.bankingapp.repository.loginrepository.UserRepository;
 import com.bankingapp.service.accountservice.AccountCheckService;
 import com.bankingapp.service.accountservice.AccountDetailsService;
 import com.bankingapp.service.adminlogservice.AdminLogService;
@@ -46,6 +47,9 @@ public class AdminController {
 
     @Autowired
     AdminLogService adminLogService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @RequestMapping(value = "/getAccount", method = RequestMethod.POST)
     public Account getAccount(@RequestBody Id id) throws Exception {
@@ -226,7 +230,7 @@ public class AdminController {
                 transactionResponse.setMessage("You haven't modified any details");
                 return transactionResponse;
             }
-            if(editedAccount.getRouting_no() == 2563) {
+            if(editedAccount.getRouting_no() != 2563) {
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Wrong routing number!");
                 return transactionResponse;

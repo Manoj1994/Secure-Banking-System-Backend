@@ -3,6 +3,8 @@ package com.bankingapp.controller.accountcontroller;
 import com.bankingapp.configuration.AppConfig;
 import com.bankingapp.model.account.Account;
 import com.bankingapp.model.account.Customer;
+import com.bankingapp.model.login.LoginResponse;
+import com.bankingapp.model.login.Role;
 import com.bankingapp.model.request.TransactionRequest;
 import com.bankingapp.model.transaction.EmailTransactionParams;
 import com.bankingapp.model.transaction.OtpEmailTransactionParams;
@@ -23,7 +25,10 @@ import com.bankingapp.utils.AmountUtils;
 import com.bankingapp.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
 import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
@@ -90,7 +95,7 @@ public class CustomerTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(from_account_no)) {
+            if (!accountCheckService.checkAccountExists(customer_id, from_account_no)) {
 
                 adminLogService.createUserLog(customer_id, "transaction request was rejected.Invalid payer account chosen!");
                 transactionResponse.setSuccess(false);
@@ -108,7 +113,7 @@ public class CustomerTransactionController {
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExists(to_account_no)) {
+            if (!accountCheckService.checkAccountExists(0, to_account_no)) {
 
                 adminLogService.createUserLog(customer_id, "transaction request was rejected. Invalid payee account chosen!");
                 transactionResponse.setSuccess(false);
@@ -192,6 +197,8 @@ public class CustomerTransactionController {
 
         }catch(Exception e){
 
+            e.printStackTrace();
+
             adminLogService.createUserLog(customer_id, "Payment was rejected. Ran into Exception");
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -211,7 +218,7 @@ public class CustomerTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try {
 
-            if (!accountCheckService.checkAccountExists(emailTransactionParams.getAccount_no())) {
+            if (!accountCheckService.checkAccountExists(0, emailTransactionParams.getAccount_no())) {
 
                 adminLogService.createUserLog(0, "transaction request was rejected.Invalid payer account chosen!");
                 transactionResponse.setSuccess(false);
@@ -268,6 +275,8 @@ public class CustomerTransactionController {
                 String message = "OTP: "+otp;
                 emailService.sendOtpMessage(customer.getEmail(), "Secure Banking System Email Transfer OTP ", message);
 
+                transactionResponse.setSuccess(true);
+                transactionResponse.setMessage("Otp Sent");
             } catch (Exception e) {
 
                 transactionResponse.setSuccess(false);
@@ -295,27 +304,35 @@ public class CustomerTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(otpEmailTransactionParams.getAccount_no())) {
+            if(String.valueOf(otpEmailTransactionParams.getOtp()).isEmpty()) {
 
+                adminLogService.createUserLog(0, "Account = "+otpEmailTransactionParams.getAccount_no()+" entered empty otp"+" at "+ new Timestamp((System.currentTimeMillis())));;
+                //loginResponse = new LoginResponse(false, "Otp can't be empty");
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Otp can't be empty!");
+            }
+            if (!accountCheckService.checkAccountExists(0, otpEmailTransactionParams.getAccount_no())) {
+
+                adminLogService.createUserLog(0, "transaction request was rejected.Invalid payer account chosen!");
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
                         " Invalid payer account chosen!");
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExists(otpEmailTransactionParams.getAccount_no())) {
-
-                transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
-                        " Invalid payee account chosen!");
-                return transactionResponse;
-            }
-
             if (!amountUtils.isValidAmount(otpEmailTransactionParams.getAmount().toString())) {
 
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
                         " Invalid amount!");
+                return transactionResponse;
+            }
+
+            if (!requestUtils.validateEmail(otpEmailTransactionParams.getEmail())) {
+
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid email!");
                 return transactionResponse;
             }
 
@@ -325,54 +342,103 @@ public class CustomerTransactionController {
             if (doubleAmount > balance) {
 
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
                         " Insufficient Balance!");
                 return transactionResponse;
             }
 
-            System.out.println("Balance = "+balance);
-            boolean status = false;
+            Account account = accountDetailsService.getAccount(otpEmailTransactionParams.getAccount_no());
+            Customer customer = customerService.getCustomer(account.getUser_id());
+            Customer toCustomer = customerService.getCustomerByEmail(otpEmailTransactionParams.getEmail());
 
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            List<Account> accounts = customerService.getAllAccounts(toCustomer.getUser_id());
+            int toAccountNo = -1;
 
-            TransactionRequest transactionRequest = new TransactionRequest();
-
-            transactionRequest.setFrom_account(otpEmailTransactionParams.getAccount_no());
-            transactionRequest.setTo_account(otpEmailTransactionParams.getAccount_no());
-
-            transactionRequest.setCreated_by(otpEmailTransactionParams.getAccount_no());
-            transactionRequest.setStatus_id(1);
-            transactionRequest.setCreated_at(timestamp);
-            transactionRequest.setTransaction_amount(doubleAmount);
-
-            if(doubleAmount >= appConfig.getCriticalAmount()) {
-                transactionRequest.setCritical(true);
-            } else {
-                transactionRequest.setCritical(false);
+            for(Account account1: accounts) {
+                if(account1.getAccount_type() == 2) {
+                    toAccountNo = account1.getAccount_no();
+                }
             }
 
-            System.out.println("Transaction Request = "+transactionRequest);
-            status = transactionRequestService.saveTransactionRequest(transactionRequest);
-
-            if(!status) {
+            if(toAccountNo == -1) {
                 transactionResponse.setSuccess(false);
-                transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
-                        " Internal Server Error!");
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " No checking account exist with this email!");
                 return transactionResponse;
-            } else {
-                transactionResponse.setSuccess(true);
-                transactionResponse.setMessage("Your transaction request is Pending");
             }
+
+            if(otpEmailTransactionParams.getOtp() >= 0){
+                int serverOtp = otpService.
+                        getOtp(
+                                String.valueOf(customer.getUser_id()+" "+
+                                        customer.getEmail()+" "+
+                                        otpEmailTransactionParams.getAmount()+" $$$$"));
+
+                if(serverOtp > 0){
+                    if(otpEmailTransactionParams.getOtp() == serverOtp){
+                        otpService.clearOTP(String.valueOf(customer.getUser_id()+" "+
+                                customer.getEmail()+" "+
+                                otpEmailTransactionParams.getAmount()+" $$$$"));
+
+                        System.out.println("Balance = "+balance);
+                        boolean status = false;
+
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                        TransactionRequest transactionRequest = new TransactionRequest();
+
+                        transactionRequest.setFrom_account(otpEmailTransactionParams.getAccount_no());
+                        transactionRequest.setTo_account(toAccountNo);
+
+                        transactionRequest.setCreated_by(otpEmailTransactionParams.getAccount_no());
+                        transactionRequest.setStatus_id(transactionParameters.TRANSFER);
+                        transactionRequest.setCreated_at(timestamp);
+                        transactionRequest.setTransaction_amount(doubleAmount);
+                        if(doubleAmount >= appConfig.getCriticalAmount()) {
+                            transactionRequest.setCritical(true);
+                        } else {
+                            transactionRequest.setCritical(false);
+                        }
+                        status = transactionRequestService.saveTransactionRequest(transactionRequest);
+
+                        if(!status) {
+                            transactionResponse.setSuccess(false);
+                            transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
+                                    " Internal Server Error!");
+                            return transactionResponse;
+                        } else {
+                            transactionResponse.setSuccess(true);
+                            transactionResponse.setMessage("Your transaction request is Pending");
+                        }
+                       return transactionResponse;
+                    }else{
+                        adminLogService.createUserLog(customer.getUser_id(), "User id = "+customer.getUser_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
+                        transactionResponse.setSuccess(false);
+                        transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                                " Invalid Otp!");
+                    }
+                }else {
+                    adminLogService.createUserLog(customer.getUser_id(), "User id = "+customer.getUser_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
+                    transactionResponse.setSuccess(false);
+                    transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                            " Invalid Otp!");
+                }
+            }else {
+                adminLogService.createUserLog(customer.getUser_id(), "User id = "+customer.getUser_id()+" entered invalid otp "+" at "+ new Timestamp((System.currentTimeMillis())));
+                transactionResponse.setSuccess(false);
+                transactionResponse.setMessage("Sorry! Your payment was rejected." +
+                        " Invalid Otp!");
+            }
+
+            return transactionResponse;
+
+
         }catch(Exception e){
-
-
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
                     " Ran into Exception!");
         }
-
         return transactionResponse;
-
     }
 
 
@@ -389,7 +455,7 @@ public class CustomerTransactionController {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(customer_id, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +

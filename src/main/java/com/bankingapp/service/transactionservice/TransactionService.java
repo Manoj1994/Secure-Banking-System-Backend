@@ -2,6 +2,7 @@ package com.bankingapp.service.transactionservice;
 
 import com.bankingapp.model.transaction.Transaction;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface TransactionService {
@@ -12,5 +13,5 @@ public interface TransactionService {
 
     public void update(Transaction employer);
 
-    public boolean deleteById(int id,String type);
+    public boolean deleteById(int id, String type);
 }

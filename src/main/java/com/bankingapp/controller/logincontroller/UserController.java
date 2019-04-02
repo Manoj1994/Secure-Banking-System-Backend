@@ -150,6 +150,7 @@ public class UserController {
                 }
 
                 int otp = otpLoginCredentials.getOtp();
+                System.out.println("Given otp "+otpLoginCredentials.getOtp());
                 User user = userService.findByUserNameAndPassword(otpLoginCredentials.getUserName(),
                         otpLoginCredentials.getPassword());
 

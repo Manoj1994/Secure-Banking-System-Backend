@@ -18,10 +18,10 @@ public class AccountCheckService {
     public boolean checkAccountExists(int customer_id, int account_no) {
 
         try {
-            String sql = "select b from " + Account.class.getName() + " b where b.account_no=:account_no and b.user_id = :user_id";
+            String sql = "select b from " + Account.class.getName() + " b where b.account_no=:account_no";
             Query query = entityManager.createQuery(sql, Account.class);
             query.setParameter("account_no", account_no);
-            query.setParameter("user_id", customer_id);
+            //query.setParameter("user_id", customer_id);
 
             if (query.getResultList().size() > 0) {
                 return true;
@@ -35,26 +35,25 @@ public class AccountCheckService {
         return false;
     }
 
-    public boolean checkAccountExists(int account_no) {
-
-        try {
-
-            String sql = "select b from " + Account.class.getName() + " b where b.account_no =: account_no";
-
-            Query query = entityManager.createQuery(sql, Account.class);
-            query.setParameter("account_no", account_no);
-
-            if (query.getResultList().size() > 0) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch (Exception e) {
-
-        }
-        return false;
-    }
+//    public boolean checkAccountExists(int account_no) {
+//
+//        try {
+//
+//            String sql = "select b from " + Account.class.getName() + " b where b.account_no = :account_no";
+//            Query query = entityManager.createQuery(sql, Account.class);
+//            query.setParameter("account_no", account_no);
+//
+//            if (query.getResultList().size() > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//
+//        } catch (Exception e) {
+//
+//        }
+//        return false;
+//    }
 
     public boolean checkAccountExistsWithRoutingNo(int account_no, int routing_no) {
 

@@ -70,7 +70,7 @@ public class AdminTier2Controller {
         }
         try{
 
-            if (!accountCheckService.checkAccountExists(from_account_no)) {
+            if (!accountCheckService.checkAccountExists(0, from_account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -86,7 +86,7 @@ public class AdminTier2Controller {
                 return transactionResponse;
             }
 
-            if (!accountCheckService.checkAccountExists(to_account_no)) {
+            if (!accountCheckService.checkAccountExists(0, to_account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your transaction request was rejected." +
@@ -180,6 +180,7 @@ public class AdminTier2Controller {
 
         }catch(Exception e){
 
+            e.printStackTrace();
             transactionResponse.setSuccess(false);
             transactionResponse.setMessage("Sorry! Your payment was rejected." +
                     " Ran into Exceptiom!");
@@ -200,7 +201,7 @@ public class AdminTier2Controller {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -276,7 +277,7 @@ public class AdminTier2Controller {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +
@@ -342,7 +343,7 @@ public class AdminTier2Controller {
         TransactionResponse transactionResponse = new TransactionResponse();
         try{
 
-            if (!accountCheckService.checkAccountExists(account_no)) {
+            if (!accountCheckService.checkAccountExists(0, account_no)) {
 
                 transactionResponse.setSuccess(false);
                 transactionResponse.setMessage("Sorry! Your payment was rejected." +

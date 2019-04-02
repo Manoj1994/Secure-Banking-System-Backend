@@ -73,6 +73,25 @@ public class UserService {
         }
     }
 
+    public User deleteById(int id) {
+        try {
+
+            //String encryptedPassword = EncrytedPasswordUtils.encrptPassword(password);
+            //System.out.println(encryptedPassword);
+            String sql = "Select e from " + User.class.getName() + " e " //
+                    + " Where e.username = :username " +" and e.password = :password";
+
+            Query query = entityManager.createQuery(sql, User.class);
+            query.setParameter("id", id);
+
+            System.out.println(query.getResultList());
+
+            return (User) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public Boolean checkForUserNameAndPassword(String username, String password) {
         try {
 

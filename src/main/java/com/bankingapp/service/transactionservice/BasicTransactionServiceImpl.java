@@ -7,9 +7,11 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
+@Transactional
 public class BasicTransactionServiceImpl implements TransactionService {
 
     @Autowired
@@ -18,6 +20,7 @@ public class BasicTransactionServiceImpl implements TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
+    @Transactional
     public Boolean save(Transaction transaction) {
 
         try {
@@ -29,6 +32,7 @@ public class BasicTransactionServiceImpl implements TransactionService {
         return false;
     }
 
+    @Transactional
     public List<Transaction> getById(int id) {
 
         String sql = "Select e from " + Transaction.class.getName() + " e " //
@@ -39,12 +43,14 @@ public class BasicTransactionServiceImpl implements TransactionService {
         return query.getResultList();
     }
 
+    @Transactional
     public void update(Transaction employer) {
 
         String sql = "update Transaction t set t.status = :status where t.name = :name";
         entityManager.createQuery(sql);
     }
 
+    @Transactional
     public boolean deleteById(int id,String type) {
 
         try {
