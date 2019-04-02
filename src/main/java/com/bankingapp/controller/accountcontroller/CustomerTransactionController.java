@@ -392,6 +392,7 @@ public class CustomerTransactionController {
 
                         transactionRequest.setCreated_by(otpEmailTransactionParams.getAccount_no());
                         transactionRequest.setStatus_id(transactionParameters.TRANSFER);
+                        transactionRequest.setRequest_description("Funds Transfer Via Email");
                         transactionRequest.setCreated_at(timestamp);
                         transactionRequest.setTransaction_amount(doubleAmount);
                         if(doubleAmount >= appConfig.getCriticalAmount()) {
